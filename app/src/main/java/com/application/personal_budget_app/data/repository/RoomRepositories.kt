@@ -43,4 +43,7 @@ class RoomBudgetRepository @Inject constructor(
     override suspend fun upsertIncome(income: Income) = dao.upsertIncome(income.toEntity())
     override suspend fun upsertSaving(saving: PlannedSaving) = dao.upsertSaving(saving.toEntity())
     override suspend fun upsertFixedCharge(charge: FixedCharge) = dao.upsertFixedCharge(charge.toEntity())
+    override suspend fun deleteIncome(id: Long) = dao.deleteIncome(id)
+    override suspend fun deleteSaving(id: Long) = dao.deleteSaving(id)
+    override suspend fun deleteFixedCharge(id: Long) = dao.deleteFixedCharge(id)
 }
