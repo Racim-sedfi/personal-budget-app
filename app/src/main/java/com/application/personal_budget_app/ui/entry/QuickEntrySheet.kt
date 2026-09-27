@@ -65,6 +65,7 @@ fun QuickEntryContent(
     onSave: () -> Unit,
     onClose: () -> Unit,
 ) {
+    val dayText = if (state.isToday) "Aujourd'hui" else state.date.withWeekdayFr()
     Column(
         Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 16.dp).navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -93,13 +94,13 @@ fun QuickEntryContent(
             OutlinedTextField(
                 value = state.note,
                 onValueChange = onNoteChange,
-                label = { Text("Note · aujourd'hui") },
+                label = { Text("Note · $dayText") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
         } else {
             TextButton(onClick = onOpenDetails, modifier = Modifier.fillMaxWidth()) {
-                Text("Aujourd'hui · ajouter une note", color = TextStrong)
+                Text("$dayText · ajouter une note", color = TextStrong)
             }
         }
 

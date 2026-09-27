@@ -17,6 +17,7 @@ import javax.inject.Inject
 
 data class QuickEntryState(
     val date: LocalDate,
+    val isToday: Boolean = true,
     val amount: AmountInput = AmountInput(),
     val type: TransactionType = TransactionType.EXPENSE,
     val categories: List<Category> = emptyList(),
@@ -51,9 +52,16 @@ class QuickEntryViewModel @Inject constructor(
         }
     }
 
-    /** Appelé à chaque ouverture : formulaire vide, date du jour. */
-    fun start() = _state.update {
-        it.copy(date = LocalDate.now(clock), amount = AmountInput(), type = TransactionType.EXPENSE, note = "", detailsOpen = false)
+    /** Appelé à chaque ouverture. Sans date : aujourd'hui. */
+    fun start(date: LocalDate? = null) {
+        val today = LocalDate.now(clock)
+        val day = date ?: today
+        _state.update {
+            it.copy(
+                date = day, isToday = day == today,
+                amount = AmountInput(), type = TransactionType.EXPENSE, note = "", detailsOpen = false,
+            )
+        }
     }
 
     fun onKey(key: KeypadKey) = _state.update { it.copy(amount = it.amount.press(key)) }
@@ -73,6 +81,7 @@ class QuickEntryViewModel @Inject constructor(
                     type = s.type,
                     categoryId = category.id,
                     date = s.date,
+
                     note = s.note.trim().ifEmpty { null },
                 )
             )
