@@ -5,13 +5,19 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.application.personal_budget_app.domain.model.Transaction
 import com.application.personal_budget_app.ui.components.PlaceholderScreen
 import com.application.personal_budget_app.ui.history.HistoryScreen
 import com.application.personal_budget_app.ui.home.HomeScreen
 import java.time.LocalDate
 
 @Composable
-fun AppNavHost(navController: NavHostController, onAddClick: (LocalDate?) -> Unit, modifier: Modifier = Modifier) {
+fun AppNavHost(
+    navController: NavHostController,
+    onAddClick: (LocalDate?) -> Unit,
+    onEditTransaction: (Transaction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     NavHost(navController, startDestination = HomeRoute, modifier = modifier) {
         composable<HomeRoute> {
             HomeScreen(
@@ -20,7 +26,12 @@ fun AppNavHost(navController: NavHostController, onAddClick: (LocalDate?) -> Uni
                 onEditBudget = { navController.navigateToTopLevel(BudgetRoute) },
             )
         }
-        composable<HistoryRoute> { HistoryScreen(onAddForDate = { date -> onAddClick(date) }) }
+        composable<HistoryRoute> {
+            HistoryScreen(
+                onAddForDate = { date -> onAddClick(date) },
+                onEditTransaction = onEditTransaction,
+            )
+        }
         composable<AnalysisRoute> { PlaceholderScreen("Analyse") }
         composable<BudgetRoute> { PlaceholderScreen("Budget") }
     }

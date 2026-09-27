@@ -8,7 +8,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.application.personal_budget_app.domain.model.Transaction
 import com.application.personal_budget_app.domain.model.TransactionType
+import com.application.personal_budget_app.ui.entry.EntryEvent
 import com.application.personal_budget_app.ui.entry.QuickEntrySheet
 import com.application.personal_budget_app.ui.entry.QuickEntryViewModel
 import com.application.personal_budget_app.ui.navigation.AppNavHost
@@ -22,23 +24,35 @@ fun BudgetAppRoot() {
     val entryViewModel: QuickEntryViewModel = hiltViewModel()
     var showEntry by rememberSaveable { mutableStateOf(false) }
 
-    // Après chaque enregistrement : on ferme la sheet et on propose d'annuler.
-    LaunchedEffect(entryViewModel) {
-        entryViewModel.saved.collect { saved ->
-            showEntry = false
-            val label = if (saved.type == TransactionType.REFUND) "Remboursement ajouté" else "Dépense ajoutée"
-            val result = snackbarHostState.showSnackbar(
-                message = "$label · ${saved.amount.format()} · ${saved.categoryName}",
-                actionLabel = "Annuler",
-                duration = SnackbarDuration.Long,
-            )
-            if (result == SnackbarResult.ActionPerformed) entryViewModel.undo(saved.id)
-        }
-    }
-
     val openEntry: (LocalDate?) -> Unit = { date ->
         entryViewModel.start(date)
         showEntry = true
+    }
+
+    val openEdit: (Transaction) -> Unit = { transaction ->
+        entryViewModel.startEdit(transaction)
+        showEntry = true
+    }
+
+    // Après chaque ajout, modification ou suppression : on ferme la sheet et on propose d'annuler.
+    LaunchedEffect(entryViewModel) {
+        entryViewModel.events.collect { event ->
+            showEntry = false
+            val isRefund = event.transaction.type == TransactionType.REFUND
+            val subject = if (isRefund) "Remboursement" else "Dépense"
+            val agreement = if (isRefund) "" else "e" // ajouté / ajoutée
+            val verb = when (event) {
+                is EntryEvent.Added -> "ajouté"
+                is EntryEvent.Updated -> "modifié"
+                is EntryEvent.Deleted -> "supprimé"
+            }
+            val result = snackbarHostState.showSnackbar(
+                message = "$subject $verb$agreement · ${event.transaction.amount.format()} · ${event.categoryName}",
+                actionLabel = "Annuler",
+                duration = SnackbarDuration.Long,
+            )
+            if (result == SnackbarResult.ActionPerformed) entryViewModel.undo(event)
+        }
     }
 
     Scaffold(
@@ -46,7 +60,12 @@ fun BudgetAppRoot() {
         snackbarHost = { SnackbarHost(snackbarHostState) },
         bottomBar = { BudgetBottomBar(navController, onAddClick = { openEntry(null) }) },
     ) { innerPadding ->
-        AppNavHost(navController, onAddClick = openEntry, modifier = Modifier.padding(innerPadding))
+        AppNavHost(
+            navController,
+            onAddClick = openEntry,
+            onEditTransaction = openEdit,
+            modifier = Modifier.padding(innerPadding),
+        )
     }
 
     if (showEntry) {

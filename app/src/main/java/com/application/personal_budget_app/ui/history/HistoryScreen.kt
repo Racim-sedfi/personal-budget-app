@@ -2,6 +2,7 @@ package com.application.personal_budget_app.ui.history
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -40,6 +42,7 @@ import java.time.LocalDate
 @Composable
 fun HistoryScreen(
     onAddForDate: (LocalDate) -> Unit,
+    onEditTransaction: (Transaction) -> Unit,
     viewModel: HistoryViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -49,6 +52,7 @@ fun HistoryScreen(
             onPrevious = viewModel::previousCycle,
             onNext = viewModel::nextCycle,
             onAddForDate = onAddForDate,
+            onEditTransaction = onEditTransaction,
             onDeclareNoExpense = viewModel::declareNoExpense,
             onClearNoExpense = viewModel::clearNoExpense,
         )
@@ -61,6 +65,7 @@ fun HistoryContent(
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     onAddForDate: (LocalDate) -> Unit,
+    onEditTransaction: (Transaction) -> Unit,
     onDeclareNoExpense: (LocalDate) -> Unit,
     onClearNoExpense: (LocalDate) -> Unit,
 ) {
@@ -72,6 +77,7 @@ fun HistoryContent(
                 today = state.today,
                 categories = state.categories,
                 onAdd = { onAddForDate(day.date) },
+                onEdit = onEditTransaction,
                 onDeclare = { onDeclareNoExpense(day.date) },
                 onClear = { onClearNoExpense(day.date) },
             )
@@ -127,6 +133,7 @@ private fun DaySection(
     today: LocalDate,
     categories: Map<Long, Category>,
     onAdd: () -> Unit,
+    onEdit: (Transaction) -> Unit,
     onDeclare: () -> Unit,
     onClear: () -> Unit,
 ) {
@@ -151,7 +158,9 @@ private fun DaySection(
         }
 
         when (day.state) {
-            DayState.WITH_TRANSACTIONS -> day.transactions.forEach { TransactionRow(it, categories[it.categoryId]) }
+            DayState.WITH_TRANSACTIONS -> day.transactions.forEach { tx ->
+                TransactionRow(tx, categories[tx.categoryId], onClick = { onEdit(tx) })
+            }
             DayState.NO_EXPENSE -> NoExpenseRow(onClear)
             DayState.NOT_FILLED -> NotFilledCard(onAdd, onDeclare)
             DayState.TODAY_OPEN -> TodayOpenCard(onDeclare)
@@ -161,11 +170,13 @@ private fun DaySection(
 }
 
 @Composable
-private fun TransactionRow(tx: Transaction, category: Category?) {
+private fun TransactionRow(tx: Transaction, category: Category?, onClick: () -> Unit) {
     val isRefund = tx.type == TransactionType.REFUND
     val categoryName = category?.name ?: "Sans catégorie"
     Row(
-        Modifier.fillMaxWidth().heightIn(min = 56.dp).semantics(mergeDescendants = true) {},
+        Modifier.fillMaxWidth().heightIn(min = 56.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClickLabel = "Modifier", role = Role.Button, onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -283,7 +294,8 @@ private fun HistoryPreview() {
                 completion = completion(cycle, today, transactions.map { it.date }.toSet(), noExpense),
                 categories = categories,
             ),
-            onPrevious = {}, onNext = {}, onAddForDate = {}, onDeclareNoExpense = {}, onClearNoExpense = {},
+            onPrevious = {}, onNext = {}, onAddForDate = {}, onEditTransaction = {},
+            onDeclareNoExpense = {}, onClearNoExpense = {},
         )
     }
 }
