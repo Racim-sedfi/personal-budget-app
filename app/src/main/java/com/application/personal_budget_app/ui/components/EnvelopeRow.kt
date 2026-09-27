@@ -32,9 +32,7 @@ fun EnvelopeRow(model: EnvelopeRowModel, modifier: Modifier = Modifier) {
                     Text(model.name, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, modifier = Modifier.weight(1f))
                     Text(model.amountText, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = model.amountColor)
                 }
-                Box(Modifier.fillMaxWidth().height(4.dp).clip(RoundedCornerShape(2.dp)).background(Track)) {
-                    Box(Modifier.fillMaxHeight().fillMaxWidth(model.fraction).clip(RoundedCornerShape(2.dp)).background(model.barColor))
-                }
+                BudgetProgressBar(fraction = model.fraction, color = model.barColor)
                 if (model.statusText != null && model.statusIcon != null) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         Icon(painterResource(model.statusIcon), contentDescription = null, tint = model.statusColor, modifier = Modifier.size(14.dp))

@@ -5,10 +5,12 @@ import androidx.compose.ui.graphics.Color
 import com.application.personal_budget_app.R
 import com.application.personal_budget_app.domain.budget.EnvelopeStatus
 import com.application.personal_budget_app.domain.budget.envelopeStatus
+import com.application.personal_budget_app.domain.budget.progressFraction
+import com.application.personal_budget_app.domain.budget.usedPercent
 import com.application.personal_budget_app.domain.home.EnvelopeLine
 import com.application.personal_budget_app.domain.home.HomeSummary
+import com.application.personal_budget_app.domain.model.Money
 import com.application.personal_budget_app.ui.theme.*
-import kotlin.math.roundToInt
 
 data class EnvelopeRowModel(
     val id: Long,
@@ -26,35 +28,34 @@ data class EnvelopeRowModel(
 fun EnvelopeLine.toRowModel(summary: HomeSummary): EnvelopeRowModel {
     val cap = category.cap
 
-    // Observation (ou enveloppe sans plafond) : montant dépensé et part du total.
+    // Observation (ou enveloppe sans plafond) : pas de « prévu », on compare à la plus grosse catégorie.
     if (summary.snapshot == null || cap == null) {
-        val max = summary.envelopes.maxOfOrNull { it.spent.cents } ?: 0L
-        val share = if (summary.spent.cents > 0) (spent.cents * 100.0 / summary.spent.cents).roundToInt() else 0
+        val biggest = Money(summary.envelopes.maxOfOrNull { it.spent.cents } ?: 0L)
         return EnvelopeRowModel(
-            id = category.id, name = "${category.name} · $share %", iconKey = category.iconKey,
+            id = category.id,
+            name = "${category.name} · ${usedPercent(spent, summary.spent)} %",
+            iconKey = category.iconKey,
             amountText = spent.format(), amountColor = Ink,
-            fraction = if (max > 0) spent.cents.toFloat() / max else 0f, barColor = NearLimit,
+            fraction = progressFraction(spent, biggest), barColor = NearLimit,
         )
     }
 
-    val fraction = if (cap.cents > 0) (spent.cents.toFloat() / cap.cents).coerceIn(0f, 1f) else 1f
-    val percent = if (cap.cents > 0) (spent.cents * 100.0 / cap.cents).roundToInt() else 100
+    // Budget : dépensé / prévu, barre bornée à 100 %.
     val base = EnvelopeRowModel(
         id = category.id, name = category.name, iconKey = category.iconKey,
-        amountText = "${(cap - spent).format()} restants", amountColor = Ink,
-        fraction = fraction, barColor = CalmBlue,
+        amountText = "${spent.format()} / ${cap.format()}", amountColor = Ink,
+        fraction = progressFraction(spent, cap), barColor = CalmBlue,
     )
     return when (envelopeStatus(spent, cap)) {
         EnvelopeStatus.NORMAL -> base
         EnvelopeStatus.NEAR_LIMIT -> base.copy(
             barColor = NearLimit,
-            statusText = "Proche de la limite · $percent %",
+            statusText = "Proche de la limite · ${usedPercent(spent, cap)} %",
             statusIcon = R.drawable.ic_status_near, statusColor = NearLimitText,
         )
         EnvelopeStatus.OVER -> base.copy(
-            amountText = "${(spent - cap).format()} de trop", amountColor = OverAmberText,
-            fraction = 1f, barColor = OverAmber,
-            statusText = "Plafond dépassé · ${spent.format()} sur ${cap.format()}",
+            amountColor = OverAmberText, barColor = OverAmber,
+            statusText = "Dépassé de ${(spent - cap).format()} · ${usedPercent(spent, cap)} %",
             statusIcon = R.drawable.ic_status_over, statusColor = OverAmberText,
         )
     }

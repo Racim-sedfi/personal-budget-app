@@ -26,9 +26,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.application.personal_budget_app.R
 import com.application.personal_budget_app.domain.budget.EnvelopeStatus
+import com.application.personal_budget_app.domain.budget.progressFraction
+import com.application.personal_budget_app.domain.budget.usedPercent
 import com.application.personal_budget_app.domain.home.HomeSummary
 import com.application.personal_budget_app.domain.home.buildHomeSummary
 import com.application.personal_budget_app.domain.model.*
+import com.application.personal_budget_app.ui.components.BudgetProgressBar
 import com.application.personal_budget_app.ui.components.EnvelopeRow
 import com.application.personal_budget_app.ui.components.SectionTitle
 import com.application.personal_budget_app.ui.components.StatusBadge
@@ -124,21 +127,27 @@ private fun HomeHeader(summary: HomeSummary) {
             EnvelopeStatus.OVER -> StatusBadge("Budget dépassé", R.drawable.ic_status_over, OverAmberText)
         }
 
-        if (budget != null) BudgetProgress(summary.spent, budget.spendable)
+        if (budget != null) BudgetProgress(summary.spent, budget.spendable, summary.overallStatus ?: EnvelopeStatus.NORMAL)
     }
 }
 
 @Composable
-private fun BudgetProgress(spent: Money, spendable: Money) {
-    val fraction = if (spendable.cents > 0) (spent.cents.toFloat() / spendable.cents).coerceIn(0f, 1f) else 1f
+private fun BudgetProgress(spent: Money, spendable: Money, status: EnvelopeStatus) {
+    val color = when (status) {
+        EnvelopeStatus.NORMAL -> Ink
+        EnvelopeStatus.NEAR_LIMIT -> NearLimit
+        EnvelopeStatus.OVER -> OverAmber
+    }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Box(
-            Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp))
-                .background(Color.White.copy(alpha = 0.8f))
-                .semantics { contentDescription = "${spent.format()} dépensés sur ${spendable.format()}" },
-        ) {
-            Box(Modifier.fillMaxHeight().fillMaxWidth(fraction).clip(RoundedCornerShape(4.dp)).background(Ink))
-        }
+        BudgetProgressBar(
+            fraction = progressFraction(spent, spendable),
+            color = color,
+            trackColor = Color.White.copy(alpha = 0.8f),
+            height = 8.dp,
+            modifier = Modifier.semantics {
+                contentDescription = "${spent.format()} dépensés sur ${spendable.format()}, soit ${usedPercent(spent, spendable)} %"
+            },
+        )
         Row {
             Text(
                 buildAnnotatedString {
