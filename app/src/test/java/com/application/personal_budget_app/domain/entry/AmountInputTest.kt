@@ -35,4 +35,14 @@ class AmountInputTest {
         assertFalse(AmountInput().isValid)
         assertFalse(type(d(0), KeypadKey.Comma, d(0)).isValid)
     }
+    @Test fun `from money rebuilds what the user would have typed`() {
+        assertEquals("8,40", AmountInput.from(Money(840)).raw)
+        assertEquals("15", AmountInput.from(Money(1500)).raw)
+        assertEquals("0,05", AmountInput.from(Money(5)).raw)
+    }
+
+    @Test fun `from money round trips`() {
+        val money = Money.euros(1234, 56)
+        assertEquals(money, AmountInput.from(money).money)
+    }
 }

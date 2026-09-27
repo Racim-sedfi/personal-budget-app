@@ -13,6 +13,8 @@ interface TransactionDao {
 
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun delete(id: Long)
+
+    @Update suspend fun update(entity: TransactionEntity)
 }
 
 @Dao

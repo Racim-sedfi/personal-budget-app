@@ -50,4 +50,17 @@ class AppDatabaseTest {
         db.noExpenseDayDao().insert(NoExpenseDayEntity(day))
         assertEquals(listOf(day), db.noExpenseDayDao().observeBetween(day, day).first())
     }
+    @Test fun updateChangesAmountAndKeepsId() = runBlocking {
+        val courses = db.categoryDao().observeAll().first().first().id
+        val dao = db.transactionDao()
+        val day = LocalDate.of(2026, 10, 10)
+        val id = dao.insert(TransactionEntity(amountCents = 840, type = TransactionType.EXPENSE, categoryId = courses, date = day, note = null))
+
+        dao.update(TransactionEntity(id = id, amountCents = 480, type = TransactionType.EXPENSE, categoryId = courses, date = day, note = "Boulangerie"))
+
+        val saved = dao.observeBetween(day, day).first().single()
+        assertEquals(id, saved.id)
+        assertEquals(480L, saved.amountCents)
+        assertEquals("Boulangerie", saved.note)
+    }
 }
