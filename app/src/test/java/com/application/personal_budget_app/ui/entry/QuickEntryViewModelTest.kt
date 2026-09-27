@@ -78,4 +78,14 @@ class QuickEntryViewModelTest {
         vm.undo(events.single().id)
         assertEquals(listOf(1L), repo.deleted)
     }
+
+    @Test fun `starting on a past day saves on that day`() {
+        vm.start(LocalDate.of(2026, 10, 9))
+        assertFalse(vm.state.value.isToday)
+
+        vm.onKey(KeypadKey.Digit(3))
+        vm.save()
+
+        assertEquals(LocalDate.of(2026, 10, 9), repo.added.single().date)
+    }
 }

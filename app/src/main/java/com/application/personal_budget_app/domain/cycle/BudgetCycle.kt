@@ -20,6 +20,9 @@ data class BudgetCycle(val start: LocalDate, val end: LocalDate) {
     /** Tous les jours du cycle. */
     fun days(): List<LocalDate> = (0 until lengthInDays).map { start.plusDays(it.toLong()) }
 
+    /** Le cycle décalé de `cycles` (négatif = passé). Ex. shifted(-1) = cycle précédent. */
+    fun shifted(cycles: Int): BudgetCycle =
+        containing(start.plusMonths(cycles.toLong()), start.dayOfMonth)
     companion object {
         /** Le cycle qui contient `date`, pour un jour de début entre 1 et 28. */
         fun containing(date: LocalDate, startDay: Int): BudgetCycle {
