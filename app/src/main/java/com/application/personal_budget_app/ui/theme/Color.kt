@@ -25,6 +25,10 @@ val OverAmberBg = Color(0xFFFCF0D8)
 // Texte posé sur les dégradés
 val OnGradient = Color(0xFF22364A)
 
+// Historique
+val Hatch = Color(0xFFE9EDF2)          // hachures « Non renseignée »
+val DashedBorder = Color(0xFF8A929C)   // bordure pointillée (contraste ≥ 3:1)
+val RefundBg = Color(0xFFE1ECF8)       // fond de l'icône remboursement
 object BudgetGradients {
     val header = Brush.verticalGradient(
         0f to Color(0xFFD4EAFF),
