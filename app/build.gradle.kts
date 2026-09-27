@@ -9,9 +9,7 @@ plugins {
 android {
     namespace = "com.application.personal_budget_app"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
+        version = release(37)
     }
 
     defaultConfig {
@@ -19,7 +17,7 @@ android {
         minSdk = 26 // java.time sans desugaring (calcul des cycles)
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -1,0 +1,42 @@
+package com.application.personal_budget_app.data.settings
+
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.*
+import com.application.personal_budget_app.domain.model.AppSettings
+import com.application.personal_budget_app.domain.model.BudgetMode
+import com.application.personal_budget_app.domain.repository.SettingsRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+
+class DataStoreSettingsRepository @Inject constructor(
+    private val store: DataStore<Preferences>,
+) : SettingsRepository {
+
+    private object Keys {
+        val START_DAY = intPreferencesKey("cycle_start_day")
+        val MODE = stringPreferencesKey("budget_mode")
+        val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
+    }
+
+    override val settings: Flow<AppSettings> = store.data.map { prefs ->
+        AppSettings(
+            cycleStartDay = prefs[Keys.START_DAY] ?: 1,
+            mode = prefs[Keys.MODE]?.let { BudgetMode.valueOf(it) } ?: BudgetMode.OBSERVATION,
+            onboardingDone = prefs[Keys.ONBOARDING_DONE] ?: false,
+        )
+    }
+
+    override suspend fun setCycleStartDay(day: Int) {
+        require(day in 1..28)
+        store.edit { it[Keys.START_DAY] = day }
+    }
+
+    override suspend fun setMode(mode: BudgetMode) {
+        store.edit { it[Keys.MODE] = mode.name }
+    }
+
+    override suspend fun completeOnboarding() {
+        store.edit { it[Keys.ONBOARDING_DONE] = true }
+    }
+}
