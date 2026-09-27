@@ -11,37 +11,31 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.application.personal_budget_app.ui.navigation.AppNavHost
+import com.application.personal_budget_app.ui.navigation.BudgetBottomBar
 import com.application.personal_budget_app.ui.theme.PersonalbudgetappTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PersonalbudgetappTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController()
+                Scaffold(
+                    bottomBar = {
+                        BudgetBottomBar(
+                            navController = navController,
+                            onAddClick = { /* saisie rapide : prochaine branche */ },
+                        )
+                    },
+                ) { innerPadding ->
+                    AppNavHost(navController, Modifier.padding(innerPadding))
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PersonalbudgetappTheme {
-        Greeting("Android")
     }
 }
