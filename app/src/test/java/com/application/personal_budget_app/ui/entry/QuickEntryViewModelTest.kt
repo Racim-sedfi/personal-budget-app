@@ -17,6 +17,8 @@ import java.time.*
 private class FakeTransactions : TransactionRepository {
     val added = mutableListOf<Transaction>()
     val deleted = mutableListOf<Long>()
+    val updated = mutableListOf<Transaction>()
+    override suspend fun update(transaction: Transaction) { updated += transaction }
     override fun observeBetween(start: LocalDate, end: LocalDate) = flowOf(added.toList())
     override suspend fun add(transaction: Transaction): Long { added += transaction; return added.size.toLong() }
     override suspend fun delete(id: Long) { deleted += id }

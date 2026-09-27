@@ -15,6 +15,7 @@ class RoomTransactionRepository @Inject constructor(
         dao.observeBetween(start, end).map { list -> list.map { it.toDomain() } }
     override suspend fun add(transaction: Transaction) = dao.insert(transaction.toEntity())
     override suspend fun delete(id: Long) = dao.delete(id)
+    override suspend fun update(transaction: Transaction) = dao.update(transaction.toEntity())
 }
 
 class RoomCategoryRepository @Inject constructor(

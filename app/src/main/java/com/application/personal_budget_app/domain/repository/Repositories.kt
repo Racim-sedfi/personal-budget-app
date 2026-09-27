@@ -8,6 +8,7 @@ interface TransactionRepository {
     fun observeBetween(start: LocalDate, end: LocalDate): Flow<List<Transaction>>
     suspend fun add(transaction: Transaction): Long
     suspend fun delete(id: Long)
+    suspend fun update(transaction: Transaction)
 }
 
 interface CategoryRepository {
