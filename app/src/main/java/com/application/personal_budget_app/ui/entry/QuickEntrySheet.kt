@@ -48,6 +48,7 @@ fun QuickEntrySheet(viewModel: QuickEntryViewModel, onDismiss: () -> Unit) {
             onNoteChange = viewModel::onNoteChange,
             onOpenDetails = viewModel::openDetails,
             onSave = viewModel::save,
+            onDelete = viewModel::delete,
             onClose = onDismiss,
         )
     }
@@ -64,6 +65,7 @@ fun QuickEntryContent(
     onNoteChange: (String) -> Unit,
     onOpenDetails: () -> Unit,
     onSave: () -> Unit,
+    onDelete: () -> Unit = {},
     onClose: () -> Unit,
 ) {
     val dayText = if (state.isToday) "Aujourd'hui" else state.date.withWeekdayFr()
@@ -118,9 +120,24 @@ fun QuickEntryContent(
             ),
         ) {
             Text(
-                if (state.amount.isValid) "Enregistrer ${state.amount.money.format()}" else "Saisis un montant",
+                when {
+                    state.isEditing -> "Enregistrer les modifications"
+                    state.amount.isValid -> "Enregistrer ${state.amount.money.format()}"
+                    else -> "Saisis un montant"
+                },
                 style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp),
             )
+        }
+
+        if (state.isEditing) {
+            TextButton(onClick = onDelete, modifier = Modifier.fillMaxWidth().height(48.dp)) {
+                Icon(painterResource(R.drawable.ic_trash), contentDescription = null, tint = TextStrong, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    if (state.type == TransactionType.REFUND) "Supprimer ce remboursement" else "Supprimer cette dépense",
+                    color = TextStrong,
+                )
+            }
         }
     }
 }
