@@ -225,3 +225,4 @@ Commencer par `domain/` avec des tests unitaires (calcul du cycle 25 → 24, res
 - **`android:allowBackup="true"`** dans le manifest : la sauvegarde Android envoie les données vers le cloud Google, ce qui contredit la promesse « rien ne quitte ton téléphone ». À passer à `false` (l'export/import manuel reste disponible).
 - Charges trimestrielles/annuelles : comptées dans le cycle de leur échéance (choix actuel) ou provisionnées chaque cycle — décision métier à confirmer.
 - Seuil « proche de la limite » fixé à 70 % du plafond — à ajuster après tests utilisateurs.
+- **Choix de la monnaie** à l'onboarding (étape du jour de début). Impacts : `Money.format()` ne doit plus écrire « € » en dur (formatage selon la monnaie et la langue), gestion des monnaies sans centimes (JPY…), la monnaie ne change pas une fois des transactions saisies.
