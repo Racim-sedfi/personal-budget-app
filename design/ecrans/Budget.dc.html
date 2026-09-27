@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Budget</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#FFFFFF;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+a{color:#1C1C1C}a:hover{color:#000000}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 1640px; position: relative; box-sizing: border-box; background: #FFFFFF; font-variant-numeric: tabular-nums; overflow: hidden">
+
+<header style="box-sizing: border-box; padding: 12px 16px 28px; background: linear-gradient(180deg, #D4EAFF 0%, #E4E1FC 72%, #FFFFFF 100%); display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 13px; font-weight: 500; color: #22364A">Budget · du 25 au 24</span>
+<button style="height: 44px; padding: 0 16px; border: 0; border-radius: 22px; background: linear-gradient(135deg, #2F3540, #1C1C1C); color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Modifier le budget</button>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-size: 15px; font-weight: 500; color: #22364A">À dépenser par cycle</h1>
+<span style="font-size: 52px; font-weight: 600; letter-spacing: -0.035em; line-height: 60px">957&nbsp;€</span>
+<span style="font-size: 14px; color: #22364A">après charges fixes et épargne</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div aria-hidden="true" style="display: flex; height: 10px; gap: 2px; border-radius: 5px; overflow: hidden">
+<div style="width: 40.2%; background: #1F3550"></div>
+<div style="width: 8.1%; background: #4F7FB0"></div>
+<div style="flex-grow: 1; background: rgba(255,255,255,0.85)"></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: #22364A">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 4px; background: #1F3550"></span>Charges fixes 40 %</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; border-radius: 4px; background: #4F7FB0"></span>Épargne 8 %</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; box-sizing: border-box; border-radius: 4px; background: #FFFFFF; border: 1px solid #7E93AA"></span>À dépenser 52 %</span>
+</div>
+</div>
+</header>
+
+<main style="box-sizing: border-box; padding: 4px 16px 96px; display: flex; flex-direction: column; gap: 28px">
+
+<section aria-labelledby="h-rev">
+<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px"><h2 id="h-rev" style="margin: 0; font-size: 15px; font-weight: 600">Revenus</h2><span style="font-size: 14px; font-weight: 600">1&nbsp;850,00&nbsp;€</span></div>
+<ul style="margin: 0; padding: 0; list-style: none">
+<sc-for list="{{ revenus }}" as="r" hint-placeholder-count="2">
+<li style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EEF1F5">
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px">{{ r.label }}</span><span style="font-size: 12px; color: #5B6068">{{ r.when }}</span></div>
+<span style="font-size: 14px; font-weight: 600">{{ r.amount }}</span>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<section aria-labelledby="h-fix">
+<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px"><h2 id="h-fix" style="margin: 0; font-size: 15px; font-weight: 600">Charges fixes</h2><span style="font-size: 14px; font-weight: 600">743,00&nbsp;€</span></div>
+<ul style="margin: 0; padding: 0; list-style: none">
+<sc-for list="{{ charges }}" as="r" hint-placeholder-count="6">
+<li style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EEF1F5">
+<div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1"><span style="font-size: 14px">{{ r.label }}</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: {{ r.tagBg }}; color: {{ r.tagFg }}">{{ r.freq }}</span><span style="font-size: 12px; color: #5B6068">{{ r.when }}</span></span></div>
+<span style="font-size: 14px; font-weight: 600; color: {{ r.amountColor }}">{{ r.amount }}</span>
+</li>
+</sc-for>
+</ul>
+</section>
+
+<section aria-labelledby="h-sav">
+<h2 id="h-sav" style="margin: 0 0 4px; font-size: 15px; font-weight: 600">Épargne planifiée</h2>
+<div style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EEF1F5">
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px">Virement vers le livret</span><span style="font-size: 12px; color: #5B6068">le 26</span></div>
+<span style="font-size: 14px; font-weight: 600">150,00&nbsp;€</span>
+</div>
+</section>
+
+<section aria-labelledby="h-env">
+<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px"><h2 id="h-env" style="margin: 0; font-size: 15px; font-weight: 600">Enveloppes</h2><span style="font-size: 14px; font-weight: 600">645,00&nbsp;€</span></div>
+<ul style="margin: 0; padding: 0; list-style: none">
+<sc-for list="{{ enveloppes }}" as="e" hint-placeholder-count="7">
+<li style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EEF1F5">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="{{ e.d }}"/></svg>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px">{{ e.label }}</span><sc-if value="{{ e.hasSub }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #5B6068">{{ e.sub }}</span></sc-if></div>
+<span style="font-size: 14px; font-weight: 600">{{ e.plafond }}</span>
+</li>
+</sc-for>
+</ul>
+<div style="min-height: 52px; display: flex; align-items: center; justify-content: space-between; font-size: 14px">
+<span style="color: #3E444B">Non alloué</span><span style="font-weight: 600">312,00&nbsp;€</span>
+</div>
+</section>
+</main>
+
+<nav aria-label="Navigation principale" style="position: absolute; left: 0; bottom: 0; width: 360px; height: 72px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #E6EAF0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+<a href="Main.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6068; font-size: 11px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+<a href="Historique.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6068; font-size: 11px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Historique</a>
+<div style="display: flex; justify-content: center">
+<a href="Saisie.dc.html" aria-label="Ajouter une dépense" style="width: 56px; height: 56px; margin-top: -18px; border-radius: 28px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 10px 20px -8px rgba(28,28,28,0.55); color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+<a href="Analyse.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6068; font-size: 11px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 19v-7M12 19V5M19 19v-10"/></svg>Analyse</a>
+<a href="Budget.dc.html" aria-current="page" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #1C1C1C; font-size: 11px; font-weight: 600">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/></svg>Budget</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":1640}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const nb = ' ';
+    const TAG = { Mensuelle: ['#E1ECF8', '#1F3550'], Trimestrielle: ['#E6E2FC', '#3A3270'], Annuelle: ['#E8EAEE', '#3E444B'] };
+    const ch = (label, amount, freq, when, muted) => ({
+      label, amount: amount + nb + '€', freq, when,
+      tagBg: TAG[freq][0], tagFg: TAG[freq][1], amountColor: muted ? '#5B6068' : '#1C1C1C'
+    });
+    const env = (label, cap, d, sub) => ({ label, plafond: cap + nb + '€', d, hasSub: !!sub, sub: sub || '' });
+    return {
+      revenus: [
+        { label: 'Salaire', when: 'le 25', amount: '1' + nb + '650,00' + nb + '€' },
+        { label: 'Aide au logement', when: 'le 5', amount: '200,00' + nb + '€' }
+      ],
+      charges: [
+        ch('Loyer', '650,00', 'Mensuelle', 'le 25'),
+        ch('Électricité', '48,00', 'Mensuelle', 'le 10'),
+        ch('Internet', '30,00', 'Mensuelle', 'le 1er'),
+        ch('Téléphone', '15,00', 'Mensuelle', 'le 5'),
+        ch('Eau', '45,00', 'Trimestrielle', '15 janv.', true),
+        ch('Assurance habitation', '96,00', 'Annuelle', '15 mars', true)
+      ],
+      enveloppes: [
+        env('Courses', '250,00', 'M3 4h2l2 11h11l2-8H6.2M9 19h.01M17 19h.01'),
+        env('Restaurants', '90,00', 'M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 3-3 6v4h3'),
+        env('Transports', '75,00', 'M7 4h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM5 11h14M8 20l1-3M16 20l-1-3'),
+        env('Loisirs', '60,00', 'M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM14 8v1.5M14 11.25v1.5M14 14.5V16'),
+        env('Shopping', '80,00', 'M6 8h12l-1 12H7zM9 8a3 3 0 0 1 6 0'),
+        env('Santé', '30,00', 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z'),
+        env('Imprévus', '60,00', 'M3 12a9 9 0 0 1 18 0zM12 12v6a2 2 0 0 1-4 0', 'Couvre les dépassements')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

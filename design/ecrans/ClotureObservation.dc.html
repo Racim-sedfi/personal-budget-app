@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Clôture — plafonds proposés</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#FFFFFF;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+a{color:#1C1C1C}a:hover{color:#000000}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 960px; position: relative; box-sizing: border-box; background: #FFFFFF; font-variant-numeric: tabular-nums; overflow: hidden">
+
+<header style="box-sizing: border-box; padding: 12px 16px 32px; background: linear-gradient(180deg, #E4E1FC 0%, #D4EAFF 72%, #FFFFFF 100%); display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: center; gap: 4px">
+<a href="Observation.dc.html" aria-label="Fermer" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></a>
+<span style="font-size: 13px; font-weight: 500; color: #2A2F4A">25 sept. → 24 oct.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-size: 15px; font-weight: 500; color: #2A2F4A">Premier cycle terminé. Tu as dépensé</h1>
+<span style="font-size: 52px; font-weight: 600; letter-spacing: -0.035em; line-height: 60px">601,40&nbsp;€</span>
+<span style="font-size: 14px; color: #2A2F4A">27 journées renseignées sur 30</span>
+</div>
+</header>
+
+<main style="box-sizing: border-box; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 24px">
+<section aria-labelledby="h-caps">
+<h2 id="h-caps" style="margin: 0 0 4px; font-size: 15px; font-weight: 600">Tes plafonds</h2>
+<ul style="margin: 0; padding: 0; list-style: none">
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="7">
+<li style="min-height: 64px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #EEF1F5">
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0">
+<span style="font-size: 14px; font-weight: 500">{{ r.label }}</span>
+<span style="font-size: 12px; color: #5B6068">{{ r.sub }}</span>
+</div>
+<div style="display: flex; align-items: center; gap: 2px">
+<button onClick="{{ r.dec }}" aria-label="{{ r.decLabel }}" style="width: 44px; height: 44px; border: 1px solid #D5DAE1; border-radius: 22px; background: #FFFFFF; color: #1C1C1C; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+<span aria-live="polite" style="min-width: 64px; text-align: center; font-size: 15px; font-weight: 600">{{ r.cap }}</span>
+<button onClick="{{ r.inc }}" aria-label="{{ r.incLabel }}" style="width: 44px; height: 44px; border: 1px solid #D5DAE1; border-radius: 22px; background: #FFFFFF; color: #1C1C1C; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+</div>
+</li>
+</sc-for>
+</ul>
+<div style="min-height: 52px; display: flex; align-items: center; justify-content: space-between; font-size: 14px">
+<span style="color: #3E444B">Total</span>
+<span><strong style="font-weight: 600">{{ total }}</strong> <span style="color: #5B6068">sur 957&nbsp;€ disponibles</span></span>
+</div>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 4px">
+<a href="Main.dc.html" style="height: 54px; border-radius: 14px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 8px 18px -10px rgba(28,28,28,0.6); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; text-decoration: none">Valider ces plafonds</a>
+<a href="Observation.dc.html" style="height: 48px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; text-decoration: none">Observer un cycle de plus</a>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":960}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { caps: { courses: 235, restaurants: 100, transports: 65, loisirs: 120, shopping: 80, sante: 15, imprevus: 60 } };
+  }
+  step(id, delta) {
+    const caps = Object.assign({}, this.state.caps);
+    caps[id] = Math.max(0, caps[id] + delta);
+    this.setState({ caps });
+  }
+  renderVals() {
+    const nb = ' ';
+    const eur = (v) => v.toFixed(2).replace('.', ',') + nb + '€';
+    const int = (v) => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, nb) + nb + '€';
+    const obs = [
+      ['courses', 'Courses', 231.8], ['restaurants', 'Restaurants', 98.5], ['transports', 'Transports', 61.2],
+      ['loisirs', 'Loisirs', 118], ['shopping', 'Shopping', 79.9], ['sante', 'Santé', 12]
+    ];
+    const caps = this.state.caps;
+    const rows = obs.map(([id, label, v]) => ({
+      label, sub: 'Dépensé ' + eur(v), cap: int(caps[id]),
+      dec: () => this.step(id, -5), inc: () => this.step(id, 5),
+      decLabel: 'Baisser ' + label + ' de 5 euros', incLabel: 'Augmenter ' + label + ' de 5 euros'
+    }));
+    rows.push({
+      label: 'Imprévus', sub: 'Couvre les dépassements', cap: int(caps.imprevus),
+      dec: () => this.step('imprevus', -5), inc: () => this.step('imprevus', 5),
+      decLabel: 'Baisser Imprévus de 5 euros', incLabel: 'Augmenter Imprévus de 5 euros'
+    });
+    const total = Object.keys(caps).reduce((s, k) => s + caps[k], 0);
+    return { rows, total: int(total) };
+  }
+}
+</script>
+</body>
+</html>

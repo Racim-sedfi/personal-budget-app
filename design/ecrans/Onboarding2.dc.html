@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onboarding 2 — Début du cycle</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#FFFFFF;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+a{color:#1C1C1C}a:hover{color:#000000}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 800px; box-sizing: border-box; padding: 16px 20px 24px; display: flex; flex-direction: column; gap: 22px; background: linear-gradient(180deg, #E4F1FF 0%, #F3F5F9 38%, #FFFFFF 100%); font-variant-numeric: tabular-nums">
+<div style="display: flex; align-items: center; gap: 8px">
+<a href="Onboarding1.dc.html" aria-label="Retour" style="width: 44px; height: 44px; margin-left: -12px; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></a>
+<div role="progressbar" aria-label="Étape 2 sur 4" aria-valuenow="2" aria-valuemin="1" aria-valuemax="4" style="flex-grow: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+<div style="height: 4px; border-radius: 2px; background: #1C1C1C"></div>
+<div style="height: 4px; border-radius: 2px; background: #1C1C1C"></div>
+<div style="height: 4px; border-radius: 2px; background: #D3DAE4"></div>
+<div style="height: 4px; border-radius: 2px; background: #D3DAE4"></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; font-weight: 500; color: #4E5A68; letter-spacing: 0.02em">Étape 2 sur 4</span>
+<h1 style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; text-wrap: pretty">Quel jour commence ton mois budgétaire ?</h1>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #4E545C">En général, le jour de ta paie.</p>
+</div>
+
+<div role="radiogroup" aria-label="Jour de début du cycle" style="background: #FFFFFF; border: 1px solid #E3E8EF; box-shadow: 0 1px 3px rgba(28,28,28,0.05); border-radius: 16px; padding: 12px; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px">
+<sc-for list="{{ days }}" as="d" hint-placeholder-count="28">
+<button role="radio" aria-checked="{{ d.selected }}" onClick="{{ d.pick }}" style="height: 44px; border: 0; border-radius: 10px; font-size: 14px; font-weight: {{ d.weight }}; background: {{ d.bg }}; color: {{ d.fg }}; cursor: pointer">{{ d.n }}</button>
+</sc-for>
+</div>
+
+<div style="background: linear-gradient(135deg, #BFE3FF 0%, #C8D5FB 55%, #D8CCF7 100%); box-shadow: 0 10px 24px -14px rgba(52,88,150,0.55); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 12px; font-weight: 500; color: #22364A">Ton cycle en cours</span>
+<span style="font-size: 20px; font-weight: 600; letter-spacing: -0.01em">{{ preview }}</span>
+<span style="font-size: 12px; color: #22364A">{{ rule }}</span>
+</div>
+
+<div style="flex-grow: 1"></div>
+<a href="Onboarding3.dc.html" style="height: 52px; border-radius: 14px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 8px 18px -10px rgba(28,28,28,0.6); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; text-decoration: none">Continuer</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { day: 25 };
+  }
+  renderVals() {
+    const m = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+    const sel = this.state.day;
+    const today = new Date(2026, 9, 12);
+    let start = new Date(today.getFullYear(), today.getMonth(), sel);
+    if (start > today) start = new Date(today.getFullYear(), today.getMonth() - 1, sel);
+    const end = new Date(start.getFullYear(), start.getMonth() + 1, sel - 1);
+    const fmt = (d) => d.getDate() + ' ' + m[d.getMonth()];
+    const days = [];
+    for (let i = 1; i <= 28; i++) {
+      const on = i === sel;
+      days.push({
+        n: String(i), selected: on,
+        bg: on ? 'linear-gradient(135deg, #2F3540, #1C1C1C)' : 'transparent',
+        fg: on ? '#FFFFFF' : '#1C1C1C', weight: on ? '600' : '400',
+        pick: () => this.setState({ day: i })
+      });
+    }
+    return {
+      days,
+      preview: fmt(start) + ' → ' + fmt(end),
+      rule: sel === 1 ? 'Du 1er au dernier jour du mois' : 'Du ' + sel + ' au ' + (sel - 1 === 1 ? '1er' : sel - 1) + ' du mois suivant'
+    };
+  }
+}
+</script>
+</body>
+</html>

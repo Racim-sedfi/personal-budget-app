@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Widgets écran d'accueil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#FFFFFF;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+a{color:#1C1C1C}a:hover{color:#000000}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 800px; box-sizing: border-box; padding: 64px 16px 24px; display: flex; flex-direction: column; gap: 16px; background: linear-gradient(165deg, #8EBCEB 0%, #A9B3EE 45%, #D9C3EC 80%, #F0D4E0 100%); font-variant-numeric: tabular-nums">
+
+<div aria-label="Widget 4×2 — reste disponible" style="border-radius: 26px; padding: 18px; background: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(236,243,255,0.94) 100%); box-shadow: 0 16px 36px -18px rgba(30,40,90,0.55); display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; font-weight: 500; color: #3E4A5A">Reste disponible</span>
+<span style="font-size: 34px; font-weight: 600; letter-spacing: -0.03em; line-height: 40px">557,10&nbsp;€</span>
+</div>
+<a href="Saisie.dc.html" aria-label="Ajouter une dépense" style="width: 52px; height: 52px; flex-shrink: 0; border-radius: 26px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 8px 16px -8px rgba(28,28,28,0.7); color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="height: 6px; border-radius: 3px; background: #DCE4EF"><div style="width: 60%; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #1C1C1C, #4A5563)"></div></div>
+<div style="display: flex; justify-content: space-between; font-size: 12px; color: #3E4A5A"><span>12 jours restants</span><span>jusqu'au 24 oct.</span></div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<div aria-label="Widget 2×2 — reste disponible" style="height: 156px; box-sizing: border-box; border-radius: 26px; padding: 16px; background: linear-gradient(145deg, #BFE3FF 0%, #C8D5FB 55%, #D8CCF7 100%); box-shadow: 0 16px 36px -18px rgba(30,40,90,0.55); display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; font-weight: 500; color: #22364A">Reste disponible</span>
+<span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em">557&nbsp;€</span>
+<span style="font-size: 11px; color: #22364A">12 j restants</span>
+</div>
+<a href="Saisie.dc.html" style="height: 44px; border-radius: 22px; background: #1C1C1C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 600; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Saisir</a>
+</div>
+
+<div aria-label="Widget 2×2 — cycle d'observation" style="height: 156px; box-sizing: border-box; border-radius: 26px; padding: 16px; background: linear-gradient(145deg, rgba(255,255,255,0.96) 0%, rgba(236,233,255,0.94) 100%); box-shadow: 0 16px 36px -18px rgba(30,40,90,0.55); display: flex; flex-direction: column; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; font-weight: 500; color: #3E4A5A">Dépensé ce cycle</span>
+<span style="font-size: 24px; font-weight: 600; letter-spacing: -0.02em">399,90&nbsp;€</span>
+<span style="font-size: 11px; color: #3E4A5A">Observation · 12 j</span>
+</div>
+<a href="Saisie.dc.html" style="height: 44px; border-radius: 22px; background: #1C1C1C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 600; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Saisir</a>
+</div>
+</div>
+
+<div aria-label="Widget 4×1 — compact" style="height: 72px; box-sizing: border-box; border-radius: 36px; padding: 10px 10px 10px 22px; background: linear-gradient(90deg, rgba(255,255,255,0.96), rgba(229,236,246,0.94)); box-shadow: 0 16px 36px -18px rgba(30,40,90,0.55); display: flex; align-items: center; gap: 12px">
+<div style="display: flex; flex-direction: column; flex-grow: 1">
+<span style="font-size: 11px; font-weight: 500; color: #3E4A5A">Reste disponible · 12 j</span>
+<span style="font-size: 20px; font-weight: 600; letter-spacing: -0.02em">557,10&nbsp;€</span>
+</div>
+<a href="Saisie.dc.html" aria-label="Ajouter une dépense" style="width: 52px; height: 52px; border-radius: 26px; background: linear-gradient(135deg, #2F3540, #1C1C1C); color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

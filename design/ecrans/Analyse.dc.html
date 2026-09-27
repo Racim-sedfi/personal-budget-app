@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Analyse</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#F3F5F9;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+a{color:#1C1C1C}a:hover{color:#000000}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 1500px; position: relative; box-sizing: border-box; background: #FFFFFF; font-variant-numeric: tabular-nums; overflow: hidden">
+<main style="box-sizing: border-box; padding: 16px 16px 96px; display: flex; flex-direction: column; gap: 24px">
+
+<header style="display: flex; flex-direction: column; gap: 2px; min-height: 44px; justify-content: center">
+<h1 style="margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em">Analyse</h1>
+<span style="font-size: 12px; color: #5B6068">Cycle en cours 25 sept. → 24 oct. · jour 18 sur 30</span>
+</header>
+
+<section aria-label="Où va ton argent" style="background: linear-gradient(135deg, #BFE3FF 0%, #C8D5FB 55%, #D8CCF7 100%); box-shadow: 0 10px 24px -14px rgba(52,88,150,0.55); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 600">Où va ton argent</h2>
+<span style="font-size: 12px; color: #22364A">Dépenses variables de ce cycle, par catégorie</span>
+</div>
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="position: relative; width: 132px; height: 132px; flex-shrink: 0">
+<svg width="132" height="132" viewBox="0 0 140 140" role="img" aria-label="Répartition : Courses 36 %, Loisirs 24 %, Restaurants 16 %, Shopping 12 %, Transports 9 %, Santé 3 %">
+<circle cx="70" cy="70" r="52" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="18"/>
+<g transform="rotate(-90 70 70)" fill="none" stroke-width="18">
+<circle cx="70" cy="70" r="52" stroke="#1F3550" stroke-dasharray="114.25 212.48" stroke-dashoffset="0"/>
+<circle cx="70" cy="70" r="52" stroke="#5B55B8" stroke-dasharray="75.63 251.10" stroke-dashoffset="-116.25"/>
+<circle cx="70" cy="70" r="52" stroke="#4F7FB0" stroke-dasharray="50.70 276.03" stroke-dashoffset="-193.88"/>
+<circle cx="70" cy="70" r="52" stroke="#9C94E6" stroke-dasharray="37.14 289.59" stroke-dashoffset="-246.58"/>
+<circle cx="70" cy="70" r="52" stroke="#8DB6DA" stroke-dasharray="29.20 297.53" stroke-dashoffset="-285.72"/>
+<circle cx="70" cy="70" r="52" stroke="#FFFFFF" stroke-dasharray="7.80 318.93" stroke-dashoffset="-316.92"/>
+</g>
+</svg>
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 132px; height: 132px; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 17px; font-weight: 600; letter-spacing: -0.02em">399,90&nbsp;€</span>
+<span style="font-size: 11px; color: #22364A">à J18</span>
+</div>
+</div>
+<ul style="margin: 0; padding: 0; list-style: none; flex-grow: 1; display: flex; flex-direction: column; gap: 7px; font-size: 12px">
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #1F3550"></span><span style="flex-grow: 1">Courses</span><span style="font-weight: 600">36 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #5B55B8"></span><span style="flex-grow: 1">Loisirs</span><span style="font-weight: 600">24 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #4F7FB0"></span><span style="flex-grow: 1">Restaurants</span><span style="font-weight: 600">16 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #9C94E6"></span><span style="flex-grow: 1">Shopping</span><span style="font-weight: 600">12 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #8DB6DA"></span><span style="flex-grow: 1">Transports</span><span style="font-weight: 600">9 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; box-sizing: border-box; border-radius: 4px; background: #FFFFFF; border: 1px solid #8A96A6"></span><span style="flex-grow: 1">Santé</span><span style="font-weight: 600">3 %</span></li>
+</ul>
+</div>
+</section>
+
+<section aria-label="Évolution sur 6 cycles" style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 600">Évolution sur 6 cycles</h2>
+<span style="font-size: 12px; color: #5B6068">Dépenses variables par cycle, en euros</span>
+</div>
+<div style="padding: 8px 0 0; display: flex; flex-direction: column; gap: 12px">
+<svg width="296" height="186" viewBox="0 0 296 186" role="img" aria-label="Dépenses variables : 612 € en avril, 584 € en mai, 703 € en juin, 455 € en juillet renseigné à 68 %, 649 € en août, 400 € en septembre en cours" style="display: block">
+<defs>
+<linearGradient id="barG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3F719E"/><stop offset="1" stop-color="#A8C5DA"/></linearGradient>
+<pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#EEF2F7"/><rect width="2.5" height="6" fill="#B9C6D6"/></pattern>
+</defs>
+<line x1="0" y1="150.5" x2="296" y2="150.5" stroke="#DCE2EA"/>
+<line x1="0" y1="29.6" x2="296" y2="29.6" stroke="#1C1C1C" stroke-width="1" stroke-dasharray="3 3"/>
+<text x="296" y="22" text-anchor="end" font-size="10" fill="#3E444B">Plafonds actuels 645</text>
+<rect x="10.7" y="35.7" width="28" height="114.3" rx="6" fill="url(#barG)"/>
+<rect x="60" y="41" width="28" height="109" rx="6" fill="url(#barG)"/>
+<rect x="109.3" y="18.8" width="28" height="131.2" rx="6" fill="url(#barG)"/>
+<rect x="158.7" y="65" width="28" height="85" rx="6" fill="url(#hatch)" stroke="#B9C6D6"/>
+<rect x="208" y="28.9" width="28" height="121.1" rx="6" fill="url(#barG)"/>
+<rect x="257.8" y="75.9" width="27" height="73.6" rx="6" fill="#FFFFFF" stroke="#5E8FBA" stroke-width="1.2" stroke-dasharray="3 2.5"/>
+<g font-size="10" font-weight="600" fill="#FFFFFF" text-anchor="middle">
+<text x="24.7" y="49.7">612</text>
+<text x="74" y="55">584</text>
+<text x="123.3" y="32.8">703</text>
+<text x="172.7" y="79" fill="#3E444B">455</text>
+<text x="222" y="42.9">649</text>
+<text x="271.3" y="89.9" fill="#1F3550">400</text>
+</g>
+<g font-size="10" fill="#5B6068" text-anchor="middle">
+<text x="24.7" y="166">avr.</text>
+<text x="74" y="166">mai</text>
+<text x="123.3" y="166">juin</text>
+<text x="172.7" y="166">juil.</text>
+<text x="222" y="166">août</text>
+<text x="271.3" y="166">sept.</text>
+<text x="172.7" y="180" fill="#6B7079">68 %</text>
+<text x="271.3" y="180">en cours</text>
+</g>
+</svg>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 11px; color: #4E545C">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 3px; background: linear-gradient(180deg, #3F719E, #A8C5DA)"></span>Renseigné ≥ 80 %</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; box-sizing: border-box; border-radius: 3px; border: 1px solid #B9C6D6; background: repeating-linear-gradient(45deg, #B9C6D6 0 2px, #EEF2F7 2px 5px)"></span>Renseigné &lt; 80 %</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 12px; height: 0; border-top: 1px dashed #1C1C1C"></span>Plafonds</span>
+</div>
+<p style="margin: 0; padding-top: 10px; border-top: 1px solid #EEF1F5; font-size: 12px; line-height: 17px; color: #4E545C">Juillet : renseigné à 68 %, exclu des moyennes.</p>
+</div>
+</section>
+
+<section aria-label="Moyenne par cycle" style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 600">Moyenne par cycle et plafond</h2>
+<span style="font-size: 12px; color: #5B6068">4 cycles renseignés à plus de 80 %</span>
+</div>
+<div style="padding: 8px 0 0; display: flex; flex-direction: column; gap: 14px">
+<sc-for list="{{ avg }}" as="e" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 13px">
+<span style="font-weight: 500">{{ e.label }}</span>
+<span style="color: #5B6068"><span style="color: #1C1C1C; font-weight: 600">{{ e.mean }}</span> / {{ e.cap }}</span>
+</div>
+<div aria-hidden="true" style="position: relative; height: 8px; border-radius: 4px; background: #E6EBF2">
+<div style="position: absolute; left: 0; top: 0; height: 8px; border-radius: 4px; width: {{ e.w }}; background: {{ e.fill }}"></div>
+<div style="position: absolute; left: 50%; top: -3px; width: 2px; height: 14px; background: #1C1C1C"></div>
+</div>
+<sc-if value="{{ e.over }}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #7A5212">{{ e.note }}</span></sc-if>
+</div>
+</sc-for>
+<p style="margin: 0; padding-top: 12px; border-top: 1px solid #EEF1F5; display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4E545C"><span style="width: 2px; height: 12px; background: #1C1C1C"></span>Le trait marque le plafond de chaque enveloppe.</p>
+</div>
+</section>
+
+<section aria-label="À retenir" style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 600">À retenir</h2>
+<div style="padding: 14px 0; border-bottom: 1px solid #EEF1F5; display: flex; gap: 12px; align-items: flex-start">
+<div style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 10px; background: rgba(255,255,255,0.7); color: #7A5212; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M14 8v1.5M14 11.25v1.5M14 14.5V16"/></svg></div>
+<span style="font-size: 14px; line-height: 20px">En moyenne, Loisirs dépasse son plafond de 49&nbsp;€. C'est l'enveloppe où l'écart est le plus grand.</span>
+</div>
+<div style="padding: 14px 0; border-bottom: 1px solid #EEF1F5; display: flex; gap: 12px; align-items: flex-start">
+<div style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 10px; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></div>
+<span style="font-size: 14px; line-height: 20px">Tu dépenses 637&nbsp;€ en moyenne pour 645&nbsp;€ de plafonds. Le total tient : c'est la répartition entre enveloppes qui se décale.</span>
+</div>
+<div style="padding: 14px 0; border-bottom: 1px solid #EEF1F5; display: flex; gap: 12px; align-items: flex-start">
+<div style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 10px; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg></div>
+<span style="font-size: 14px; line-height: 20px">Tes charges fixes représentent 40 % de tes revenus.</span>
+</div>
+<a href="Budget.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: #FFFFFF; border: 1px solid #D5DAE1; font-size: 14px; font-weight: 500; text-decoration: none">Ajuster mes plafonds</a>
+</section>
+</main>
+
+<nav aria-label="Navigation principale" style="position: absolute; left: 0; bottom: 0; width: 360px; height: 72px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #E6EAF0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+<a href="Main.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #62676E; font-size: 11px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+<a href="Historique.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #62676E; font-size: 11px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Historique</a>
+<div style="display: flex; justify-content: center">
+<a href="Saisie.dc.html" aria-label="Ajouter une dépense" style="width: 56px; height: 56px; margin-top: -18px; border-radius: 28px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 10px 20px -8px rgba(28,28,28,0.55); color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+<a href="Analyse.dc.html" aria-current="page" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #1C1C1C; font-size: 11px; font-weight: 600">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 19v-7M12 19V5M19 19v-10"/></svg>Analyse</a>
+<a href="Budget.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #62676E; font-size: 11px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/></svg>Budget</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const nb = ' ';
+    const data = [
+      ['Courses', 241, 250], ['Restaurants', 97, 90], ['Transports', 66, 75],
+      ['Loisirs', 109, 60], ['Shopping', 96, 80], ['Santé', 28, 30]
+    ];
+    return {
+      avg: data.map(([label, m, c]) => {
+        const over = m > c;
+        return {
+          label, mean: m + nb + '€', cap: c + nb + '€',
+          w: Math.min((m / c) * 50, 100).toFixed(1) + '%',
+          fill: over ? 'linear-gradient(90deg, #E7BF72, #D39A3A)' : 'linear-gradient(90deg, #6E9CC2, #A8C5DA)',
+          over, note: over ? (m - c) + nb + '€ au-dessus du plafond en moyenne' : ''
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
