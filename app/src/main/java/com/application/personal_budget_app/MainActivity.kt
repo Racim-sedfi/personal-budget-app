@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import com.application.personal_budget_app.ui.BudgetAppRoot
 import com.application.personal_budget_app.ui.navigation.AppNavHost
 import com.application.personal_budget_app.ui.navigation.BudgetBottomBar
 import com.application.personal_budget_app.ui.theme.PersonalbudgetappTheme
@@ -24,17 +25,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PersonalbudgetappTheme {
-                val navController = rememberNavController()
-                Scaffold(
-                    bottomBar = {
-                        BudgetBottomBar(
-                            navController = navController,
-                            onAddClick = { /* saisie rapide : prochaine branche */ },
-                        )
-                    },
-                ) { innerPadding ->
-                    AppNavHost(navController, Modifier.padding(innerPadding))
-                }
+                BudgetAppRoot()
             }
         }
     }
