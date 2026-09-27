@@ -45,5 +45,14 @@ data class AmountInput(val raw: String = "") {
             return if (',' in raw) grouped + "," + raw.substringAfter(',') else grouped
         }
 
-    companion object { const val MAX_INTEGER_DIGITS = 6 }
+    companion object {
+        const val MAX_INTEGER_DIGITS = 6
+
+        /** Recrée la saisie à partir d'un montant : 840 centimes → "8,40", 1500 → "15". */
+        fun from(money: Money): AmountInput {
+            val euros = money.cents / 100
+            val cents = money.cents % 100
+            return AmountInput(if (cents == 0L) "$euros" else "$euros,${cents.toString().padStart(2, '0')}")
+        }
+    }
 }
