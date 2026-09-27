@@ -1,5 +1,6 @@
 package com.application.personal_budget_app.ui
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -34,16 +35,17 @@ fun BudgetAppRoot() {
         }
     }
 
+    val openEntry = {
+        entryViewModel.start()
+        showEntry = true
+    }
+
     Scaffold(
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = {
-            BudgetBottomBar(navController, onAddClick = {
-                entryViewModel.start()
-                showEntry = true
-            })
-        },
+        bottomBar = { BudgetBottomBar(navController, onAddClick = openEntry) },
     ) { innerPadding ->
-        AppNavHost(navController, Modifier.padding(innerPadding))
+        AppNavHost(navController, onAddClick = openEntry, modifier = Modifier.padding(innerPadding))
     }
 
     if (showEntry) {
