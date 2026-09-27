@@ -44,11 +44,7 @@ fun BudgetBottomBar(navController: NavHostController, onAddClick: () -> Unit) {
                 if (index == 2) AddButton(onAddClick, Modifier.weight(1f))
                 val selected = current?.hierarchy?.any { it.hasRoute(item.route::class) } == true
                 NavItem(item, selected, Modifier.weight(1f)) {
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    navController.navigateToTopLevel(item.route)
                 }
             }
         }
