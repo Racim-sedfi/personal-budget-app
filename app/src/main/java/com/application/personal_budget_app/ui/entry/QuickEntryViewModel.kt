@@ -24,12 +24,22 @@ data class QuickEntryState(
     val selectedCategoryId: Long? = null,
     val note: String = "",
     val detailsOpen: Boolean = false,
+    /** Non null : on modifie cette transaction au lieu d'en créer une. */
+    val editing: Transaction? = null,
 ) {
+    val isEditing: Boolean get() = editing != null
     val canSave: Boolean get() = amount.isValid && selectedCategoryId != null
 }
 
-/** Envoyé après un enregistrement, pour le message avec « Annuler ». */
-data class SavedTransaction(val id: Long, val amount: Money, val type: TransactionType, val categoryName: String)
+/** Ce qui vient de se passer, avec de quoi l'annuler. */
+sealed interface EntryEvent {
+    val transaction: Transaction
+    val categoryName: String
+
+    data class Added(override val transaction: Transaction, override val categoryName: String) : EntryEvent
+    data class Updated(val previous: Transaction, override val transaction: Transaction, override val categoryName: String) : EntryEvent
+    data class Deleted(override val transaction: Transaction, override val categoryName: String) : EntryEvent
+}
 
 @HiltViewModel
 class QuickEntryViewModel @Inject constructor(
@@ -41,8 +51,8 @@ class QuickEntryViewModel @Inject constructor(
     private val _state = MutableStateFlow(QuickEntryState(date = LocalDate.now(clock)))
     val state: StateFlow<QuickEntryState> = _state.asStateFlow()
 
-    private val _saved = Channel<SavedTransaction>(Channel.BUFFERED)
-    val saved: Flow<SavedTransaction> = _saved.receiveAsFlow()
+    private val _events = Channel<EntryEvent>(Channel.BUFFERED)
+    val events: Flow<EntryEvent> = _events.receiveAsFlow()
 
     init {
         viewModelScope.launch {
@@ -52,14 +62,27 @@ class QuickEntryViewModel @Inject constructor(
         }
     }
 
-    /** Appelé à chaque ouverture. Sans date : aujourd'hui. */
+    /** Nouvelle saisie. Sans date : aujourd'hui. */
     fun start(date: LocalDate? = null) {
         val today = LocalDate.now(clock)
         val day = date ?: today
         _state.update {
             it.copy(
                 date = day, isToday = day == today,
-                amount = AmountInput(), type = TransactionType.EXPENSE, note = "", detailsOpen = false,
+                amount = AmountInput(), type = TransactionType.EXPENSE, note = "",
+                detailsOpen = false, editing = null,
+            )
+        }
+    }
+
+    /** Modification : le formulaire reprend la transaction telle quelle. */
+    fun startEdit(transaction: Transaction) {
+        _state.update {
+            it.copy(
+                date = transaction.date, isToday = transaction.date == LocalDate.now(clock),
+                amount = AmountInput.from(transaction.amount), type = transaction.type,
+                selectedCategoryId = transaction.categoryId, note = transaction.note.orEmpty(),
+                detailsOpen = transaction.note != null, editing = transaction,
             )
         }
     }
@@ -72,25 +95,49 @@ class QuickEntryViewModel @Inject constructor(
 
     fun save() {
         val s = _state.value
-        if (!s.canSave) return
-        val category = s.categories.first { it.id == s.selectedCategoryId }
+        val categoryId = s.selectedCategoryId
+        if (!s.canSave || categoryId == null) return
+        val transaction = Transaction(
+            id = s.editing?.id ?: 0,
+            amount = s.amount.money,
+            type = s.type,
+            categoryId = categoryId,
+            date = s.date,
+            note = s.note.trim().ifEmpty { null },
+        )
         viewModelScope.launch {
-            val id = transactions.add(
-                Transaction(
-                    amount = s.amount.money,
-                    type = s.type,
-                    categoryId = category.id,
-                    date = s.date,
-
-                    note = s.note.trim().ifEmpty { null },
-                )
-            )
-            _saved.send(SavedTransaction(id, s.amount.money, s.type, category.name))
+            val event = if (s.editing == null) {
+                val id = transactions.add(transaction)
+                EntryEvent.Added(transaction.copy(id = id), categoryName(categoryId))
+            } else {
+                transactions.update(transaction)
+                EntryEvent.Updated(s.editing, transaction, categoryName(categoryId))
+            }
+            _events.send(event)
             start()
         }
     }
 
-    fun undo(id: Long) {
-        viewModelScope.launch { transactions.delete(id) }
+    fun delete() {
+        val original = _state.value.editing ?: return
+        viewModelScope.launch {
+            transactions.delete(original.id)
+            _events.send(EntryEvent.Deleted(original, categoryName(original.categoryId)))
+            start()
+        }
     }
+
+    /** Défait exactement ce que l'événement a fait. */
+    fun undo(event: EntryEvent) {
+        viewModelScope.launch {
+            when (event) {
+                is EntryEvent.Added -> transactions.delete(event.transaction.id)
+                is EntryEvent.Updated -> transactions.update(event.previous)
+                is EntryEvent.Deleted -> transactions.add(event.transaction) // même id : elle revient à l'identique
+            }
+        }
+    }
+
+    private fun categoryName(id: Long): String =
+        _state.value.categories.firstOrNull { it.id == id }?.name ?: "Sans catégorie"
 }
