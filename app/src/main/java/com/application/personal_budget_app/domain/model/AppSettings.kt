@@ -1,0 +1,9 @@
+package com.application.personal_budget_app.domain.model
+
+enum class BudgetMode { BUDGET, OBSERVATION }
+
+data class AppSettings(
+    val cycleStartDay: Int = 1,
+    val mode: BudgetMode = BudgetMode.OBSERVATION,
+    val onboardingDone: Boolean = false,
+)
