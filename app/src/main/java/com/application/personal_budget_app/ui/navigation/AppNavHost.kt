@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.application.personal_budget_app.domain.model.Transaction
+import com.application.personal_budget_app.ui.budget.BudgetScreen
 import com.application.personal_budget_app.ui.components.PlaceholderScreen
 import com.application.personal_budget_app.ui.history.HistoryScreen
 import com.application.personal_budget_app.ui.home.HomeScreen
@@ -33,6 +34,6 @@ fun AppNavHost(
             )
         }
         composable<AnalysisRoute> { PlaceholderScreen("Analyse") }
-        composable<BudgetRoute> { PlaceholderScreen("Budget") }
+        composable<BudgetRoute> { BudgetScreen() }
     }
 }
