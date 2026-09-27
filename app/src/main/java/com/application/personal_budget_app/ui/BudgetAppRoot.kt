@@ -13,6 +13,7 @@ import com.application.personal_budget_app.ui.entry.QuickEntrySheet
 import com.application.personal_budget_app.ui.entry.QuickEntryViewModel
 import com.application.personal_budget_app.ui.navigation.AppNavHost
 import com.application.personal_budget_app.ui.navigation.BudgetBottomBar
+import java.time.LocalDate
 
 @Composable
 fun BudgetAppRoot() {
@@ -35,15 +36,15 @@ fun BudgetAppRoot() {
         }
     }
 
-    val openEntry = {
-        entryViewModel.start()
+    val openEntry: (LocalDate?) -> Unit = { date ->
+        entryViewModel.start(date)
         showEntry = true
     }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = { BudgetBottomBar(navController, onAddClick = openEntry) },
+        bottomBar = { BudgetBottomBar(navController, onAddClick = { openEntry(null) }) },
     ) { innerPadding ->
         AppNavHost(navController, onAddClick = openEntry, modifier = Modifier.padding(innerPadding))
     }

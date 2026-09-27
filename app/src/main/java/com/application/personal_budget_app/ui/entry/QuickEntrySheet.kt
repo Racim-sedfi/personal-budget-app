@@ -27,6 +27,7 @@ import com.application.personal_budget_app.domain.entry.KeypadKey
 import com.application.personal_budget_app.domain.model.Category
 import com.application.personal_budget_app.domain.model.TransactionType
 import com.application.personal_budget_app.ui.components.categoryIcon
+import com.application.personal_budget_app.ui.format.withWeekdayFr
 import com.application.personal_budget_app.ui.theme.*
 import java.time.LocalDate
 
