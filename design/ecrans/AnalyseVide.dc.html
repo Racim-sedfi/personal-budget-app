@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Analyse — pas encore assez de données</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#F3F5F9;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+a{color:#1C1C1C}a:hover{color:#000000}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 1260px; position: relative; box-sizing: border-box; background: #FFFFFF; font-variant-numeric: tabular-nums; overflow: hidden">
+<main style="box-sizing: border-box; padding: 16px 16px 96px; display: flex; flex-direction: column; gap: 24px">
+
+<header style="display: flex; flex-direction: column; gap: 2px; min-height: 44px; justify-content: center">
+<h1 style="margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em">Analyse</h1>
+<span style="font-size: 12px; color: #5B6068">Cycle en cours 25 sept. → 24 oct. · jour 18 sur 30</span>
+</header>
+
+<section aria-label="Où va ton argent" style="background: linear-gradient(135deg, #BFE3FF 0%, #C8D5FB 55%, #D8CCF7 100%); box-shadow: 0 10px 24px -14px rgba(52,88,150,0.55); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 style="margin: 0; font-size: 15px; font-weight: 600">Où va ton argent</h2>
+<span style="font-size: 12px; color: #22364A">Dépenses variables de ce cycle, par catégorie</span>
+</div>
+<div style="display: flex; align-items: center; gap: 16px">
+<div style="position: relative; width: 132px; height: 132px; flex-shrink: 0">
+<svg width="132" height="132" viewBox="0 0 140 140" role="img" aria-label="Répartition : Courses 36 %, Loisirs 24 %, Restaurants 16 %, Shopping 12 %, Transports 9 %, Santé 3 %">
+<circle cx="70" cy="70" r="52" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="18"/>
+<g transform="rotate(-90 70 70)" fill="none" stroke-width="18">
+<circle cx="70" cy="70" r="52" stroke="#1F3550" stroke-dasharray="114.25 212.48" stroke-dashoffset="0"/>
+<circle cx="70" cy="70" r="52" stroke="#5B55B8" stroke-dasharray="75.63 251.10" stroke-dashoffset="-116.25"/>
+<circle cx="70" cy="70" r="52" stroke="#4F7FB0" stroke-dasharray="50.70 276.03" stroke-dashoffset="-193.88"/>
+<circle cx="70" cy="70" r="52" stroke="#9C94E6" stroke-dasharray="37.14 289.59" stroke-dashoffset="-246.58"/>
+<circle cx="70" cy="70" r="52" stroke="#8DB6DA" stroke-dasharray="29.20 297.53" stroke-dashoffset="-285.72"/>
+<circle cx="70" cy="70" r="52" stroke="#FFFFFF" stroke-dasharray="7.80 318.93" stroke-dashoffset="-316.92"/>
+</g>
+</svg>
+<div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 132px; height: 132px; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 17px; font-weight: 600; letter-spacing: -0.02em">399,90&nbsp;€</span>
+<span style="font-size: 11px; color: #22364A">à J18</span>
+</div>
+</div>
+<ul style="margin: 0; padding: 0; list-style: none; flex-grow: 1; display: flex; flex-direction: column; gap: 7px; font-size: 12px">
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #1F3550"></span><span style="flex-grow: 1">Courses</span><span style="font-weight: 600">36 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #5B55B8"></span><span style="flex-grow: 1">Loisirs</span><span style="font-weight: 600">24 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #4F7FB0"></span><span style="flex-grow: 1">Restaurants</span><span style="font-weight: 600">16 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #9C94E6"></span><span style="flex-grow: 1">Shopping</span><span style="font-weight: 600">12 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; border-radius: 4px; background: #8DB6DA"></span><span style="flex-grow: 1">Transports</span><span style="font-weight: 600">9 %</span></li>
+<li style="display: flex; align-items: center; gap: 6px"><span style="width: 8px; height: 8px; flex-shrink: 0; box-sizing: border-box; border-radius: 4px; background: #FFFFFF; border: 1px solid #8A96A6"></span><span style="flex-grow: 1">Santé</span><span style="font-weight: 600">3 %</span></li>
+</ul>
+</div>
+</section>
+
+<section aria-labelledby="h-moyennes" style="padding: 4px 0 0; display: flex; flex-direction: column; gap: 16px">
+<div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #E3DEFC 0%, #D6E3F8 100%); display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 19v-7M12 19V5M19 19v-10"/></svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<h2 id="h-moyennes" style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; text-wrap: pretty">Tes moyennes arrivent bientôt</h2>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #3E444B; text-wrap: pretty">Il faut 2 cycles renseignés à plus de 80 %.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; font-size: 13px">
+<span style="font-weight: 500">Cycles utilisables</span>
+<span><span style="font-weight: 600">1</span> sur 2</span>
+</div>
+<div role="progressbar" aria-label="Cycles utilisables" aria-valuenow="1" aria-valuemin="0" aria-valuemax="2" aria-valuetext="1 cycle sur 2" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px">
+<div style="height: 8px; border-radius: 4px; background: linear-gradient(90deg, #3F719E, #A8C5DA)"></div>
+<div style="height: 8px; box-sizing: border-box; border-radius: 4px; border: 1px dashed #8A96A6; background: #F3F5F9"></div>
+</div>
+</div>
+
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-top: 1px solid #EEF1F5">
+<li style="min-height: 52px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EEF1F5; font-size: 13px">
+<span style="flex-grow: 1">25 juil. → 24 août</span>
+<span style="display: flex; align-items: center; gap: 6px; padding: 3px 8px; border-radius: 10px; border: 1px dashed #8A96A6; background: repeating-linear-gradient(135deg, #EEF2F7 0 4px, #FFFFFF 4px 8px); font-size: 12px; font-weight: 500">62 % · non utilisé</span>
+</li>
+<li style="min-height: 52px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EEF1F5; font-size: 13px">
+<span style="flex-grow: 1">25 août → 24 sept.</span>
+<span style="display: flex; align-items: center; gap: 6px; padding: 3px 8px; border-radius: 10px; background: #E1ECF8; color: #1F3550; font-size: 12px; font-weight: 500"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>90 % · utilisé</span>
+</li>
+<li style="min-height: 52px; display: flex; align-items: center; gap: 12px; font-size: 13px">
+<span style="flex-grow: 1">25 sept. → 24 oct.</span>
+<span style="padding: 3px 8px; border-radius: 10px; background: #EEF2F7; font-size: 12px; font-weight: 500">82 % · en cours</span>
+</li>
+</ul>
+
+<a href="Historique.dc.html" style="min-height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 14px; background: linear-gradient(135deg, #2F3540, #1C1C1C); color: #FFFFFF; font-size: 14px; font-weight: 600; text-decoration: none">Compléter les 3 journées manquantes</a>
+</section>
+
+<section aria-labelledby="h-retenir" style="display: flex; flex-direction: column; gap: 10px">
+<h2 id="h-retenir" style="margin: 0; font-size: 15px; font-weight: 600">À retenir</h2>
+<div style="padding: 14px 0; border-bottom: 1px solid #EEF1F5; display: flex; gap: 12px; align-items: flex-start">
+<div style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 10px; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg></div>
+<span style="font-size: 14px; line-height: 20px">Tes charges fixes représentent 40 % de tes revenus.</span>
+</div>
+</section>
+</main>
+
+<nav aria-label="Navigation principale" style="position: absolute; left: 0; bottom: 0; width: 360px; height: 72px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #E6EAF0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+<a href="Main.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #62676E; font-size: 11px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+<a href="Historique.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #62676E; font-size: 11px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Historique</a>
+<div style="display: flex; justify-content: center">
+<a href="Saisie.dc.html" aria-label="Ajouter une dépense" style="width: 56px; height: 56px; margin-top: -18px; border-radius: 28px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 10px 20px -8px rgba(28,28,28,0.55); color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+<a href="AnalyseVide.dc.html" aria-current="page" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #1C1C1C; font-size: 11px; font-weight: 600">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 19v-7M12 19V5M19 19v-10"/></svg>Analyse</a>
+<a href="Budget.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #62676E; font-size: 11px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/></svg>Budget</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":1260}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

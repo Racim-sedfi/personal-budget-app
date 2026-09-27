@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Historique</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#FFFFFF;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+a{color:#1C1C1C}a:hover{color:#000000}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 1480px; position: relative; box-sizing: border-box; background: #FFFFFF; font-variant-numeric: tabular-nums; overflow: hidden">
+<main style="box-sizing: border-box; padding: 16px 16px 96px; display: flex; flex-direction: column; gap: 20px">
+
+<header style="display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<h1 style="margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em">Historique</h1>
+<button aria-label="Rechercher" style="width: 44px; height: 44px; border: 1px solid #E3E8EF; border-radius: 12px; background: #FFFFFF; color: #1C1C1C; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg>
+</button>
+</div>
+<button aria-label="Cycle affiché : 25 sept. au 24 oct. Changer de cycle" style="align-self: flex-start; height: 44px; padding: 0 12px 0 14px; border: 1px solid #E1E5EA; border-radius: 20px; background: #FFFFFF; color: #1C1C1C; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; cursor: pointer">25 sept. → 24 oct.
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+<div style="border-top: 1px solid #EEF1F5; border-bottom: 1px solid #EEF1F5; padding: 12px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; color: #22364A">Dépenses variables</span>
+<span style="font-size: 18px; font-weight: 600">399,90&nbsp;€</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 12px; color: #22364A">Cycle renseigné</span>
+<span style="font-size: 18px; font-weight: 600">82 %<span style="font-size: 12px; font-weight: 400; color: #22364A"> · 14 j sur 17</span></span>
+</div>
+</div>
+</header>
+
+<section aria-label="Aujourd'hui" style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 14px; font-weight: 600">Aujourd'hui · lun. 12 oct.</h2>
+<span style="font-size: 13px; color: #62676E">{{ todayTotal }}</span>
+</div>
+<sc-if value="{{ todayOpen }}" hint-placeholder-val="{{ true }}">
+<div style="background: #FFFFFF; border: 1px solid #E1E5EA; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 14px; color: #3E444B">Rien de saisi pour l'instant.</span>
+<button onClick="{{ declareNone }}" style="height: 48px; border: 0; border-radius: 14px; background: #1C1C1C; color: #FFFFFF; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>Aucune dépense aujourd'hui</button>
+</div>
+</sc-if>
+<sc-if value="{{ todayNone }}" hint-placeholder-val="{{ false }}">
+<div style="background: #FFFFFF; border: 1px solid #E1E5EA; border-radius: 16px; padding: 12px 16px; display: flex; align-items: center; gap: 12px">
+<div style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 16px; background: #E5ECF6; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<span style="font-size: 14px; font-weight: 500">Aucune dépense</span>
+<span style="font-size: 12px; color: #62676E">Journée déclarée sans dépense</span>
+</div>
+<button onClick="{{ undoNone }}" style="height: 44px; padding: 0 4px; border: 0; background: transparent; color: #1C1C1C; font-size: 13px; text-decoration: underline; cursor: pointer">Annuler</button>
+</div>
+</sc-if>
+</section>
+
+<section aria-label="Hier" style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 14px; font-weight: 600">Hier · dim. 11 oct.</h2>
+<span style="font-size: 13px; color: #62676E">0,00&nbsp;€</span>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #E1E5EA; border-radius: 16px; padding: 12px 16px; display: flex; align-items: center; gap: 12px">
+<div style="width: 32px; height: 32px; flex-shrink: 0; border-radius: 16px; background: #E5ECF6; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 14px; font-weight: 500">Aucune dépense</span>
+<span style="font-size: 12px; color: #62676E">Journée déclarée sans dépense</span>
+</div>
+</div>
+</section>
+
+<section aria-label="Samedi 10 octobre" style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 14px; font-weight: 600">sam. 10 oct.</h2>
+<span style="font-size: 13px; color: #62676E">Total <span style="color: #1C1C1C; font-weight: 600">77,90&nbsp;€</span></span>
+</div>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<li style="min-height: 60px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E9ECF0">
+<div style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: #EAF1F8; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10" stroke-dasharray="2 2"/></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 500">Place de concert</span><span style="font-size: 12px; color: #62676E">Loisirs</span></div>
+<span style="font-size: 14px; font-weight: 600">38,00&nbsp;€</span>
+</li>
+<li style="min-height: 60px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E9ECF0">
+<div style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: #EAF1F8; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 3-3 6v4h3"/></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 500">Pizzeria</span><span style="font-size: 12px; color: #62676E">Restaurants</span></div>
+<span style="font-size: 14px; font-weight: 600">16,50&nbsp;€</span>
+</li>
+<li style="min-height: 60px; display: flex; align-items: center; gap: 12px">
+<div style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: #EAF1F8; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2 11h11l2-8H6.2"/><circle cx="9" cy="19" r="1"/><circle cx="17" cy="19" r="1"/></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 500">Carrefour City</span><span style="font-size: 12px; color: #62676E">Courses</span></div>
+<span style="font-size: 14px; font-weight: 600">23,40&nbsp;€</span>
+</li>
+</ul>
+</section>
+
+<section aria-label="Vendredi 9 octobre" style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 14px; font-weight: 600">ven. 9 oct.</h2>
+<span style="font-size: 13px; color: #62676E">—</span>
+</div>
+<div style="border: 1px dashed #AEB5BE; border-radius: 16px; padding: 10px 10px 10px 16px; display: flex; align-items: center; gap: 12px; background: repeating-linear-gradient(135deg, #F1F3F6 0 6px, #FFFFFF 6px 12px)">
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<span style="font-size: 14px; font-weight: 500">Non renseignée</span></div>
+<a href="Saisie.dc.html" style="height: 44px; padding: 0 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid #D5DAE1; display: flex; align-items: center; font-size: 13px; font-weight: 500; text-decoration: none">Compléter</a>
+</div>
+</section>
+
+<section aria-label="Jeudi 8 octobre" style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 14px; font-weight: 600">jeu. 8 oct.</h2>
+<span style="font-size: 13px; color: #62676E">Total <span style="color: #1C1C1C; font-weight: 600">5,35&nbsp;€</span></span>
+</div>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<li style="min-height: 60px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E9ECF0">
+<div style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: #EAF1F8; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="13" rx="2"/><path d="M5 11h14M8 20l1-3M16 20l-1-3"/></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 500">Carnet de tickets</span><span style="font-size: 12px; color: #62676E">Transports</span></div>
+<span style="font-size: 14px; font-weight: 600">17,35&nbsp;€</span>
+</li>
+<li style="min-height: 60px; display: flex; align-items: center; gap: 12px">
+<div style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: #E3F5FF; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 500">Part de Léa, resto</span><span style="font-size: 12px; color: #62676E">Remboursement · Restaurants</span></div>
+<span style="font-size: 14px; font-weight: 600">+12,00&nbsp;€</span>
+</li>
+</ul>
+</section>
+
+<section aria-label="Mercredi 7 octobre" style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 14px; font-weight: 600">mer. 7 oct.</h2>
+<span style="font-size: 13px; color: #62676E">—</span>
+</div>
+<div style="border: 1px dashed #AEB5BE; border-radius: 16px; padding: 10px 10px 10px 16px; display: flex; align-items: center; gap: 12px; background: repeating-linear-gradient(135deg, #F1F3F6 0 6px, #FFFFFF 6px 12px)">
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<span style="font-size: 14px; font-weight: 500">Non renseignée</span></div>
+<a href="Saisie.dc.html" style="height: 44px; padding: 0 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid #D5DAE1; display: flex; align-items: center; font-size: 13px; font-weight: 500; text-decoration: none">Compléter</a>
+</div>
+</section>
+
+<section aria-label="Mardi 6 octobre" style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 14px; font-weight: 600">mar. 6 oct.</h2>
+<span style="font-size: 13px; color: #62676E">Total <span style="color: #1C1C1C; font-weight: 600">43,80&nbsp;€</span></span>
+</div>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<li style="min-height: 60px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #E9ECF0">
+<div style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: #EAF1F8; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2 11h11l2-8H6.2"/><circle cx="9" cy="19" r="1"/><circle cx="17" cy="19" r="1"/></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 500">Lidl</span><span style="font-size: 12px; color: #62676E">Courses</span></div>
+<span style="font-size: 14px; font-weight: 600">31,80&nbsp;€</span>
+</li>
+<li style="min-height: 60px; display: flex; align-items: center; gap: 12px">
+<div style="width: 36px; height: 36px; flex-shrink: 0; border-radius: 10px; background: #EAF1F8; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></div>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1"><span style="font-size: 14px; font-weight: 500">Pharmacie</span><span style="font-size: 12px; color: #62676E">Santé</span></div>
+<span style="font-size: 14px; font-weight: 600">12,00&nbsp;€</span>
+</li>
+</ul>
+</section>
+</main>
+
+<nav aria-label="Navigation principale" style="position: absolute; left: 0; bottom: 0; width: 360px; height: 72px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #EEF1F4; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+<a href="Main.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #62676E; font-size: 11px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+<a href="Historique.dc.html" aria-current="page" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #1C1C1C; font-size: 11px; font-weight: 600">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Historique</a>
+<div style="display: flex; justify-content: center">
+<a href="Saisie.dc.html" aria-label="Ajouter une dépense" style="width: 56px; height: 56px; margin-top: -18px; border-radius: 28px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 10px 20px -8px rgba(28,28,28,0.55); color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+<a href="Analyse.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #62676E; font-size: 11px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 19v-7M12 19V5M19 19v-10"/></svg>Analyse</a>
+<a href="Budget.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #62676E; font-size: 11px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/></svg>Budget</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":1480}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { todayDeclared: false };
+  }
+  renderVals() {
+    const d = !!this.state.todayDeclared;
+    return {
+      todayOpen: !d,
+      todayNone: d,
+      todayTotal: d ? '0,00 €' : 'En cours',
+      declareNone: () => this.setState({ todayDeclared: true }),
+      undoNone: () => this.setState({ todayDeclared: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Onboarding 3 — Configurer ou observer</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#FFFFFF;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+a{color:#1C1C1C}a:hover{color:#000000}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 800px; box-sizing: border-box; padding: 16px 20px 24px; display: flex; flex-direction: column; gap: 22px; background: linear-gradient(180deg, #E4F1FF 0%, #F3F5F9 38%, #FFFFFF 100%)">
+<div style="display: flex; align-items: center; gap: 8px">
+<a href="Onboarding2.dc.html" aria-label="Retour" style="width: 44px; height: 44px; margin-left: -12px; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></a>
+<div role="progressbar" aria-label="Étape 3 sur 4" aria-valuenow="3" aria-valuemin="1" aria-valuemax="4" style="flex-grow: 1; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+<div style="height: 4px; border-radius: 2px; background: #1C1C1C"></div>
+<div style="height: 4px; border-radius: 2px; background: #1C1C1C"></div>
+<div style="height: 4px; border-radius: 2px; background: #1C1C1C"></div>
+<div style="height: 4px; border-radius: 2px; background: #D3DAE4"></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 12px; font-weight: 500; color: #4E5A68; letter-spacing: 0.02em">Étape 3 sur 4</span>
+<h1 style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 600; letter-spacing: -0.02em; text-wrap: pretty">Comment veux-tu commencer ?</h1>
+<p style="margin: 0; font-size: 14px; line-height: 20px; color: #4E545C">Modifiable plus tard.</p>
+</div>
+
+<div role="radiogroup" aria-label="Mode de départ" style="display: flex; flex-direction: column; gap: 12px">
+<button role="radio" aria-checked="{{ isConfig }}" onClick="{{ pickConfig }}" style="text-align: left; border-radius: 18px; padding: 18px; border: {{ configBorder }}; background: {{ configBg }}; box-shadow: {{ configShadow }}; display: flex; flex-direction: column; gap: 12px; cursor: pointer; color: #1C1C1C">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/></svg></div>
+<span style="width: 22px; height: 22px; box-sizing: border-box; border-radius: 11px; border: {{ configRadio }}; background: #FFFFFF"></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 16px; font-weight: 600">Configurer mon budget</span>
+<span style="font-size: 13px; line-height: 19px; color: #2F3A46">Revenus, charges, plafonds. Environ 5 min.</span>
+</div>
+</button>
+
+<button role="radio" aria-checked="{{ isObserve }}" onClick="{{ pickObserve }}" style="text-align: left; border-radius: 18px; padding: 18px; border: {{ observeBorder }}; background: {{ observeBg }}; box-shadow: {{ observeShadow }}; display: flex; flex-direction: column; gap: 12px; cursor: pointer; color: #1C1C1C">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div style="width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg></div>
+<span style="width: 22px; height: 22px; box-sizing: border-box; border-radius: 11px; border: {{ observeRadio }}; background: #FFFFFF"></span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 16px; font-weight: 600">Commencer par observer</span>
+<span style="font-size: 13px; line-height: 19px; color: #2F3A46">Saisis tes dépenses un cycle, l'app propose ensuite des plafonds.</span>
+</div>
+</button>
+</div>
+
+<div style="flex-grow: 1"></div>
+<a href="Onboarding4.dc.html" style="height: 52px; border-radius: 14px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 8px 18px -10px rgba(28,28,28,0.6); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; text-decoration: none">Continuer</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { mode: 'observe' };
+  }
+  renderVals() {
+    const obs = this.state.mode === 'observe';
+    const on = {
+      border: '2px solid #1C1C1C',
+      shadow: '0 12px 28px -16px rgba(52,88,150,0.6)',
+      radio: '7px solid #1C1C1C'
+    };
+    const off = {
+      border: '1px solid #E3E8EF',
+      shadow: '0 1px 3px rgba(28,28,28,0.05)',
+      radio: '1.5px solid #9AA1AA'
+    };
+    const c = obs ? off : on;
+    const o = obs ? on : off;
+    return {
+      isConfig: !obs, isObserve: obs,
+      configBorder: c.border, configShadow: c.shadow, configRadio: c.radio,
+      configBg: obs ? '#FFFFFF' : 'linear-gradient(135deg, #BFE3FF 0%, #C8D5FB 100%)',
+      observeBorder: o.border, observeShadow: o.shadow, observeRadio: o.radio,
+      observeBg: obs ? 'linear-gradient(135deg, #E3DEFC 0%, #D6E3F8 100%)' : '#FFFFFF',
+      pickConfig: () => this.setState({ mode: 'config' }),
+      pickObserve: () => this.setState({ mode: 'observe' })
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accueil — nouveau cycle, aucune dépense</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#FFFFFF;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+a{color:#1C1C1C}a:hover{color:#000000}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 960px; position: relative; box-sizing: border-box; background: #FFFFFF; font-variant-numeric: tabular-nums; overflow: hidden">
+
+<header style="box-sizing: border-box; padding: 12px 16px 28px; background: linear-gradient(180deg, #D4EAFF 0%, #E4E1FC 72%, #FFFFFF 100%); display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 13px; font-weight: 500; color: #22364A">25 oct. → 24 nov.</span>
+<a href="Parametres.dc.html" aria-label="Paramètres" style="width: 44px; height: 44px; margin-right: -10px; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+</a>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-size: 15px; font-weight: 500; color: #22364A">Il te reste</h1>
+<span style="font-size: 52px; font-weight: 600; letter-spacing: -0.035em; line-height: 60px">957,00&nbsp;€</span>
+<span style="font-size: 14px; color: #22364A">jusqu'au 24 nov. · 31 jours</span>
+</div>
+<span style="align-self: flex-start; display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; border-radius: 16px; background: rgba(255,255,255,0.75); color: #1F3550; font-size: 13px; font-weight: 600">
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M6 18l2-2M16 8l2-2"/></svg>
+Nouveau cycle</span>
+</header>
+
+<main style="box-sizing: border-box; padding: 4px 16px 96px; display: flex; flex-direction: column; gap: 28px">
+<section aria-labelledby="h-today" style="display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 28px 0; border-bottom: 1px solid #EEF1F5">
+<h2 id="h-today" style="margin: 0; font-size: 15px; font-weight: 600">Aucune dépense enregistrée</h2>
+<a href="Saisie.dc.html" style="height: 52px; padding: 0 24px; border-radius: 26px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 8px 18px -10px rgba(28,28,28,0.6); color: #FFFFFF; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; text-decoration: none">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Ajouter une dépense</a>
+</section>
+
+<section aria-labelledby="h-env">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px">
+<h2 id="h-env" style="margin: 0; font-size: 15px; font-weight: 600">Enveloppes</h2>
+<a href="Budget.dc.html" style="min-height: 44px; display: flex; align-items: center; font-size: 13px; font-weight: 500">Modifier</a>
+</div>
+<ul style="margin: 0; padding: 0; list-style: none">
+<sc-for list="{{ env }}" as="e" hint-placeholder-count="7">
+<li style="min-height: 52px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #EEF1F5">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="{{ e.d }}"/></svg>
+<span style="font-size: 14px; font-weight: 500; flex-grow: 1">{{ e.label }}</span>
+<span style="font-size: 14px; font-weight: 600">{{ e.cap }}</span>
+</li>
+</sc-for>
+</ul>
+</section>
+</main>
+
+<nav aria-label="Navigation principale" style="position: absolute; left: 0; bottom: 0; width: 360px; height: 72px; box-sizing: border-box; background: #FFFFFF; border-top: 1px solid #E6EAF0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center">
+<a href="AccueilVide.dc.html" aria-current="page" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #1C1C1C; font-size: 11px; font-weight: 600">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/></svg>Accueil</a>
+<a href="Historique.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6068; font-size: 11px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Historique</a>
+<div style="display: flex; justify-content: center">
+<a href="Saisie.dc.html" aria-label="Ajouter une dépense" style="width: 56px; height: 56px; margin-top: -18px; border-radius: 28px; background: linear-gradient(135deg, #2F3540, #1C1C1C); box-shadow: 0 10px 20px -8px rgba(28,28,28,0.55); color: #FFFFFF; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></a>
+</div>
+<a href="Analyse.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6068; font-size: 11px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 19v-7M12 19V5M19 19v-10"/></svg>Analyse</a>
+<a href="Budget.dc.html" style="height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #5B6068; font-size: 11px">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 14.5h2"/></svg>Budget</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const nb = ' ';
+    const data = [
+      ['Courses', 250, 'M3 4h2l2 11h11l2-8H6.2M9 19h.01M17 19h.01'],
+      ['Restaurants', 90, 'M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 3-3 6v4h3'],
+      ['Transports', 75, 'M7 4h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM5 11h14M8 20l1-3M16 20l-1-3'],
+      ['Loisirs', 60, 'M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM14 8v1.5M14 11.25v1.5M14 14.5V16'],
+      ['Shopping', 80, 'M6 8h12l-1 12H7zM9 8a3 3 0 0 1 6 0'],
+      ['Santé', 30, 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z'],
+      ['Imprévus', 60, 'M3 12a9 9 0 0 1 18 0zM12 12v6a2 2 0 0 1-4 0']
+    ];
+    return { env: data.map(([label, c, d]) => ({ label, d, cap: c + ',00' + nb + '€ restants' })) };
+  }
+}
+</script>
+</body>
+</html>

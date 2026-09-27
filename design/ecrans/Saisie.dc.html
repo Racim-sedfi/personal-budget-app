@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Saisie rapide</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#FFFFFF;color:#1C1C1C;-webkit-font-smoothing:antialiased}
+button,input{font-family:inherit}
+a{color:#1C1C1C}a:hover{color:#000000}
+input::placeholder{color:#6B7079}
+:focus-visible{outline:2px solid #1C1C1C;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 360px; height: 800px; position: relative; box-sizing: border-box; background: #FFFFFF; font-variant-numeric: tabular-nums; overflow: hidden">
+
+<div aria-hidden="true" style="padding: 16px; background: linear-gradient(180deg, #D4EAFF 0%, #E4E1FC 100%); height: 240px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; color: #22364A">Il te reste</span>
+<span style="font-size: 44px; font-weight: 600; letter-spacing: -0.03em">{{ bgAmount }}</span>
+</div>
+
+<sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; left: 0; top: 0; width: 360px; height: 800px; background: rgba(28,28,28,0.42)"></div>
+<section role="dialog" aria-modal="true" aria-label="Nouvelle dépense" style="position: absolute; left: 0; bottom: 0; width: 360px; box-sizing: border-box; background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 8px 16px 20px; display: flex; flex-direction: column; gap: 14px">
+
+<div style="display: flex; justify-content: center"><div style="width: 32px; height: 4px; border-radius: 2px; background: #C9D0D9"></div></div>
+
+<div style="display: flex; align-items: center; justify-content: space-between">
+<div role="group" aria-label="Type" style="display: flex; gap: 4px; padding: 3px; border-radius: 12px; background: #F1F4F8">
+<button onClick="{{ setDepense }}" aria-pressed="{{ isDepense }}" style="height: 38px; padding: 0 12px; border: 0; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{ segDepBg }}; color: {{ segDepFg }}">Dépense</button>
+<button onClick="{{ setRemb }}" aria-pressed="{{ isRemb }}" style="height: 38px; padding: 0 12px; border: 0; border-radius: 9px; font-size: 13px; font-weight: 600; cursor: pointer; background: {{ segRembBg }}; color: {{ segRembFg }}">Remboursement</button>
+</div>
+<a href="Main.dc.html" aria-label="Fermer" style="width: 44px; height: 44px; margin-right: -8px; display: flex; align-items: center; justify-content: center">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></a>
+</div>
+
+<div role="status" aria-live="polite" aria-label="{{ amountAria }}" style="display: flex; align-items: baseline; justify-content: center; gap: 6px; height: 68px">
+<span style="font-size: 60px; font-weight: 600; letter-spacing: -0.04em; line-height: 68px; color: {{ amountColor }}">{{ amountText }}</span>
+<span style="font-size: 30px; font-weight: 500; color: #5B6068">€</span>
+</div>
+
+<div role="group" aria-label="Catégorie" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center">
+<sc-for list="{{ cats }}" as="c" hint-placeholder-count="7">
+<button onClick="{{ c.pick }}" aria-pressed="{{ c.selected }}" style="height: 44px; padding: 0 14px 0 12px; border-radius: 22px; border: 1px solid {{ c.bd }}; background: {{ c.bg }}; color: {{ c.fg }}; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap">
+<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="{{ c.d }}"/></svg>{{ c.label }}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{ detailsClosed }}" hint-placeholder-val="{{ true }}">
+<button onClick="{{ openDetails }}" aria-expanded="false" style="align-self: center; height: 44px; padding: 0 12px; border: 0; background: transparent; color: #3E444B; font-size: 13px; display: flex; align-items: center; gap: 6px; cursor: pointer">Aujourd'hui · <span style="text-decoration: underline">ajouter une note</span></button>
+</sc-if>
+<sc-if value="{{ detailsOpen }}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; gap: 8px">
+<button aria-label="Date : aujourd'hui, 12 octobre. Modifier" style="height: 44px; flex-shrink: 0; padding: 0 12px; border: 1px solid #D5DAE1; border-radius: 12px; background: #FFFFFF; color: #1C1C1C; font-size: 13px; font-weight: 500; cursor: pointer">Aujourd'hui</button>
+<label for="note" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Note</label>
+<input id="note" value="{{ note }}" onChange="{{ onNote }}" placeholder="Note" autocomplete="off" style="flex-grow: 1; min-width: 0; height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #D5DAE1; border-radius: 12px; font-size: 14px; color: #1C1C1C">
+</div>
+<div role="group" aria-label="Suggestions" style="display: flex; gap: 6px; margin-top: -6px">
+<sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="3">
+<button onClick="{{ s.pick }}" style="height: 40px; padding: 0 12px; border: 0; border-radius: 20px; background: #F1F4F8; color: #1C1C1C; font-size: 12px; cursor: pointer; white-space: nowrap">{{ s.label }}</button>
+</sc-for>
+</div>
+</sc-if>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+<button onClick="{{ k.press }}" aria-label="{{ k.aria }}" style="height: 48px; border: 0; border-radius: 12px; background: #F1F4F8; color: #1C1C1C; font-size: 22px; font-weight: 500; display: flex; align-items: center; justify-content: center; cursor: pointer">
+<sc-if value="{{ k.isDel }}" hint-placeholder-val="{{ false }}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-5-6z"/><path d="m12 10 4 4M16 10l-4 4"/></svg></sc-if>
+<sc-if value="{{ k.isChar }}" hint-placeholder-val="{{ true }}">{{ k.label }}</sc-if>
+</button>
+</sc-for>
+</div>
+
+<button onClick="{{ save }}" disabled="{{ cannotSave }}" style="height: 54px; border: 0; border-radius: 14px; background: {{ saveBg }}; box-shadow: {{ saveShadow }}; color: {{ saveFg }}; font-size: 16px; font-weight: 600; cursor: {{ saveCursor }}">{{ saveLabel }}</button>
+</section>
+</sc-if>
+
+<sc-if value="{{ saved }}" hint-placeholder-val="{{ false }}">
+<div role="status" aria-live="polite" style="position: absolute; left: 16px; bottom: 96px; width: 328px; box-sizing: border-box; min-height: 60px; padding: 8px 8px 8px 16px; border-radius: 14px; background: #1C1C1C; color: #FFFFFF; box-shadow: 0 12px 28px -12px rgba(28,28,28,0.7); display: flex; align-items: center; gap: 10px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="m8.5 12.2 2.4 2.4 4.6-4.8"/></svg>
+<span style="flex-grow: 1; font-size: 14px; line-height: 19px">{{ savedText }}</span>
+<button onClick="{{ undo }}" style="height: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: rgba(255,255,255,0.16); color: #FFFFFF; font-size: 14px; font-weight: 600; cursor: pointer">Annuler</button>
+</div>
+<a href="Main.dc.html" style="position: absolute; left: 16px; top: 260px; width: 328px; height: 48px; border-radius: 14px; border: 1px solid #C9D0D9; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; text-decoration: none">Retour à l'accueil</a>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":800}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { amount: '8,40', mode: 'depense', cat: 'courses', note: '', details: false, saved: false };
+  }
+  press(k) {
+    let a = this.state.amount;
+    if (k === 'del') { a = a.slice(0, -1); }
+    else if (k === ',') { if (a.indexOf(',') === -1) a = (a === '' ? '0' : a) + ','; }
+    else {
+      const i = a.indexOf(',');
+      if (i !== -1 && a.length - i > 2) return;
+      if (i === -1 && a.replace(/^0+/, '').length >= 6) return;
+      a = (a === '0') ? k : a + k;
+    }
+    this.setState({ amount: a });
+  }
+  renderVals() {
+    const s = this.state;
+    const nb = ' ';
+    const cats = [
+      { id: 'courses', label: 'Courses', d: 'M3 4h2l2 11h11l2-8H6.2M9 19h.01M17 19h.01', sug: ['Carrefour City', 'Lidl', 'Boulangerie'] },
+      { id: 'restaurants', label: 'Restaurants', d: 'M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1-3 3-3 6v4h3', sug: ['Pizzeria', 'Café', 'Resto U'] },
+      { id: 'transports', label: 'Transports', d: 'M7 4h10a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM5 11h14M8 20l1-3M16 20l-1-3', sug: ['Tickets', 'Vélo', 'Essence'] },
+      { id: 'loisirs', label: 'Loisirs', d: 'M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4zM14 8v1.5M14 11.25v1.5M14 14.5V16', sug: ['Cinéma', 'Concert', 'Bar'] },
+      { id: 'shopping', label: 'Shopping', d: 'M6 8h12l-1 12H7zM9 8a3 3 0 0 1 6 0', sug: ['Vêtements', 'Livres', 'Maison'] },
+      { id: 'sante', label: 'Santé', d: 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z', sug: ['Pharmacie', 'Médecin', 'Dentiste'] },
+      { id: 'imprevus', label: 'Imprévus', d: 'M3 12a9 9 0 0 1 18 0zM12 12v6a2 2 0 0 1-4 0', sug: ['Réparation', 'Cadeau', 'Frais'] }
+    ];
+    const current = cats.find((c) => c.id === s.cat) || cats[0];
+    const q = (s.note || '').trim().toLowerCase();
+    const pool = q ? current.sug.filter((x) => x.toLowerCase().indexOf(q) === 0 && x.toLowerCase() !== q) : current.sug;
+
+    const raw = s.amount;
+    let amountText = '0';
+    if (raw !== '') {
+      const parts = raw.split(',');
+      const intPart = (parts[0] || '0').replace(/\B(?=(\d{3})+(?!\d))/g, nb);
+      amountText = parts.length > 1 ? intPart + ',' + parts[1] : intPart;
+    }
+    const isRemb = s.mode === 'remboursement';
+    if (isRemb && raw !== '') amountText = '+' + amountText;
+    const value = parseFloat((raw || '0').replace(',', '.')) || 0;
+    const can = value > 0;
+    const shown = value.toFixed(2).replace('.', ',') + nb + '€';
+    const white = '#FFFFFF';
+    const rest = 557.10 + (s.saved ? (isRemb ? value : -value) : 0);
+    const keyList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ',', '0', 'del'];
+    return {
+      bgAmount: rest.toFixed(2).replace('.', ',') + nb + '€',
+      open: !s.saved, saved: !!s.saved,
+      isDepense: !isRemb, isRemb,
+      segDepBg: isRemb ? 'transparent' : '#1C1C1C', segDepFg: isRemb ? '#3E444B' : white,
+      segRembBg: isRemb ? '#1C1C1C' : 'transparent', segRembFg: isRemb ? white : '#3E444B',
+      setDepense: () => this.setState({ mode: 'depense' }),
+      setRemb: () => this.setState({ mode: 'remboursement' }),
+      amountText, amountColor: raw === '' ? '#A3AAB3' : '#1C1C1C',
+      amountAria: 'Montant : ' + (raw === '' ? 'vide' : amountText.replace(nb, ' ') + ' euros'),
+      cats: cats.map((c) => {
+        const sel = c.id === s.cat;
+        return {
+          label: c.label, d: c.d, selected: sel,
+          bg: sel ? '#1C1C1C' : '#FFFFFF', fg: sel ? white : '#1C1C1C', bd: sel ? '#1C1C1C' : '#D5DAE1',
+          pick: () => this.setState({ cat: c.id })
+        };
+      }),
+      detailsClosed: !s.details, detailsOpen: !!s.details,
+      openDetails: () => this.setState({ details: true }),
+      note: s.note,
+      onNote: (e) => this.setState({ note: e.target.value }),
+      suggestions: pool.slice(0, 3).map((x) => ({ label: x, pick: () => this.setState({ note: x }) })),
+      keys: keyList.map((k) => ({
+        label: k, isDel: k === 'del', isChar: k !== 'del',
+        aria: k === 'del' ? 'Effacer' : (k === ',' ? 'Virgule' : k),
+        press: () => this.press(k)
+      })),
+      save: () => { if (can) this.setState({ saved: true }); },
+      undo: () => this.setState({ saved: false }),
+      cannotSave: !can,
+      saveLabel: can ? 'Enregistrer ' + shown : 'Saisis un montant',
+      saveBg: can ? 'linear-gradient(135deg, #2F3540, #1C1C1C)' : '#E3E7EC',
+      saveFg: can ? white : '#4E545C',
+      saveShadow: can ? '0 8px 18px -10px rgba(28,28,28,0.6)' : 'none',
+      saveCursor: can ? 'pointer' : 'not-allowed',
+      savedText: (isRemb ? 'Remboursement ajouté · ' : 'Dépense ajoutée · ') + shown + ' · ' + current.label
+    };
+  }
+}
+</script>
+</body>
+</html>
