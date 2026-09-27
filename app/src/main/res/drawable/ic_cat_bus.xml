@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icône trait fin, 24 dp. La couleur est remplacée par le tint du composant Icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M7,4 H17 A2,2 0,0 1,19,6 V15 A2,2 0,0 1,17,17 H7 A2,2 0,0 1,5,15 V6 A2,2 0,0 1,7,4 Z M5,11 H19 M8,20 L9,17 M16,20 L15,17"
+        android:fillColor="#00000000"
+        android:strokeColor="#FF1C1C1C"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>
