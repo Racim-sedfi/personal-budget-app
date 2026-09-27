@@ -46,4 +46,8 @@ interface BudgetDao {
     @Upsert suspend fun upsertIncome(entity: IncomeEntity)
     @Upsert suspend fun upsertSaving(entity: PlannedSavingEntity)
     @Upsert suspend fun upsertFixedCharge(entity: FixedChargeEntity)
+
+    @Query("DELETE FROM incomes WHERE id = :id") suspend fun deleteIncome(id: Long)
+    @Query("DELETE FROM planned_savings WHERE id = :id") suspend fun deleteSaving(id: Long)
+    @Query("DELETE FROM fixed_charges WHERE id = :id") suspend fun deleteFixedCharge(id: Long)
 }

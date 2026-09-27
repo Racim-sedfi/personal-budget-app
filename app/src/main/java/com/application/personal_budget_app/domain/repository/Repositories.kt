@@ -29,6 +29,10 @@ interface BudgetRepository {
     suspend fun upsertIncome(income: Income)
     suspend fun upsertSaving(saving: PlannedSaving)
     suspend fun upsertFixedCharge(charge: FixedCharge)
+
+    suspend fun deleteIncome(id: Long)
+    suspend fun deleteSaving(id: Long)
+    suspend fun deleteFixedCharge(id: Long)
 }
 
 interface SettingsRepository {
