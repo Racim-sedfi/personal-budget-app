@@ -31,4 +31,9 @@ class BudgetSnapshotTest {
     fun `transaction amount must be positive`() {
         Transaction(amount = Money.ZERO, type = TransactionType.EXPENSE, categoryId = 1, date = LocalDate.now())
     }
+
+    @Test fun `carry over increases what can be spent`() {
+        val snapshot = BudgetSnapshot(Money.euros(1850), Money.euros(150), Money.euros(743), Money.ZERO, carryOver = Money.euros(355, 60))
+        assertEquals(Money.euros(1312, 60), snapshot.spendable)
+    }
 }
