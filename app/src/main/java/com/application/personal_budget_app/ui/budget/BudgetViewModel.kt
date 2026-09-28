@@ -68,6 +68,13 @@ class BudgetViewModel @Inject constructor(
         viewModelScope.launch { settings.setMode(mode) }
     }
 
+    /** Active le budget puis prévient l'écran, une fois l'écriture terminée. */
+    fun activateBudget(onActivated: () -> Unit) {
+        viewModelScope.launch {
+            settings.setMode(BudgetMode.BUDGET)
+            onActivated()
+        }
+    }
     private fun saveAndClose(action: suspend () -> Unit) {
         viewModelScope.launch {
             action()
