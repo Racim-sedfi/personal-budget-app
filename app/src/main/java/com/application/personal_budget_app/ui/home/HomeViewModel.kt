@@ -2,9 +2,11 @@ package com.application.personal_budget_app.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.application.personal_budget_app.domain.closing.cycleToClose
 import com.application.personal_budget_app.domain.cycle.BudgetCycle
 import com.application.personal_budget_app.domain.home.HomeSummary
 import com.application.personal_budget_app.domain.home.buildHomeSummary
+import com.application.personal_budget_app.domain.model.Money
 import com.application.personal_budget_app.domain.repository.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,6 +28,7 @@ class HomeViewModel @Inject constructor(
     dayStatus: DayStatusRepository,
     categories: CategoryRepository,
     budget: BudgetRepository,
+    closedCycles: ClosedCycleRepository,
     clock: Clock,
 ) : ViewModel() {
 
@@ -37,13 +40,29 @@ class HomeViewModel @Inject constructor(
         .flatMapLatest { appSettings ->
             val today = LocalDate.now(clock)
             val cycle = BudgetCycle.containing(today, appSettings.cycleStartDay)
+            val previous = cycle.shifted(-1)
+
+            // Le cycle précédent : clôturé ? contient-il des saisies ?
+            val previousInfo = combine(
+                closedCycles.observe(previous.start),
+                transactions.observeBetween(previous.start, previous.end),
+                dayStatus.observeNoExpenseDays(previous.start, previous.end),
+            ) { closed, tx, noExpense -> closed to (tx.isNotEmpty() || noExpense.isNotEmpty()) }
+
             combine(
                 transactions.observeBetween(cycle.start, cycle.end),
                 dayStatus.observeNoExpenseDays(cycle.start, cycle.end),
                 categories.observeAll(),
                 budgetItems,
-            ) { tx, noExpense, cats, (incomes, savings, charges) ->
-                HomeUiState.Ready(buildHomeSummary(today, appSettings, tx, noExpense, cats, incomes, savings, charges))
+                previousInfo,
+            ) { tx, noExpense, cats, (incomes, savings, charges), (closed, hadActivity) ->
+                HomeUiState.Ready(
+                    buildHomeSummary(
+                        today, appSettings, tx, noExpense, cats, incomes, savings, charges,
+                        carryOver = closed?.carryOver ?: Money.ZERO,
+                        cycleToClose = cycleToClose(cycle, closed != null, hadActivity),
+                    )
+                )
             }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState.Loading)
