@@ -25,6 +25,23 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 
+/** Affiche le formulaire ouvert dans le ViewModel, s'il y en a un. Partagé par l'écran Budget et l'assistant. */
+@Composable
+fun BudgetEditorHost(viewModel: BudgetViewModel, editor: BudgetEditor?) {
+    if (editor == null) return
+    BudgetEditorSheet(
+        editor = editor,
+        today = viewModel.today(),
+        onSaveIncome = viewModel::saveIncome,
+        onSaveSaving = viewModel::saveSaving,
+        onSaveCharge = viewModel::saveCharge,
+        onSaveCap = viewModel::saveCap,
+        onDeleteIncome = viewModel::deleteIncome,
+        onDeleteSaving = viewModel::deleteSaving,
+        onDeleteCharge = viewModel::deleteCharge,
+        onDismiss = viewModel::closeEditor,
+    )
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BudgetEditorSheet(

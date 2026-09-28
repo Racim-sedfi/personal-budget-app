@@ -34,26 +34,12 @@ import com.application.personal_budget_app.ui.theme.*
 import java.time.LocalDate
 
 @Composable
-fun BudgetScreen(viewModel: BudgetViewModel = hiltViewModel()) {
+fun BudgetScreen(onOpenSetup: () -> Unit, viewModel: BudgetViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val current = state ?: return
 
-    BudgetContent(current.overview, onEdit = viewModel::edit, onSetMode = viewModel::setMode)
-
-    current.editor?.let { editor ->
-        BudgetEditorSheet(
-            editor = editor,
-            today = viewModel.today(),
-            onSaveIncome = viewModel::saveIncome,
-            onSaveSaving = viewModel::saveSaving,
-            onSaveCharge = viewModel::saveCharge,
-            onSaveCap = viewModel::saveCap,
-            onDeleteIncome = viewModel::deleteIncome,
-            onDeleteSaving = viewModel::deleteSaving,
-            onDeleteCharge = viewModel::deleteCharge,
-            onDismiss = viewModel::closeEditor,
-        )
-    }
+    BudgetContent(current.overview, onEdit = viewModel::edit, onSetMode = viewModel::setMode, onOpenSetup = onOpenSetup)
+    BudgetEditorHost(viewModel, current.editor)
 }
 
 @Composable
@@ -61,10 +47,11 @@ fun BudgetContent(
     overview: BudgetOverview,
     onEdit: (BudgetEditor) -> Unit,
     onSetMode: (BudgetMode) -> Unit,
+    onOpenSetup: () -> Unit,
 ) {
     val side = Modifier.padding(horizontal = 16.dp)
     LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 24.dp)) {
-        item { BudgetHeader(overview, onSetMode) }
+        item { BudgetHeader(overview, onSetMode, onOpenSetup) }
 
         // Revenus
         item { SectionHeader("Revenus", overview.incomeTotal.format(), side) }
@@ -128,7 +115,7 @@ fun BudgetContent(
 }
 
 @Composable
-private fun BudgetHeader(overview: BudgetOverview, onSetMode: (BudgetMode) -> Unit) {
+private fun BudgetHeader(overview: BudgetOverview, onSetMode: (BudgetMode) -> Unit, onOpenSetup: () -> Unit) {
     Column(
         Modifier.fillMaxWidth().background(BudgetGradients.header).statusBarsPadding()
             .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 28.dp),
@@ -145,7 +132,7 @@ private fun BudgetHeader(overview: BudgetOverview, onSetMode: (BudgetMode) -> Un
         }
         if (overview.incomeTotal.cents > 0) IncomeSplit(overview)
         if (overview.mode == BudgetMode.OBSERVATION) {
-            ObservationBanner(overview.canActivateBudget) { onSetMode(BudgetMode.BUDGET) }
+            ObservationBanner(overview.canActivateBudget, onActivate = { onSetMode(BudgetMode.BUDGET) }, onOpenSetup = onOpenSetup)
         }
     }
 }
@@ -193,7 +180,7 @@ private fun LegendItem(color: Color, label: String) {
 }
 
 @Composable
-private fun ObservationBanner(canActivate: Boolean, onActivate: () -> Unit) {
+private fun ObservationBanner(canActivate: Boolean, onActivate: () -> Unit, onOpenSetup: () -> Unit) {
     Column(
         Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color.White.copy(alpha = 0.75f)).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -203,21 +190,22 @@ private fun ObservationBanner(canActivate: Boolean, onActivate: () -> Unit) {
             Text("Mode observation", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold, color = NearLimitText)
         }
         Text(
-            if (canActivate) "Pose tes plafonds, puis active le budget." else "Ajoute au moins un revenu pour activer le budget.",
+            if (canActivate) "Pose tes plafonds, puis active le budget."
+            else "Revenus, charges et plafonds en 3 étapes.",
             style = MaterialTheme.typography.bodyMedium, color = TextStrong,
         )
         Button(
-            onClick = onActivate,
-            enabled = canActivate,
+            onClick = if (canActivate) onActivate else onOpenSetup,
             modifier = Modifier.fillMaxWidth().height(48.dp),
             shape = RoundedCornerShape(14.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Background),
-        ) { Text("Activer le budget", style = MaterialTheme.typography.labelLarge) }
+        ) {
+            Text(if (canActivate) "Activer le budget" else "Configurer pas à pas", style = MaterialTheme.typography.labelLarge)
+        }
     }
 }
-
 @Composable
-private fun SectionHeader(title: String, total: String, modifier: Modifier) {
+internal fun SectionHeader(title: String, total: String, modifier: Modifier) {
     Row(modifier.fillMaxWidth().padding(top = 20.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(title, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f).semantics { heading() })
         Text(total, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
@@ -225,7 +213,7 @@ private fun SectionHeader(title: String, total: String, modifier: Modifier) {
 }
 
 @Composable
-private fun BudgetRow(
+internal fun BudgetRow(
     title: String,
     subtitle: String?,
     frequency: Frequency?,
@@ -281,7 +269,7 @@ fun Frequency.label(): String = when (this) {
 }
 
 @Composable
-private fun AddRow(label: String, modifier: Modifier, onClick: () -> Unit) {
+internal fun AddRow(label: String, modifier: Modifier, onClick: () -> Unit) {
     Row(
         modifier.fillMaxWidth().heightIn(min = 52.dp).clickable(role = Role.Button, onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
@@ -293,7 +281,7 @@ private fun AddRow(label: String, modifier: Modifier, onClick: () -> Unit) {
 }
 
 @Composable
-private fun UnallocatedLine(overview: BudgetOverview, modifier: Modifier) {
+internal fun UnallocatedLine(overview: BudgetOverview, modifier: Modifier) {
     val over = overview.unallocated.isNegative
     Row(modifier.fillMaxWidth().heightIn(min = 52.dp).semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically) {
         Text(
@@ -331,6 +319,7 @@ private fun BudgetPreview() {
                     Category(3, "Transports", "bus"), Category(7, "Imprévus", "umbrella", Money.euros(60), isFuse = true),
                 ),
             ),
+            onOpenSetup = {},
             onEdit = {}, onSetMode = {},
         )
     }
