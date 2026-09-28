@@ -31,12 +31,12 @@ class MainActivity : ComponentActivity() {
             PersonalbudgetappTheme {
                 val appViewModel: AppViewModel = hiltViewModel()
                 val onboardingDone by appViewModel.onboardingDone.collectAsStateWithLifecycle()
-                var openBudgetFirst by rememberSaveable { mutableStateOf(false) }
+                var openBudgetSetup by rememberSaveable { mutableStateOf(false) }
 
                 when (onboardingDone) {
                     null -> Box(Modifier.fillMaxSize().background(Background))
-                    false -> OnboardingScreen(onChoiceMade = { openBudgetFirst = it == StartChoice.CONFIGURE })
-                    true -> BudgetAppRoot(openBudgetFirst = openBudgetFirst)
+                    false -> OnboardingScreen(onChoiceMade = { openBudgetSetup = it == StartChoice.CONFIGURE })
+                    true -> BudgetAppRoot(openBudgetSetup = openBudgetSetup)
                 }
             }
         }

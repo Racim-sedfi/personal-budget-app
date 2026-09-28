@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable data object AnalysisRoute
 @Serializable data object BudgetRoute
 
+@Serializable data object BudgetSetupRoute
 enum class TopLevelDestination(
     val route: Any,
     val label: String,
