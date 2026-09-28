@@ -51,3 +51,12 @@ interface BudgetDao {
     @Query("DELETE FROM planned_savings WHERE id = :id") suspend fun deleteSaving(id: Long)
     @Query("DELETE FROM fixed_charges WHERE id = :id") suspend fun deleteFixedCharge(id: Long)
 }
+
+@Dao
+interface ClosedCycleDao {
+    @Query("SELECT * FROM closed_cycles WHERE start = :start")
+    fun observe(start: LocalDate): Flow<ClosedCycleEntity?>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(entity: ClosedCycleEntity)
+}
