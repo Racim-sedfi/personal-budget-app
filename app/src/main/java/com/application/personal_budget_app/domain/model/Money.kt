@@ -29,6 +29,13 @@ value class Money(val cents: Long) : Comparable<Money> {
         val ZERO = Money(0)
         fun euros(euros: Long, cents: Long = 0) = Money(euros * 100 + cents)
     }
+
+    /** Arrondi au multiple supérieur de `stepEuros` € : 231,80 → 235 (pas de 5). Zéro ou négatif → 0. */
+    fun roundUpTo(stepEuros: Long): Money {
+        val step = stepEuros * 100
+        return if (cents <= 0) ZERO else Money((cents + step - 1) / step * step)
+    }
 }
 
 fun Iterable<Money>.sum(): Money = Money(sumOf { it.cents })
+
