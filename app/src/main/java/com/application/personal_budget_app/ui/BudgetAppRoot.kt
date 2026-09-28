@@ -15,14 +15,26 @@ import com.application.personal_budget_app.ui.entry.QuickEntrySheet
 import com.application.personal_budget_app.ui.entry.QuickEntryViewModel
 import com.application.personal_budget_app.ui.navigation.AppNavHost
 import com.application.personal_budget_app.ui.navigation.BudgetBottomBar
+import com.application.personal_budget_app.ui.navigation.BudgetRoute
+import com.application.personal_budget_app.ui.navigation.navigateToTopLevel
 import java.time.LocalDate
 
 @Composable
-fun BudgetAppRoot() {
+fun BudgetAppRoot(openBudgetFirst: Boolean = false) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
     val entryViewModel: QuickEntryViewModel = hiltViewModel()
     var showEntry by rememberSaveable { mutableStateOf(false) }
+
+    // Choix « Configurer mon budget » : on ouvre l'onglet Budget une seule fois
+    // (le flag sauvegardé évite de rebasculer dessus à chaque rotation).
+    var budgetOpened by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (openBudgetFirst && !budgetOpened) {
+            budgetOpened = true
+            navController.navigateToTopLevel(BudgetRoute)
+        }
+    }
 
     val openEntry: (LocalDate?) -> Unit = { date ->
         entryViewModel.start(date)
