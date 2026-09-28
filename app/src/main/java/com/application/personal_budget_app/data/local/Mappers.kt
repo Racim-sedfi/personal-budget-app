@@ -1,5 +1,6 @@
 package com.application.personal_budget_app.data.local
 
+import com.application.personal_budget_app.domain.closing.ClosedCycle
 import com.application.personal_budget_app.domain.model.*
 
 fun TransactionEntity.toDomain() = Transaction(id, Money(amountCents), type, categoryId, date, note)
@@ -16,3 +17,6 @@ fun PlannedSaving.toEntity() = PlannedSavingEntity(id, label, amount.cents, dayO
 
 fun FixedChargeEntity.toDomain() = FixedCharge(id, name, Money(amountCents), frequency, nextDueDate)
 fun FixedCharge.toEntity() = FixedChargeEntity(id, name, amount.cents, frequency, nextDueDate)
+
+fun ClosedCycleEntity.toDomain() = ClosedCycle(start, end, outcome, Money(leftoverCents))
+fun ClosedCycle.toEntity() = ClosedCycleEntity(start, end, outcome, leftover.cents)

@@ -8,9 +8,10 @@ data class BudgetSnapshot(
     val plannedSavings: Money,
     val fixedCharges: Money,
     val variableSpent: Money,
+    val carryOver: Money = Money.ZERO,   // reporté du cycle précédent
 ) {
     /** Ce qu'on peut dépenser sur le cycle. */
-    val spendable: Money get() = income - plannedSavings - fixedCharges
+    val spendable: Money get() = income - plannedSavings - fixedCharges + carryOver
 
     /** Reste disponible = Revenus − Épargne − Charges fixes − Dépenses variables. */
     val remaining: Money get() = spendable - variableSpent

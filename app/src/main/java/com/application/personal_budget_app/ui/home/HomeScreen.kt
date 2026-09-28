@@ -28,6 +28,7 @@ import com.application.personal_budget_app.R
 import com.application.personal_budget_app.domain.budget.EnvelopeStatus
 import com.application.personal_budget_app.domain.budget.progressFraction
 import com.application.personal_budget_app.domain.budget.usedPercent
+import com.application.personal_budget_app.domain.cycle.BudgetCycle
 import com.application.personal_budget_app.domain.home.HomeSummary
 import com.application.personal_budget_app.domain.home.buildHomeSummary
 import com.application.personal_budget_app.domain.model.*
@@ -46,12 +47,13 @@ fun HomeScreen(
     onAddClick: () -> Unit,
     onCompleteDays: () -> Unit,
     onEditBudget: () -> Unit,
+    onCloseCycle: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     when (val s = state) {
         HomeUiState.Loading -> Box(Modifier.fillMaxSize()) // quelques ms au démarrage
-        is HomeUiState.Ready -> HomeContent(s.summary, onAddClick, onCompleteDays, onEditBudget)
+        is HomeUiState.Ready -> HomeContent(s.summary, onAddClick, onCompleteDays, onEditBudget, onCloseCycle)
     }
 }
 
@@ -61,11 +63,15 @@ fun HomeContent(
     onAddClick: () -> Unit,
     onCompleteDays: () -> Unit,
     onEditBudget: () -> Unit,
+    onCloseCycle: () -> Unit,
 ) {
+
     val sidePadding = Modifier.padding(horizontal = 16.dp)
     LazyColumn(Modifier.fillMaxSize()) {
         item { HomeHeader(summary) }
-
+        summary.cycleToClose?.let { ended ->
+            item { ClosingCard(ended, onCloseCycle, sidePadding.padding(top = 16.dp)) }
+        }
         if (!summary.hasTransactions) {
             item { EmptyState(onAddClick, sidePadding) }
         }
@@ -91,6 +97,26 @@ fun HomeContent(
             item { CycleSection(summary, sidePadding.padding(top = 16.dp)) }
         }
         item { Spacer(Modifier.height(24.dp)) }
+    }
+}
+
+@Composable
+private fun ClosingCard(ended: BudgetCycle, onClick: () -> Unit, modifier: Modifier) {
+    val shape = RoundedCornerShape(16.dp)
+    Column(
+        modifier.fillMaxWidth().clip(shape).background(BudgetGradients.observationHeader).padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text("Cycle terminé", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+            Text("${ended.label()} · fais le bilan en une minute.", style = MaterialTheme.typography.bodyMedium, color = TextStrong)
+        }
+        Button(
+            onClick = onClick,
+            modifier = Modifier.fillMaxWidth().height(48.dp),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Background),
+        ) { Text("Faire le bilan", style = MaterialTheme.typography.labelLarge) }
     }
 }
 
@@ -209,6 +235,7 @@ private fun CycleSection(summary: HomeSummary, modifier: Modifier) {
         CycleLine("Épargne planifiée", summary.plannedSavings.format())
         CycleLine("Charges fixes", summary.fixedCharges.format())
         summary.nextFixedCharge?.let { CycleLine("Prochaine charge", "${it.name} · ${it.nextDueDate.shortFr()}", last = true) }
+        summary.snapshot?.carryOver?.takeIf { it.cents > 0 }?.let { CycleLine("Report du cycle précédent", "+ ${it.format()}") }
     }
 }
 
@@ -246,12 +273,12 @@ private fun previewSummary(mode: BudgetMode): HomeSummary {
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 1300)
 @Composable
-private fun HomeBudgetPreview() = PersonalbudgetappTheme {
-    HomeContent(previewSummary(BudgetMode.BUDGET), {}, {}, {})
+private fun HomeBudgetPreview(onCloseCycle: () -> Unit = {},) = PersonalbudgetappTheme {
+    HomeContent(previewSummary(BudgetMode.BUDGET), {}, {}, {}, onCloseCycle)
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 1000)
 @Composable
-private fun HomeObservationPreview() = PersonalbudgetappTheme {
-    HomeContent(previewSummary(BudgetMode.OBSERVATION), {}, {}, {})
+private fun HomeObservationPreview(onCloseCycle: () -> Unit = {},) = PersonalbudgetappTheme {
+    HomeContent(previewSummary(BudgetMode.OBSERVATION), {}, {}, {}, onCloseCycle)
 }

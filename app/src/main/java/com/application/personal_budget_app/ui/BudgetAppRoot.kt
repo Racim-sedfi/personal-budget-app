@@ -19,6 +19,7 @@ import com.application.personal_budget_app.ui.navigation.AppNavHost
 import com.application.personal_budget_app.ui.navigation.BudgetBottomBar
 import com.application.personal_budget_app.ui.navigation.BudgetRoute
 import com.application.personal_budget_app.ui.navigation.BudgetSetupRoute
+import com.application.personal_budget_app.ui.navigation.CycleClosingRoute
 import com.application.personal_budget_app.ui.navigation.navigateToTopLevel
 import java.time.LocalDate
 
@@ -42,7 +43,9 @@ fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
 
     // Pas de barre du bas pendant l'assistant : il est plein écran.
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val inSetup = backStackEntry?.destination?.hasRoute<BudgetSetupRoute>() == true
+    val inSetup = backStackEntry?.destination?.let {
+        it.hasRoute<BudgetSetupRoute>() || it.hasRoute<CycleClosingRoute>()
+    } == true
 
     val openEntry: (LocalDate?) -> Unit = { date ->
         entryViewModel.start(date)

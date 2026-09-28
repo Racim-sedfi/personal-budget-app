@@ -1,5 +1,6 @@
 package com.application.personal_budget_app.data.local
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -9,9 +10,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     entities = [
         CategoryEntity::class, TransactionEntity::class, NoExpenseDayEntity::class,
         IncomeEntity::class, PlannedSavingEntity::class, FixedChargeEntity::class,
+        ClosedCycleEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
+    autoMigrations = [AutoMigration(from = 1, to = 2)],
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -19,6 +22,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
     abstract fun noExpenseDayDao(): NoExpenseDayDao
     abstract fun budgetDao(): BudgetDao
+    abstract fun closedCycleDao(): ClosedCycleDao
 
     companion object { const val NAME = "budget.db" }
 }
