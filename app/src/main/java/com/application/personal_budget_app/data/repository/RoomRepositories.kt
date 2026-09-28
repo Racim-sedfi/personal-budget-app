@@ -1,6 +1,7 @@
 package com.application.personal_budget_app.data.repository
 
 import com.application.personal_budget_app.data.local.*
+import com.application.personal_budget_app.domain.closing.ClosedCycle
 import com.application.personal_budget_app.domain.model.*
 import com.application.personal_budget_app.domain.repository.*
 import kotlinx.coroutines.flow.Flow
@@ -43,4 +44,14 @@ class RoomBudgetRepository @Inject constructor(
     override suspend fun upsertIncome(income: Income) = dao.upsertIncome(income.toEntity())
     override suspend fun upsertSaving(saving: PlannedSaving) = dao.upsertSaving(saving.toEntity())
     override suspend fun upsertFixedCharge(charge: FixedCharge) = dao.upsertFixedCharge(charge.toEntity())
+    override suspend fun deleteIncome(id: Long) = dao.deleteIncome(id)
+    override suspend fun deleteSaving(id: Long) = dao.deleteSaving(id)
+    override suspend fun deleteFixedCharge(id: Long) = dao.deleteFixedCharge(id)
+}
+
+class RoomClosedCycleRepository @Inject constructor(
+    private val dao: ClosedCycleDao,
+) : ClosedCycleRepository {
+    override fun observe(start: LocalDate): Flow<ClosedCycle?> = dao.observe(start).map { it?.toDomain() }
+    override suspend fun close(cycle: ClosedCycle) = dao.insert(cycle.toEntity())
 }

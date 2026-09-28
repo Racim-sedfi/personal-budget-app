@@ -27,6 +27,7 @@ data class HomeSummary(
     val plannedSavings: Money,
     val fixedCharges: Money,
     val nextFixedCharge: FixedCharge?,
+    val cycleToClose: BudgetCycle? = null,   // cycle précédent à clôturer
 ) {
     val dayNumber: Int get() = cycle.dayNumber(today)
     val daysRemaining: Int get() = cycle.daysRemainingAfter(today)
@@ -43,6 +44,8 @@ fun buildHomeSummary(
     incomes: List<Income>,
     savings: List<PlannedSaving>,
     charges: List<FixedCharge>,
+    carryOver: Money = Money.ZERO,
+    cycleToClose: BudgetCycle? = null,
 ): HomeSummary {
     val cycle = BudgetCycle.containing(today, settings.cycleStartDay)
     val inCycle = transactions.filter { it.date in cycle }
@@ -58,12 +61,13 @@ fun buildHomeSummary(
         cycle = cycle,
         today = today,
         spent = spent,
-        snapshot = if (isBudget) BudgetSnapshot(incomes.map { it.amount }.sum(), savingsTotal, chargesTotal, spent) else null,
+        snapshot = if (isBudget) BudgetSnapshot(incomes.map { it.amount }.sum(), savingsTotal, chargesTotal, spent, carryOver) else null,
         envelopes = if (isBudget) lines else lines.sortedByDescending { it.spent },
         completion = completion(cycle, today, inCycle.map { it.date }.toSet(), noExpenseDays),
         hasTransactions = inCycle.isNotEmpty(),
         plannedSavings = savingsTotal,
         fixedCharges = chargesTotal,
         nextFixedCharge = charges.filter { it.nextDueDate.isAfter(today) }.minByOrNull { it.nextDueDate },
+        cycleToClose = cycleToClose,
     )
 }

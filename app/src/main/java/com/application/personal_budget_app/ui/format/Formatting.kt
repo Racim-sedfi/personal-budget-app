@@ -24,3 +24,8 @@ fun LocalDate.dayTitle(today: LocalDate): String = when (this) {
     today.minusDays(1) -> "Hier · ${withWeekdayFr()}"
     else -> withWeekdayFr()
 }
+
+/** "Du 25 au 24 du mois suivant", "Du 2 au 1er du mois suivant", "Du 1er au dernier jour du mois". */
+fun cycleRule(startDay: Int): String =
+    if (startDay == 1) "Du 1er au dernier jour du mois"
+    else "Du $startDay au ${if (startDay - 1 == 1) "1er" else (startDay - 1).toString()} du mois suivant"

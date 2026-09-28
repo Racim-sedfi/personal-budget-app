@@ -1,6 +1,7 @@
 package com.application.personal_budget_app.data.local
 
 import androidx.room.*
+import com.application.personal_budget_app.domain.closing.CycleOutcome
 import com.application.personal_budget_app.domain.model.Frequency
 import com.application.personal_budget_app.domain.model.TransactionType
 import java.time.LocalDate
@@ -60,4 +61,12 @@ data class FixedChargeEntity(
     val amountCents: Long,
     val frequency: Frequency,
     val nextDueDate: LocalDate,
+)
+
+@Entity(tableName = "closed_cycles")
+data class ClosedCycleEntity(
+    @PrimaryKey val start: LocalDate,
+    val end: LocalDate,
+    val outcome: CycleOutcome,
+    val leftoverCents: Long,
 )

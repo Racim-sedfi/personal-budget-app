@@ -4,17 +4,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.application.personal_budget_app.domain.onboarding.StartChoice
+import com.application.personal_budget_app.ui.AppViewModel
 import com.application.personal_budget_app.ui.BudgetAppRoot
-import com.application.personal_budget_app.ui.navigation.AppNavHost
-import com.application.personal_budget_app.ui.navigation.BudgetBottomBar
+import com.application.personal_budget_app.ui.onboarding.OnboardingScreen
+import com.application.personal_budget_app.ui.theme.Background
 import com.application.personal_budget_app.ui.theme.PersonalbudgetappTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,7 +29,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PersonalbudgetappTheme {
-                BudgetAppRoot()
+                val appViewModel: AppViewModel = hiltViewModel()
+                val onboardingDone by appViewModel.onboardingDone.collectAsStateWithLifecycle()
+                var openBudgetSetup by rememberSaveable { mutableStateOf(false) }
+
+                when (onboardingDone) {
+                    null -> Box(Modifier.fillMaxSize().background(Background))
+                    false -> OnboardingScreen(onChoiceMade = { openBudgetSetup = it == StartChoice.CONFIGURE })
+                    true -> BudgetAppRoot(openBudgetSetup = openBudgetSetup)
+                }
             }
         }
     }

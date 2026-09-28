@@ -7,6 +7,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.application.personal_budget_app.domain.model.Transaction
 import com.application.personal_budget_app.domain.model.TransactionType
@@ -15,14 +17,35 @@ import com.application.personal_budget_app.ui.entry.QuickEntrySheet
 import com.application.personal_budget_app.ui.entry.QuickEntryViewModel
 import com.application.personal_budget_app.ui.navigation.AppNavHost
 import com.application.personal_budget_app.ui.navigation.BudgetBottomBar
+import com.application.personal_budget_app.ui.navigation.BudgetRoute
+import com.application.personal_budget_app.ui.navigation.BudgetSetupRoute
+import com.application.personal_budget_app.ui.navigation.CycleClosingRoute
+import com.application.personal_budget_app.ui.navigation.navigateToTopLevel
 import java.time.LocalDate
 
 @Composable
-fun BudgetAppRoot() {
+fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
     val entryViewModel: QuickEntryViewModel = hiltViewModel()
     var showEntry by rememberSaveable { mutableStateOf(false) }
+
+    // Choix « Configurer mon budget » : on ouvre l'onglet Budget une seule fois
+    // (le flag sauvegardé évite de rebasculer dessus à chaque rotation).
+    // Choix « Configurer mon budget » à l'onboarding : on ouvre l'assistant une seule fois.
+    var setupOpened by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if (openBudgetSetup && !setupOpened) {
+            setupOpened = true
+            navController.navigate(BudgetSetupRoute)
+        }
+    }
+
+    // Pas de barre du bas pendant l'assistant : il est plein écran.
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val inSetup = backStackEntry?.destination?.let {
+        it.hasRoute<BudgetSetupRoute>() || it.hasRoute<CycleClosingRoute>()
+    } == true
 
     val openEntry: (LocalDate?) -> Unit = { date ->
         entryViewModel.start(date)
@@ -58,7 +81,7 @@ fun BudgetAppRoot() {
     Scaffold(
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        bottomBar = { BudgetBottomBar(navController, onAddClick = { openEntry(null) }) },
+        bottomBar = { if (!inSetup) BudgetBottomBar(navController, onAddClick = { openEntry(null) }) },
     ) { innerPadding ->
         AppNavHost(
             navController,

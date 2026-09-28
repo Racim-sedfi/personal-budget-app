@@ -26,6 +26,7 @@ object DatabaseModule {
     @Provides fun categoryDao(db: AppDatabase) = db.categoryDao()
     @Provides fun noExpenseDayDao(db: AppDatabase) = db.noExpenseDayDao()
     @Provides fun budgetDao(db: AppDatabase) = db.budgetDao()
+    @Provides fun closedCycleDao(db: AppDatabase) = db.closedCycleDao()
 }
 
 @Module
@@ -35,4 +36,5 @@ abstract class RepositoryModule {
     @Binds @Singleton abstract fun categories(impl: RoomCategoryRepository): CategoryRepository
     @Binds @Singleton abstract fun dayStatus(impl: RoomDayStatusRepository): DayStatusRepository
     @Binds @Singleton abstract fun budget(impl: RoomBudgetRepository): BudgetRepository
+    @Binds @Singleton abstract fun closedCycles(impl: RoomClosedCycleRepository): ClosedCycleRepository
 }

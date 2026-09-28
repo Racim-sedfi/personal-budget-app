@@ -1,5 +1,6 @@
 package com.application.personal_budget_app.domain.repository
 
+import com.application.personal_budget_app.domain.closing.ClosedCycle
 import com.application.personal_budget_app.domain.model.*
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -29,6 +30,10 @@ interface BudgetRepository {
     suspend fun upsertIncome(income: Income)
     suspend fun upsertSaving(saving: PlannedSaving)
     suspend fun upsertFixedCharge(charge: FixedCharge)
+
+    suspend fun deleteIncome(id: Long)
+    suspend fun deleteSaving(id: Long)
+    suspend fun deleteFixedCharge(id: Long)
 }
 
 interface SettingsRepository {
@@ -36,4 +41,9 @@ interface SettingsRepository {
     suspend fun setCycleStartDay(day: Int)
     suspend fun setMode(mode: BudgetMode)
     suspend fun completeOnboarding()
+}
+
+interface ClosedCycleRepository {
+    fun observe(start: LocalDate): Flow<ClosedCycle?>
+    suspend fun close(cycle: ClosedCycle)
 }

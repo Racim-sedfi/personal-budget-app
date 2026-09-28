@@ -6,6 +6,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.application.personal_budget_app.domain.model.Transaction
+import com.application.personal_budget_app.ui.budget.BudgetScreen
+import com.application.personal_budget_app.ui.budget.BudgetSetupScreen
+import com.application.personal_budget_app.ui.closing.CycleClosingScreen
 import com.application.personal_budget_app.ui.components.PlaceholderScreen
 import com.application.personal_budget_app.ui.history.HistoryScreen
 import com.application.personal_budget_app.ui.home.HomeScreen
@@ -24,6 +27,7 @@ fun AppNavHost(
                 onAddClick = { onAddClick(null) },
                 onCompleteDays = { navController.navigateToTopLevel(HistoryRoute) },
                 onEditBudget = { navController.navigateToTopLevel(BudgetRoute) },
+                onCloseCycle = { navController.navigate(CycleClosingRoute) },
             )
         }
         composable<HistoryRoute> {
@@ -33,6 +37,26 @@ fun AppNavHost(
             )
         }
         composable<AnalysisRoute> { PlaceholderScreen("Analyse") }
-        composable<BudgetRoute> { PlaceholderScreen("Budget") }
+        composable<BudgetRoute> {
+            BudgetScreen(onOpenSetup = { navController.navigate(BudgetSetupRoute) })
+        }
+        composable<BudgetSetupRoute> {
+            BudgetSetupScreen(
+                onClose = { navController.popBackStack() },
+                onActivated = {
+                    navController.popBackStack()
+                    navController.navigateToTopLevel(HomeRoute) // on montre tout de suite « Il te reste… »
+                },
+            )
+        }
+        composable<CycleClosingRoute> {
+            CycleClosingScreen(
+                onDone = { navController.popBackStack() },
+                onOpenSetup = {
+                    navController.popBackStack()
+                    navController.navigate(BudgetSetupRoute)
+                },
+            )
+        }
     }
 }
