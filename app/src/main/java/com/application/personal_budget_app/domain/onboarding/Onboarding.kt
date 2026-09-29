@@ -1,7 +1,7 @@
 package com.application.personal_budget_app.domain.onboarding
 
 enum class OnboardingStep {
-    PRIVACY, CYCLE_START, START_CHOICE;
+    PRIVACY, CYCLE_START, START_CHOICE, LOCK;
 
     val number: Int get() = ordinal + 1
     val isFirst: Boolean get() = ordinal == 0

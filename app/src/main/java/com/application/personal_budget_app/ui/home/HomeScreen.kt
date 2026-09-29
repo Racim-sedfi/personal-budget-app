@@ -48,14 +48,17 @@ fun HomeScreen(
     onCompleteDays: () -> Unit,
     onEditBudget: () -> Unit,
     onCloseCycle: () -> Unit,
+    onOpenSettings: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     when (val s = state) {
         HomeUiState.Loading -> Box(Modifier.fillMaxSize()) // quelques ms au démarrage
-        is HomeUiState.Ready -> HomeContent(s.summary, onAddClick, onCompleteDays, onEditBudget, onCloseCycle)
+        is HomeUiState.Ready -> HomeContent(s.summary, onAddClick, onCompleteDays, onEditBudget, onCloseCycle, onOpenSettings)
     }
 }
+
+
 
 @Composable
 fun HomeContent(
@@ -64,11 +67,12 @@ fun HomeContent(
     onCompleteDays: () -> Unit,
     onEditBudget: () -> Unit,
     onCloseCycle: () -> Unit,
+    onOpenSettings: () -> Unit = {},
 ) {
 
     val sidePadding = Modifier.padding(horizontal = 16.dp)
     LazyColumn(Modifier.fillMaxSize()) {
-        item { HomeHeader(summary) }
+        item { HomeHeader(summary, onOpenSettings) }
         summary.cycleToClose?.let { ended ->
             item { ClosingCard(ended, onCloseCycle, sidePadding.padding(top = 16.dp)) }
         }
@@ -121,7 +125,7 @@ private fun ClosingCard(ended: BudgetCycle, onClick: () -> Unit, modifier: Modif
 }
 
 @Composable
-private fun HomeHeader(summary: HomeSummary) {
+private fun HomeHeader(summary: HomeSummary, onOpenSettings: () -> Unit){
     val budget = summary.snapshot
     Column(
         Modifier.fillMaxWidth()
@@ -130,8 +134,16 @@ private fun HomeHeader(summary: HomeSummary) {
             .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 28.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        Text(summary.cycle.label(), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, color = OnGradient)
-
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                summary.cycle.label(),
+                style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, color = OnGradient,
+                modifier = Modifier.weight(1f),
+            )
+            IconButton(onClick = onOpenSettings, modifier = Modifier.offset(x = 12.dp)) {
+                Icon(painterResource(R.drawable.ic_settings), contentDescription = "Paramètres", tint = Ink)
+            }
+        }
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 if (budget != null) "Il te reste" else "Tu as dépensé",
@@ -236,6 +248,7 @@ private fun CycleSection(summary: HomeSummary, modifier: Modifier) {
         CycleLine("Charges fixes", summary.fixedCharges.format())
         summary.nextFixedCharge?.let { CycleLine("Prochaine charge", "${it.name} · ${it.nextDueDate.shortFr()}", last = true) }
         summary.snapshot?.carryOver?.takeIf { it.cents > 0 }?.let { CycleLine("Report du cycle précédent", "+ ${it.format()}") }
+        summary.snapshot?.extraIncome?.takeIf { it.cents > 0 }?.let { CycleLine("Revenus imprévus", "+ ${it.format()}") }
     }
 }
 
@@ -273,8 +286,8 @@ private fun previewSummary(mode: BudgetMode): HomeSummary {
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 1300)
 @Composable
-private fun HomeBudgetPreview(onCloseCycle: () -> Unit = {},) = PersonalbudgetappTheme {
-    HomeContent(previewSummary(BudgetMode.BUDGET), {}, {}, {}, onCloseCycle)
+private fun HomeBudgetPreview() = PersonalbudgetappTheme {
+    HomeContent(previewSummary(BudgetMode.BUDGET), {}, {}, {}, {})
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 1000)

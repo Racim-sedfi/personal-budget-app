@@ -83,27 +83,40 @@ fun QuickEntryContent(
 
         AmountDisplay(state)
 
-        FlowRow(
-            Modifier.fillMaxWidth().selectableGroup(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            state.categories.forEach { category ->
-                CategoryChip(category, category.id == state.selectedCategoryId) { onCategorySelected(category.id) }
-            }
-        }
-
-        if (state.detailsOpen) {
+        if (state.type == TransactionType.INCOME) {
+            // Revenu : pas d'enveloppe, le libellé est à saisir directement.
             OutlinedTextField(
                 value = state.note,
                 onValueChange = onNoteChange,
-                label = { Text("Note · $dayText") },
+                label = { Text("D'où vient ce revenu ? · $dayText") },
+                placeholder = { Text("Cadeau d'anniversaire") },
+                supportingText = { Text("S'ajoute à ce qu'il te reste ce cycle.") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
         } else {
-            TextButton(onClick = onOpenDetails, modifier = Modifier.fillMaxWidth()) {
-                Text("$dayText · ajouter une note", color = TextStrong)
+            // Dépense ou remboursement : on choisit l'enveloppe, la note reste facultative.
+            FlowRow(
+                Modifier.fillMaxWidth().selectableGroup(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                state.categories.forEach { category ->
+                    CategoryChip(category, category.id == state.selectedCategoryId) { onCategorySelected(category.id) }
+                }
+            }
+            if (state.detailsOpen) {
+                OutlinedTextField(
+                    value = state.note,
+                    onValueChange = onNoteChange,
+                    label = { Text("Note · $dayText") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            } else {
+                TextButton(onClick = onOpenDetails, modifier = Modifier.fillMaxWidth()) {
+                    Text("$dayText · ajouter une note", color = TextStrong)
+                }
             }
         }
 
@@ -134,7 +147,11 @@ fun QuickEntryContent(
                 Icon(painterResource(R.drawable.ic_trash), contentDescription = null, tint = TextStrong, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    if (state.type == TransactionType.REFUND) "Supprimer ce remboursement" else "Supprimer cette dépense",
+                    when (state.type) {
+                        TransactionType.REFUND -> "Supprimer ce remboursement"
+                        TransactionType.INCOME -> "Supprimer ce revenu"
+                        TransactionType.EXPENSE -> "Supprimer cette dépense"
+                    },
                     color = TextStrong,
                 )
             }
@@ -148,7 +165,11 @@ private fun TypeToggle(type: TransactionType, onChange: (TransactionType) -> Uni
         Modifier.clip(RoundedCornerShape(12.dp)).background(SurfaceSoft).padding(3.dp).selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        listOf(TransactionType.EXPENSE to "Dépense", TransactionType.REFUND to "Remboursement").forEach { (value, label) ->
+        listOf(
+            TransactionType.EXPENSE to "Dépense",
+            TransactionType.REFUND to "Remboursement",
+            TransactionType.INCOME to "Revenu",
+        ).forEach { (value, label) ->
             val selected = value == type
             Box(
                 Modifier.height(44.dp).clip(RoundedCornerShape(9.dp))
@@ -166,7 +187,7 @@ private fun TypeToggle(type: TransactionType, onChange: (TransactionType) -> Uni
 @Composable
 private fun AmountDisplay(state: QuickEntryState) {
     val empty = state.amount.raw.isEmpty()
-    val prefix = if (state.type == TransactionType.REFUND && !empty) "+" else ""
+    val prefix = if (state.type != TransactionType.EXPENSE && !empty) "+" else ""
     val spoken = if (empty) "Montant vide" else "Montant : ${state.amount.money.format()}"
     Row(
         Modifier.fillMaxWidth().clearAndSetSemantics {

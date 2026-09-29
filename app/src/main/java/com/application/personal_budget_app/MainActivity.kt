@@ -1,7 +1,6 @@
 package com.application.personal_budget_app
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
@@ -12,31 +11,45 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.fragment.app.FragmentActivity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.application.personal_budget_app.domain.onboarding.StartChoice
 import com.application.personal_budget_app.ui.AppViewModel
 import com.application.personal_budget_app.ui.BudgetAppRoot
+import com.application.personal_budget_app.ui.lock.AppLockGate
 import com.application.personal_budget_app.ui.onboarding.OnboardingScreen
 import com.application.personal_budget_app.ui.theme.Background
 import com.application.personal_budget_app.ui.theme.PersonalbudgetappTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/** FragmentActivity (et non ComponentActivity) : BiometricPrompt en a besoin. */
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             PersonalbudgetappTheme {
                 val appViewModel: AppViewModel = hiltViewModel()
-                val onboardingDone by appViewModel.onboardingDone.collectAsStateWithLifecycle()
+                val settings by appViewModel.settings.collectAsStateWithLifecycle()
                 var openBudgetSetup by rememberSaveable { mutableStateOf(false) }
+                var justOnboarded by rememberSaveable { mutableStateOf(false) }
 
-                when (onboardingDone) {
-                    null -> Box(Modifier.fillMaxSize().background(Background))
-                    false -> OnboardingScreen(onChoiceMade = { openBudgetSetup = it == StartChoice.CONFIGURE })
-                    true -> BudgetAppRoot(openBudgetSetup = openBudgetSetup)
+                val s = settings
+                when {
+                    s == null -> Box(Modifier.fillMaxSize().background(Background))
+                    !s.onboardingDone -> OnboardingScreen(onChoiceMade = { choice ->
+                        openBudgetSetup = choice == StartChoice.CONFIGURE
+                        justOnboarded = true   // on vient de s'authentifier : pas de 2e demande tout de suite
+                    })
+                    else -> AppLockGate(
+                        enabled = s.lockEnabled,
+                        delayMinutes = s.lockDelayMinutes,
+                        startUnlocked = justOnboarded,
+                    ) {
+                        BudgetAppRoot(openBudgetSetup = openBudgetSetup)
+                    }
                 }
             }
         }

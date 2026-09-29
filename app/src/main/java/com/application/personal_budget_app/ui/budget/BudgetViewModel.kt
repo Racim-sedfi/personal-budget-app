@@ -43,7 +43,11 @@ class BudgetViewModel @Inject constructor(
             budget.observeIncomes(), budget.observeSavings(),
             budget.observeFixedCharges(), categories.observeAll(),
         ) { incomes, savings, charges, cats ->
-            BudgetOverview(appSettings.mode, cycle, incomes, savings, charges, cats)
+            BudgetOverview(
+                appSettings.mode, cycle, incomes, savings,
+                charges.map { it.rolledTo(cycle.start) }.sortedBy { it.nextDueDate },
+                cats,
+            )
         }
     }
 

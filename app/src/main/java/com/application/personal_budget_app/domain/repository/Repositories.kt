@@ -41,6 +41,8 @@ interface SettingsRepository {
     suspend fun setCycleStartDay(day: Int)
     suspend fun setMode(mode: BudgetMode)
     suspend fun completeOnboarding()
+    suspend fun setLockEnabled(enabled: Boolean)
+    suspend fun setLockDelay(minutes: Int)
 }
 
 interface ClosedCycleRepository {

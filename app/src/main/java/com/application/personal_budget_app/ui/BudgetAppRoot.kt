@@ -17,10 +17,9 @@ import com.application.personal_budget_app.ui.entry.QuickEntrySheet
 import com.application.personal_budget_app.ui.entry.QuickEntryViewModel
 import com.application.personal_budget_app.ui.navigation.AppNavHost
 import com.application.personal_budget_app.ui.navigation.BudgetBottomBar
-import com.application.personal_budget_app.ui.navigation.BudgetRoute
 import com.application.personal_budget_app.ui.navigation.BudgetSetupRoute
 import com.application.personal_budget_app.ui.navigation.CycleClosingRoute
-import com.application.personal_budget_app.ui.navigation.navigateToTopLevel
+import com.application.personal_budget_app.ui.navigation.SettingsRoute
 import java.time.LocalDate
 
 @Composable
@@ -43,9 +42,6 @@ fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
 
     // Pas de barre du bas pendant l'assistant : il est plein écran.
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val inSetup = backStackEntry?.destination?.let {
-        it.hasRoute<BudgetSetupRoute>() || it.hasRoute<CycleClosingRoute>()
-    } == true
 
     val openEntry: (LocalDate?) -> Unit = { date ->
         entryViewModel.start(date)
@@ -56,21 +52,29 @@ fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
         entryViewModel.startEdit(transaction)
         showEntry = true
     }
-
+    val inSetup = backStackEntry?.destination?.let {
+        it.hasRoute<BudgetSetupRoute>() || it.hasRoute<CycleClosingRoute>() || it.hasRoute<SettingsRoute>()
+    } == true
     // Après chaque ajout, modification ou suppression : on ferme la sheet et on propose d'annuler.
     LaunchedEffect(entryViewModel) {
         entryViewModel.events.collect { event ->
             showEntry = false
             val isRefund = event.transaction.type == TransactionType.REFUND
-            val subject = if (isRefund) "Remboursement" else "Dépense"
-            val agreement = if (isRefund) "" else "e" // ajouté / ajoutée
+            val tx = event.transaction
+            val subject = when (tx.type) {
+                TransactionType.EXPENSE -> "Dépense"
+                TransactionType.REFUND -> "Remboursement"
+                TransactionType.INCOME -> "Revenu"
+            }
+            val agreement = if (tx.type == TransactionType.EXPENSE) "e" else "" // ajoutée / ajouté
             val verb = when (event) {
                 is EntryEvent.Added -> "ajouté"
                 is EntryEvent.Updated -> "modifié"
                 is EntryEvent.Deleted -> "supprimé"
             }
+            val detail = if (tx.isIncome) tx.note else event.categoryName
             val result = snackbarHostState.showSnackbar(
-                message = "$subject $verb$agreement · ${event.transaction.amount.format()} · ${event.categoryName}",
+                message = listOfNotNull("$subject $verb$agreement", tx.amount.format(), detail).joinToString(" · "),
                 actionLabel = "Annuler",
                 duration = SnackbarDuration.Long,
             )

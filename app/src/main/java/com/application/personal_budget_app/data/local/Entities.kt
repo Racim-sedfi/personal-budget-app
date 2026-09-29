@@ -30,7 +30,7 @@ data class TransactionEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val amountCents: Long,
     val type: TransactionType,   // Room stocke le nom de l'enum
-    val categoryId: Long,
+    val categoryId: Long?,
     val date: LocalDate,
     val note: String?,
 )

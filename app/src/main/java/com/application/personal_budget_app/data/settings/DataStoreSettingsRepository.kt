@@ -17,6 +17,8 @@ class DataStoreSettingsRepository @Inject constructor(
         val START_DAY = intPreferencesKey("cycle_start_day")
         val MODE = stringPreferencesKey("budget_mode")
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
+        val LOCK_ENABLED = booleanPreferencesKey("lock_enabled")
+        val LOCK_DELAY = intPreferencesKey("lock_delay_minutes")
     }
 
     override val settings: Flow<AppSettings> = store.data.map { prefs ->
@@ -24,6 +26,8 @@ class DataStoreSettingsRepository @Inject constructor(
             cycleStartDay = prefs[Keys.START_DAY] ?: 1,
             mode = prefs[Keys.MODE]?.let { BudgetMode.valueOf(it) } ?: BudgetMode.OBSERVATION,
             onboardingDone = prefs[Keys.ONBOARDING_DONE] ?: false,
+            lockEnabled = prefs[Keys.LOCK_ENABLED] ?: false,
+            lockDelayMinutes = prefs[Keys.LOCK_DELAY] ?: 1,
         )
     }
 
@@ -38,5 +42,14 @@ class DataStoreSettingsRepository @Inject constructor(
 
     override suspend fun completeOnboarding() {
         store.edit { it[Keys.ONBOARDING_DONE] = true }
+    }
+
+    override suspend fun setLockEnabled(enabled: Boolean) {
+        store.edit { it[Keys.LOCK_ENABLED] = enabled }
+    }
+
+    override suspend fun setLockDelay(minutes: Int) {
+        require(minutes >= 0)
+        store.edit { it[Keys.LOCK_DELAY] = minutes }
     }
 }

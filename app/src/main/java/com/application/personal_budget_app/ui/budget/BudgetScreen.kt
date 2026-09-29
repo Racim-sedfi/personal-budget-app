@@ -66,10 +66,10 @@ fun BudgetContent(
         item { SectionHeader("Charges fixes", "Ce cycle ${overview.chargesThisCycle.format()}", side) }
         items(overview.charges, key = { "charge-${it.id}" }) { charge ->
             val monthly = charge.frequency == Frequency.MONTHLY
-            val inCycle = monthly || charge.nextDueDate in overview.cycle
+            val inCycle = charge.isDueIn(overview.cycle)
             BudgetRow(
                 title = charge.name,
-                subtitle = if (monthly) "le ${charge.nextDueDate.dayOfMonth}" else "prochaine le ${charge.nextDueDate.shortFr()}",
+                subtitle = if (monthly) "le ${charge.nextDueDate.dayOfMonth}" else "échéance le ${charge.nextDueDate.shortFr()}",
                 frequency = charge.frequency,
                 amount = charge.amount.format(),
                 modifier = side,

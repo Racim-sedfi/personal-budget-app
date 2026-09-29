@@ -92,4 +92,18 @@ class CycleReviewTest {
         assertNull(cycleToClose(current, previousClosed = true, previousHasActivity = true))
         assertNull(cycleToClose(current, previousClosed = false, previousHasActivity = false))
     }
+
+    @Test fun `extra income adds to the leftover, not to spending`() {
+        val gift = Transaction(amount = Money.euros(50), type = TransactionType.INCOME, categoryId = null, date = LocalDate.of(2026, 10, 3))
+        val r = buildCycleReview(
+            cycle = cycle, mode = BudgetMode.BUDGET, transactions = transactions + gift, noExpenseDays = allDays,
+            categories = categories,
+            incomes = listOf(Income(name = "Salaire", amount = Money.euros(1850), dayOfMonth = 25)),
+            savings = listOf(PlannedSaving(label = "Livret", amount = Money.euros(150), dayOfMonth = 26)),
+            charges = listOf(FixedCharge(name = "Charges", amount = Money.euros(743), frequency = Frequency.MONTHLY, nextDueDate = LocalDate.of(2026, 10, 1))),
+            carryIn = Money.ZERO,
+        )
+        assertEquals(Money.euros(601, 40), r.spent)
+        assertEquals(Money.euros(405, 60), r.leftover)
+    }
 }
