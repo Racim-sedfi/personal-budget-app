@@ -71,7 +71,7 @@ fun buildCycleReview(
         mode = mode,
         spent = inCycle.netSpent(),
         spendable = if (mode == BudgetMode.BUDGET) {
-            income - savings.map { it.amount }.sum() - charges.totalFor(cycle) + carryIn
+            income - savings.map { it.amount }.sum() - charges.totalFor(cycle) + carryIn + inCycle.extraIncome()
         } else null,
         envelopes = categories.map { EnvelopeLine(it, byCategory[it.id] ?: Money.ZERO) },
         // Le cycle est fini : tous ses jours comptent.

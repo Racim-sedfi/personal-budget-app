@@ -61,7 +61,9 @@ fun buildHomeSummary(
         cycle = cycle,
         today = today,
         spent = spent,
-        snapshot = if (isBudget) BudgetSnapshot(incomes.map { it.amount }.sum(), savingsTotal, chargesTotal, spent, carryOver) else null,
+        snapshot = if (isBudget) BudgetSnapshot(
+            incomes.map { it.amount }.sum(), savingsTotal, chargesTotal, spent, carryOver, inCycle.extraIncome(),
+        ) else null,
         envelopes = if (isBudget) lines else lines.sortedByDescending { it.spent },
         completion = completion(cycle, today, inCycle.map { it.date }.toSet(), noExpenseDays),
         hasTransactions = inCycle.isNotEmpty(),

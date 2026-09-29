@@ -133,4 +133,13 @@ class QuickEntryViewModelTest {
         vm.undo(events.single())
         assertEquals(existing, repo.added.single())
     }
+
+    @Test fun `income is saved without category`() {
+        vm.onTypeChange(TransactionType.INCOME)
+        typeAmount(KeypadKey.Digit(5), KeypadKey.Digit(0))
+        vm.save()
+        val tx = repo.added.single()
+        assertEquals(TransactionType.INCOME, tx.type)
+        assertNull(tx.categoryId)
+    }
 }

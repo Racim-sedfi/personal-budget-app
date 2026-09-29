@@ -236,6 +236,7 @@ private fun CycleSection(summary: HomeSummary, modifier: Modifier) {
         CycleLine("Charges fixes", summary.fixedCharges.format())
         summary.nextFixedCharge?.let { CycleLine("Prochaine charge", "${it.name} · ${it.nextDueDate.shortFr()}", last = true) }
         summary.snapshot?.carryOver?.takeIf { it.cents > 0 }?.let { CycleLine("Report du cycle précédent", "+ ${it.format()}") }
+        summary.snapshot?.extraIncome?.takeIf { it.cents > 0 }?.let { CycleLine("Revenus imprévus", "+ ${it.format()}") }
     }
 }
 

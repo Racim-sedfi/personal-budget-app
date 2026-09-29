@@ -36,4 +36,10 @@ class BudgetSnapshotTest {
         val snapshot = BudgetSnapshot(Money.euros(1850), Money.euros(150), Money.euros(743), Money.ZERO, carryOver = Money.euros(355, 60))
         assertEquals(Money.euros(1312, 60), snapshot.spendable)
     }
+
+    @Test fun `extra income increases what can be spent`() {
+        val snapshot = BudgetSnapshot(Money.euros(1850), Money.euros(150), Money.euros(743), Money.ZERO, extraIncome = Money.euros(50))
+        assertEquals(Money.euros(1007), snapshot.spendable)
+    }
+
 }
