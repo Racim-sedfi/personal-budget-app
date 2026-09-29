@@ -30,6 +30,7 @@ import com.application.personal_budget_app.ui.components.categoryIcon
 import com.application.personal_budget_app.ui.format.withWeekdayFr
 import com.application.personal_budget_app.ui.theme.*
 import java.time.LocalDate
+import com.application.personal_budget_app.ui.format.CurrencyState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -199,7 +200,7 @@ private fun AmountDisplay(state: QuickEntryState) {
     ) {
         Text(prefix + state.amount.display, style = MaterialTheme.typography.displayMedium, color = if (empty) TextSecondary else Ink, maxLines = 1)
         Spacer(Modifier.width(6.dp))
-        Text("€", fontSize = 30.sp, color = TextSecondary, modifier = Modifier.padding(bottom = 10.dp))
+        Text(CurrencyState.current.symbol, fontSize = 30.sp, color = TextSecondary, modifier = Modifier.padding(bottom = 10.dp))
     }
 }
 

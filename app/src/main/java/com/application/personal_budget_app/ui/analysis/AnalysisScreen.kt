@@ -31,6 +31,7 @@ import com.application.personal_budget_app.ui.format.label
 import com.application.personal_budget_app.ui.format.monthShortFr
 import com.application.personal_budget_app.ui.theme.*
 import java.time.LocalDate
+import com.application.personal_budget_app.ui.format.CurrencyState
 
 /** Palette de l'anneau : bleus et violets, jamais de rouge ni de vert. */
 private val ShareColors = listOf(
@@ -191,7 +192,7 @@ private fun EvolutionCard(a: Analysis, modifier: Modifier) {
         "${stat.cycle.start.monthShortFr()} ${stat.spent.format()} $status".trim()
     }
 
-    AnalysisCard("Évolution sur ${a.cycles.size} cycles", "Dépenses par cycle, en euros", modifier) {
+    AnalysisCard("Évolution sur ${a.cycles.size} cycles", "Dépenses par cycle, en ${CurrencyState.current.symbol}", modifier) {
         Box(
             Modifier.fillMaxWidth().height(barMax + 20.dp)
                 .clearAndSetSemantics { contentDescription = "Dépenses par cycle : $spoken" },
