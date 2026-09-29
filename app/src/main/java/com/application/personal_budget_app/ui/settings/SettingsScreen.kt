@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.application.personal_budget_app.R
+import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.model.AppSettings
+import com.application.personal_budget_app.ui.components.CurrencyPicker
 import com.application.personal_budget_app.ui.lock.authenticate
 import com.application.personal_budget_app.ui.lock.canUseAppLock
 import com.application.personal_budget_app.ui.lock.findFragmentActivity
@@ -52,6 +54,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             }
         },
         onDelay = viewModel::setLockDelay,
+        onCurrency = viewModel::setCurrency,
     )
 }
 
@@ -62,6 +65,7 @@ fun SettingsContent(
     onBack: () -> Unit,
     onToggleLock: (Boolean) -> Unit,
     onDelay: (Int) -> Unit,
+    onCurrency: (AppCurrency) -> Unit,
 ) {
     Column(Modifier.fillMaxSize().background(Background).statusBarsPadding().navigationBarsPadding()) {
         Row(Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -119,7 +123,14 @@ fun SettingsContent(
                     }
                 }
             }
-
+            SettingsSection("Monnaie") {
+                Text(
+                    "Change seulement le symbole affiché : tes montants ne sont pas convertis.",
+                    style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                CurrencyPicker(settings.currency, onCurrency)
+            }
             SettingsSection("Cycle") {
                 Row(Modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("Jour de début du cycle", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
@@ -156,7 +167,7 @@ private fun SettingsPreview() {
     PersonalbudgetappTheme {
         SettingsContent(
             settings = AppSettings(cycleStartDay = 25, onboardingDone = true, lockEnabled = true, lockDelayMinutes = 1),
-            lockAvailable = true, onBack = {}, onToggleLock = {}, onDelay = {},
+            lockAvailable = true, onBack = {}, onToggleLock = {}, onDelay = {}, onCurrency = {},
         )
     }
 }
