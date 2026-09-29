@@ -43,6 +43,7 @@ interface SettingsRepository {
     suspend fun completeOnboarding()
     suspend fun setLockEnabled(enabled: Boolean)
     suspend fun setLockDelay(minutes: Int)
+    suspend fun setCurrency(currency: AppCurrency)
 }
 
 interface ClosedCycleRepository {

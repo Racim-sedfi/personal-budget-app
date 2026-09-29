@@ -2,6 +2,7 @@ package com.application.personal_budget_app.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.model.AppSettings
 import com.application.personal_budget_app.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,5 +26,9 @@ class SettingsViewModel @Inject constructor(
 
     fun setLockDelay(minutes: Int) {
         viewModelScope.launch { settings.setLockDelay(minutes) }
+    }
+
+    fun setCurrency(currency: AppCurrency) {
+        viewModelScope.launch { settings.setCurrency(currency) }
     }
 }

@@ -24,6 +24,7 @@ import com.application.personal_budget_app.ui.theme.*
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import com.application.personal_budget_app.ui.format.CurrencyState
 
 /** Affiche le formulaire ouvert dans le ViewModel, s'il y en a un. Partagé par l'écran Budget et l'assistant. */
 @Composable
@@ -223,7 +224,7 @@ private fun SheetTitle(text: String) {
 private fun AmountField(value: String, onValueChange: (String) -> Unit, isError: Boolean, label: String = "Montant") {
     OutlinedTextField(
         value = value, onValueChange = onValueChange,
-        label = { Text(label) }, suffix = { Text("€") },
+        label = { Text(label) }, suffix = { Text(CurrencyState.current.symbol) },
         singleLine = true, isError = isError,
         supportingText = if (isError) { { Text("Par exemple 650 ou 48,90") } } else null,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),

@@ -53,6 +53,8 @@ class BudgetOverviewTest {
         assertEquals(Money.euros(48, 90), parseAmount("48,9"))
         assertEquals(Money.euros(12, 50), parseAmount("12.50"))
         assertEquals(Money.euros(1650), parseAmount("1 650,00 €"))
+        assertEquals(Money.euros(12, 50), parseAmount("12,50 CHF"))
+        assertEquals(Money.euros(1650), parseAmount("1 650 DH"))
     }
 
     @Test fun `rejects invalid amounts`() {

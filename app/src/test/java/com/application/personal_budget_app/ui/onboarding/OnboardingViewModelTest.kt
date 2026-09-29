@@ -1,5 +1,6 @@
 package com.application.personal_budget_app.ui.onboarding
 
+import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.model.AppSettings
 import com.application.personal_budget_app.domain.model.BudgetMode
 import com.application.personal_budget_app.domain.onboarding.OnboardingStep
@@ -24,6 +25,7 @@ private class FakeSettings : SettingsRepository {
     override suspend fun completeOnboarding() { calls += "done" }
     override suspend fun setLockEnabled(enabled: Boolean) { calls += "lock=$enabled" }
     override suspend fun setLockDelay(minutes: Int) = Unit
+    override suspend fun setCurrency(currency: AppCurrency) { calls += "currency=${currency.code}" }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -54,8 +56,9 @@ class OnboardingViewModelTest {
 
     @Test fun `finish saves everything, onboarding flag last`() {
         vm.pickStartDay(25)
+        vm.pickCurrency(AppCurrency.MAD)
         vm.finish()
-        assertEquals(listOf("startDay=25", "mode=OBSERVATION", "done"), settings.calls)
+        assertEquals(listOf("startDay=25", "currency=MAD", "mode=OBSERVATION", "done"), settings.calls)
     }
 
     @Test fun `double tap on finish saves only once`() {
@@ -64,7 +67,8 @@ class OnboardingViewModelTest {
     }
 
     @Test fun `finish can enable the lock before completing`() {
+        vm.pickCurrency(AppCurrency.EUR)
         vm.finish(enableLock = true)
-        assertEquals(listOf("startDay=1", "mode=OBSERVATION", "lock=true", "done"), settings.calls)
+        assertEquals(listOf("startDay=1", "currency=EUR", "mode=OBSERVATION", "lock=true", "done"), settings.calls)
     }
 }

@@ -17,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.application.personal_budget_app.domain.onboarding.StartChoice
 import com.application.personal_budget_app.ui.AppViewModel
 import com.application.personal_budget_app.ui.BudgetAppRoot
+import com.application.personal_budget_app.ui.format.CurrencyState
 import com.application.personal_budget_app.ui.lock.AppLockGate
 import com.application.personal_budget_app.ui.onboarding.OnboardingScreen
 import com.application.personal_budget_app.ui.theme.Background
@@ -28,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CurrencyState.install()
         enableEdgeToEdge()
         setContent {
             PersonalbudgetappTheme {
