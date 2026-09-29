@@ -28,7 +28,7 @@ data class QuickEntryState(
     val editing: Transaction? = null,
 ) {
     val isEditing: Boolean get() = editing != null
-    val canSave: Boolean get() = amount.isValid && selectedCategoryId != null
+    val canSave: Boolean get() = amount.isValid && (type == TransactionType.INCOME || selectedCategoryId != null)
 }
 
 /** Ce qui vient de se passer, avec de quoi l'annuler. */
@@ -81,7 +81,7 @@ class QuickEntryViewModel @Inject constructor(
             it.copy(
                 date = transaction.date, isToday = transaction.date == LocalDate.now(clock),
                 amount = AmountInput.from(transaction.amount), type = transaction.type,
-                selectedCategoryId = transaction.categoryId, note = transaction.note.orEmpty(),
+                selectedCategoryId = transaction.categoryId ?: it.selectedCategoryId,
                 detailsOpen = transaction.note != null, editing = transaction,
             )
         }
@@ -95,8 +95,8 @@ class QuickEntryViewModel @Inject constructor(
 
     fun save() {
         val s = _state.value
-        val categoryId = s.selectedCategoryId
-        if (!s.canSave || categoryId == null) return
+        if (!s.canSave) return
+        val categoryId = if (s.type == TransactionType.INCOME) null else s.selectedCategoryId
         val transaction = Transaction(
             id = s.editing?.id ?: 0,
             amount = s.amount.money,
@@ -138,6 +138,7 @@ class QuickEntryViewModel @Inject constructor(
         }
     }
 
-    private fun categoryName(id: Long): String =
-        _state.value.categories.firstOrNull { it.id == id }?.name ?: "Sans catégorie"
+    private fun categoryName(id: Long?): String =
+        if (id == null) "Revenu imprévu"
+        else _state.value.categories.firstOrNull { it.id == id }?.name ?: "Sans catégorie"
 }

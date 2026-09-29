@@ -171,8 +171,22 @@ private fun DaySection(
 
 @Composable
 private fun TransactionRow(tx: Transaction, category: Category?, onClick: () -> Unit) {
-    val isRefund = tx.type == TransactionType.REFUND
     val categoryName = category?.name ?: "Sans catégorie"
+    val moneyIn = tx.type != TransactionType.EXPENSE   // remboursement ou revenu : l'argent rentre
+
+    val (title, subtitle) = when (tx.type) {
+        TransactionType.EXPENSE -> (tx.note ?: categoryName) to (if (tx.note != null) categoryName else null)
+        TransactionType.REFUND -> (tx.note ?: categoryName) to "Remboursement · $categoryName"
+        TransactionType.INCOME -> (tx.note ?: "Revenu imprévu") to (if (tx.note != null) "Revenu imprévu" else null)
+    }
+    val icon = when (tx.type) {
+        TransactionType.EXPENSE -> categoryIcon(category?.iconKey.orEmpty())
+        TransactionType.REFUND -> R.drawable.ic_refund
+        TransactionType.INCOME -> R.drawable.ic_income
+    }
+    val amountText = (if (moneyIn) "+\u00A0" else "−\u00A0") + tx.amount.format()   // espace insécable
+    val spokenAmount = (if (moneyIn) "plus " else "moins ") + tx.amount.format()
+
     Row(
         Modifier.fillMaxWidth().heightIn(min = 56.dp)
             .clip(RoundedCornerShape(12.dp))
@@ -181,22 +195,24 @@ private fun TransactionRow(tx: Transaction, category: Category?, onClick: () -> 
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Box(
-            Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(if (isRefund) RefundBg else SurfaceSoft),
+            Modifier.size(36.dp).clip(RoundedCornerShape(10.dp)).background(if (moneyIn) RefundBg else SurfaceSoft),
             contentAlignment = Alignment.Center,
         ) {
-            val icon = if (isRefund) R.drawable.ic_refund else categoryIcon(category?.iconKey.orEmpty())
-            Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(18.dp))
+            Icon(
+                painterResource(icon), contentDescription = null,
+                tint = if (moneyIn) CalmBlueDark else Ink,
+                modifier = Modifier.size(18.dp),
+            )
         }
         Column(Modifier.weight(1f)) {
-            Text(tx.note ?: categoryName, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-            when {
-                isRefund -> Text("Remboursement · $categoryName", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-                tx.note != null -> Text(categoryName, style = MaterialTheme.typography.bodySmall, color = TextSecondary)
-            }
+            Text(title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+            subtitle?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = TextSecondary) }
         }
         Text(
-            (if (isRefund) "+" else "") + tx.amount.format(),
+            amountText,
             style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
+            color = if (moneyIn) CalmBlueDark else Ink,
+            modifier = Modifier.semantics { contentDescription = spokenAmount },
         )
     }
 }
@@ -272,12 +288,13 @@ private fun HistoryPreview() {
     val today = LocalDate.of(2026, 10, 12)
     val cycle = BudgetCycle.containing(today, 25)
     fun d(day: Int) = LocalDate.of(2026, 10, day)
-    fun tx(id: Long, day: Int, cents: Long, cat: Long, note: String?, type: TransactionType = TransactionType.EXPENSE) =
+    fun tx(id: Long, day: Int, cents: Long, cat: Long?, note: String?, type: TransactionType = TransactionType.EXPENSE) =
         Transaction(id, Money(cents), type, cat, d(day), note)
     val transactions = listOf(
         tx(1, 10, 3800, 4, "Place de concert"), tx(2, 10, 1650, 2, "Pizzeria"), tx(3, 10, 2340, 1, "Carrefour City"),
         tx(4, 8, 1735, 3, "Carnet de tickets"), tx(5, 8, 1200, 2, "Part de Léa", TransactionType.REFUND),
         tx(6, 6, 3180, 1, "Lidl"), tx(7, 6, 1200, 6, "Pharmacie"),
+        tx(8, 11, 5000, null, "Cadeau de mamie", TransactionType.INCOME),
     )
     val noExpense = setOf(d(11))
     val categories = listOf(

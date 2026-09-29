@@ -134,7 +134,11 @@ fun QuickEntryContent(
                 Icon(painterResource(R.drawable.ic_trash), contentDescription = null, tint = TextStrong, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    if (state.type == TransactionType.REFUND) "Supprimer ce remboursement" else "Supprimer cette dépense",
+                    when (state.type) {
+                        TransactionType.REFUND -> "Supprimer ce remboursement"
+                        TransactionType.INCOME -> "Supprimer ce revenu"
+                        TransactionType.EXPENSE -> "Supprimer cette dépense"
+                    },
                     color = TextStrong,
                 )
             }
@@ -148,7 +152,11 @@ private fun TypeToggle(type: TransactionType, onChange: (TransactionType) -> Uni
         Modifier.clip(RoundedCornerShape(12.dp)).background(SurfaceSoft).padding(3.dp).selectableGroup(),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        listOf(TransactionType.EXPENSE to "Dépense", TransactionType.REFUND to "Remboursement").forEach { (value, label) ->
+        listOf(
+            TransactionType.EXPENSE to "Dépense",
+            TransactionType.REFUND to "Remboursement",
+            TransactionType.INCOME to "Revenu",
+        ).forEach { (value, label) ->
             val selected = value == type
             Box(
                 Modifier.height(44.dp).clip(RoundedCornerShape(9.dp))
@@ -166,7 +174,7 @@ private fun TypeToggle(type: TransactionType, onChange: (TransactionType) -> Uni
 @Composable
 private fun AmountDisplay(state: QuickEntryState) {
     val empty = state.amount.raw.isEmpty()
-    val prefix = if (state.type == TransactionType.REFUND && !empty) "+" else ""
+    val prefix = if (state.type != TransactionType.EXPENSE && !empty) "+" else ""
     val spoken = if (empty) "Montant vide" else "Montant : ${state.amount.money.format()}"
     Row(
         Modifier.fillMaxWidth().clearAndSetSemantics {

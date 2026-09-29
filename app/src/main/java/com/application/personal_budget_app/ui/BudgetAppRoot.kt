@@ -62,15 +62,21 @@ fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
         entryViewModel.events.collect { event ->
             showEntry = false
             val isRefund = event.transaction.type == TransactionType.REFUND
-            val subject = if (isRefund) "Remboursement" else "Dépense"
-            val agreement = if (isRefund) "" else "e" // ajouté / ajoutée
+            val tx = event.transaction
+            val subject = when (tx.type) {
+                TransactionType.EXPENSE -> "Dépense"
+                TransactionType.REFUND -> "Remboursement"
+                TransactionType.INCOME -> "Revenu"
+            }
+            val agreement = if (tx.type == TransactionType.EXPENSE) "e" else "" // ajoutée / ajouté
             val verb = when (event) {
                 is EntryEvent.Added -> "ajouté"
                 is EntryEvent.Updated -> "modifié"
                 is EntryEvent.Deleted -> "supprimé"
             }
+            val detail = if (tx.isIncome) tx.note else event.categoryName
             val result = snackbarHostState.showSnackbar(
-                message = "$subject $verb$agreement · ${event.transaction.amount.format()} · ${event.categoryName}",
+                message = listOfNotNull("$subject $verb$agreement", tx.amount.format(), detail).joinToString(" · "),
                 actionLabel = "Annuler",
                 duration = SnackbarDuration.Long,
             )
