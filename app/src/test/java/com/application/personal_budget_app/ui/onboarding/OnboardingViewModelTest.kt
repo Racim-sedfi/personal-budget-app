@@ -1,5 +1,6 @@
 package com.application.personal_budget_app.ui.onboarding
 
+import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.model.AppSettings
 import com.application.personal_budget_app.domain.model.BudgetMode
 import com.application.personal_budget_app.domain.onboarding.OnboardingStep
@@ -24,6 +25,7 @@ private class FakeSettings : SettingsRepository {
     override suspend fun completeOnboarding() { calls += "done" }
     override suspend fun setLockEnabled(enabled: Boolean) { calls += "lock=$enabled" }
     override suspend fun setLockDelay(minutes: Int) = Unit
+    override suspend fun setCurrency(currency: AppCurrency) { calls += "currency=${currency.code}" }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
