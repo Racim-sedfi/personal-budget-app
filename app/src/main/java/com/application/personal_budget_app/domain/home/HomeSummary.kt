@@ -67,7 +67,7 @@ fun buildHomeSummary(
         hasTransactions = inCycle.isNotEmpty(),
         plannedSavings = savingsTotal,
         fixedCharges = chargesTotal,
-        nextFixedCharge = charges.filter { it.nextDueDate.isAfter(today) }.minByOrNull { it.nextDueDate },
+        nextFixedCharge = charges.map { it.rolledTo(today.plusDays(1)) }.minByOrNull { it.nextDueDate },
         cycleToClose = cycleToClose,
     )
 }
