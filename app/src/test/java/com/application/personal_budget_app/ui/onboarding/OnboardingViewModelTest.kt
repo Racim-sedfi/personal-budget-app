@@ -56,8 +56,9 @@ class OnboardingViewModelTest {
 
     @Test fun `finish saves everything, onboarding flag last`() {
         vm.pickStartDay(25)
+        vm.pickCurrency(AppCurrency.MAD)
         vm.finish()
-        assertEquals(listOf("startDay=25", "mode=OBSERVATION", "done"), settings.calls)
+        assertEquals(listOf("startDay=25", "currency=MAD", "mode=OBSERVATION", "done"), settings.calls)
     }
 
     @Test fun `double tap on finish saves only once`() {
@@ -66,7 +67,8 @@ class OnboardingViewModelTest {
     }
 
     @Test fun `finish can enable the lock before completing`() {
+        vm.pickCurrency(AppCurrency.EUR)
         vm.finish(enableLock = true)
-        assertEquals(listOf("startDay=1", "mode=OBSERVATION", "lock=true", "done"), settings.calls)
+        assertEquals(listOf("startDay=1", "currency=EUR", "mode=OBSERVATION", "lock=true", "done"), settings.calls)
     }
 }

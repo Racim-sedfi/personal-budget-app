@@ -35,8 +35,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.application.personal_budget_app.R
 import com.application.personal_budget_app.domain.cycle.BudgetCycle
+import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.onboarding.OnboardingStep
 import com.application.personal_budget_app.domain.onboarding.StartChoice
+import com.application.personal_budget_app.ui.components.CurrencyPicker
 import com.application.personal_budget_app.ui.format.cycleRule
 import com.application.personal_budget_app.ui.format.label
 import com.application.personal_budget_app.ui.lock.authenticate
@@ -62,6 +64,7 @@ fun OnboardingScreen(
         onNext = viewModel::next,
         onPickDay = viewModel::pickStartDay,
         onPickChoice = viewModel::pickChoice,
+        onPickCurrency = viewModel::pickCurrency,
         onFinish = {
             onChoiceMade(state.choice)
             viewModel.finish()
@@ -97,6 +100,7 @@ fun OnboardingContent(
     onFinish: () -> Unit,
     lockAvailable: Boolean = true,
     onEnableLock: () -> Unit = {},
+    onPickCurrency: (AppCurrency) -> Unit = {},
 ) {
     Column(
         Modifier.fillMaxSize().background(stepBackground(state.step))
@@ -117,9 +121,9 @@ fun OnboardingContent(
             ) {
                 when (step) {
                     OnboardingStep.PRIVACY -> PrivacyStep()
-                    OnboardingStep.CYCLE_START -> CycleStartStep(state.startDay, state.cycle, onPickDay)
                     OnboardingStep.START_CHOICE -> StartChoiceStep(state.choice, onPickChoice)
                     OnboardingStep.LOCK -> LockStep(lockAvailable)
+                    OnboardingStep.CYCLE_START -> CycleStartStep(state.startDay, state.cycle, onPickDay, state.currency, onPickCurrency)
                 }
             }
         }
@@ -204,7 +208,13 @@ private fun PrivacyStep() {
 // ---------- Étape 2 ----------
 
 @Composable
-private fun CycleStartStep(selected: Int, cycle: BudgetCycle, onPick: (Int) -> Unit) {
+private fun CycleStartStep(
+    selected: Int,
+    cycle: BudgetCycle,
+    onPick: (Int) -> Unit,
+    currency: AppCurrency,
+    onPickCurrency: (AppCurrency) -> Unit,
+) {
     StepHeader(OnboardingStep.CYCLE_START, "Quel jour commence ton mois budgétaire ?", "En général, le jour de ta paie.")
 
     Column(
@@ -243,6 +253,11 @@ private fun CycleStartStep(selected: Int, cycle: BudgetCycle, onPick: (Int) -> U
         Text("Ton cycle en cours", style = MaterialTheme.typography.bodySmall, color = TextSecondary)
         Text(cycle.label(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
         Text(cycleRule(selected), style = MaterialTheme.typography.bodySmall, color = TextStrong)
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text("Ta monnaie", style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
+        CurrencyPicker(currency, onPickCurrency)
     }
 }
 
