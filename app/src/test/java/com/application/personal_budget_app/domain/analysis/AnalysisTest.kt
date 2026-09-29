@@ -2,6 +2,7 @@ package com.application.personal_budget_app.domain.analysis
 
 import com.application.personal_budget_app.domain.cycle.BudgetCycle
 import com.application.personal_budget_app.domain.model.*
+import com.application.personal_budget_app.ui.analysis.insights
 import org.junit.Assert.*
 import org.junit.Test
 import java.time.LocalDate
@@ -78,5 +79,18 @@ class AnalysisTest {
         assertEquals(1, a.cycles.size)
         assertFalse(a.hasAverages)
         assertTrue(a.shares.isEmpty())
+    }
+
+    @Test fun `insights sum up the analysis`() {
+        val lines = analysis().insights()
+        assertEquals(3, lines.size)
+        assertTrue(lines[0].startsWith("En moyenne, Loisirs dépasse son plafond"))
+        assertTrue(lines[1].contains("de plus que tes plafonds"))   // 375 € en moyenne pour 310 € de plafonds
+        assertEquals("Tes charges fixes représentent 40 % de tes revenus.", lines[2])
+    }
+
+    @Test fun `no average insights without enough reliable cycles`() {
+        val lines = analysis(noExpense = emptySet()).insights()
+        assertEquals(listOf("Tes charges fixes représentent 40 % de tes revenus."), lines)
     }
 }
