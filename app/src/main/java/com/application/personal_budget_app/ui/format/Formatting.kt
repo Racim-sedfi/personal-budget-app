@@ -29,3 +29,9 @@ fun LocalDate.dayTitle(today: LocalDate): String = when (this) {
 fun cycleRule(startDay: Int): String =
     if (startDay == 1) "Du 1er au dernier jour du mois"
     else "Du $startDay au ${if (startDay - 1 == 1) "1er" else (startDay - 1).toString()} du mois suivant"
+
+
+private val monthShort = DateTimeFormatter.ofPattern("MMM", Locale.FRENCH)
+
+/** "sept.", "oct." */
+fun LocalDate.monthShortFr(): String = format(monthShort)

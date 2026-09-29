@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.application.personal_budget_app.domain.model.Transaction
+import com.application.personal_budget_app.ui.analysis.AnalysisScreen
 import com.application.personal_budget_app.ui.budget.BudgetScreen
 import com.application.personal_budget_app.ui.budget.BudgetSetupScreen
 import com.application.personal_budget_app.ui.closing.CycleClosingScreen
@@ -36,7 +37,12 @@ fun AppNavHost(
                 onEditTransaction = onEditTransaction,
             )
         }
-        composable<AnalysisRoute> { PlaceholderScreen("Analyse") }
+        composable<AnalysisRoute> {
+            AnalysisScreen(
+                onOpenHistory = { navController.navigateToTopLevel(HistoryRoute) },
+                onOpenBudget = { navController.navigateToTopLevel(BudgetRoute) },
+            )
+        }
         composable<BudgetRoute> {
             BudgetScreen(onOpenSetup = { navController.navigate(BudgetSetupRoute) })
         }
