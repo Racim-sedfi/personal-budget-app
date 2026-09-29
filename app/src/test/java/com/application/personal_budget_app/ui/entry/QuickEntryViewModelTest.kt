@@ -137,9 +137,19 @@ class QuickEntryViewModelTest {
     @Test fun `income is saved without category`() {
         vm.onTypeChange(TransactionType.INCOME)
         typeAmount(KeypadKey.Digit(5), KeypadKey.Digit(0))
+        vm.onNoteChange("Cadeau")
         vm.save()
         val tx = repo.added.single()
         assertEquals(TransactionType.INCOME, tx.type)
         assertNull(tx.categoryId)
+        assertEquals("Cadeau", tx.note)
+    }
+
+    @Test fun `income needs a label`() {
+        vm.onTypeChange(TransactionType.INCOME)
+        typeAmount(KeypadKey.Digit(5), KeypadKey.Digit(0))
+        assertFalse(vm.state.value.canSave)
+        vm.save()
+        assertTrue(repo.added.isEmpty())
     }
 }

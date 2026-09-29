@@ -13,6 +13,7 @@ import com.application.personal_budget_app.ui.closing.CycleClosingScreen
 import com.application.personal_budget_app.ui.components.PlaceholderScreen
 import com.application.personal_budget_app.ui.history.HistoryScreen
 import com.application.personal_budget_app.ui.home.HomeScreen
+import com.application.personal_budget_app.ui.settings.SettingsScreen
 import java.time.LocalDate
 
 @Composable
@@ -29,6 +30,7 @@ fun AppNavHost(
                 onCompleteDays = { navController.navigateToTopLevel(HistoryRoute) },
                 onEditBudget = { navController.navigateToTopLevel(BudgetRoute) },
                 onCloseCycle = { navController.navigate(CycleClosingRoute) },
+                onOpenSettings = { navController.navigate(SettingsRoute) },
             )
         }
         composable<HistoryRoute> {
@@ -64,5 +66,7 @@ fun AppNavHost(
                 },
             )
         }
+
+        composable<SettingsRoute> { SettingsScreen(onBack = { navController.popBackStack() }) }
     }
 }

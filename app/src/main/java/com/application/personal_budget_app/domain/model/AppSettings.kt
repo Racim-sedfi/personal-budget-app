@@ -6,4 +6,6 @@ data class AppSettings(
     val cycleStartDay: Int = 1,
     val mode: BudgetMode = BudgetMode.OBSERVATION,
     val onboardingDone: Boolean = false,
+    val lockEnabled: Boolean = false,
+    val lockDelayMinutes: Int = 1,   // 0 = immédiatement
 )
