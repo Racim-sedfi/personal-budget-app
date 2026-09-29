@@ -49,6 +49,7 @@ fun HomeScreen(
     onEditBudget: () -> Unit,
     onCloseCycle: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
+    onOpenSettings: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     when (val s = state) {
@@ -64,6 +65,7 @@ fun HomeContent(
     onCompleteDays: () -> Unit,
     onEditBudget: () -> Unit,
     onCloseCycle: () -> Unit,
+    onOpenSettings: () -> Unit = {},
 ) {
 
     val sidePadding = Modifier.padding(horizontal = 16.dp)
@@ -97,6 +99,7 @@ fun HomeContent(
             item { CycleSection(summary, sidePadding.padding(top = 16.dp)) }
         }
         item { Spacer(Modifier.height(24.dp)) }
+        item { HomeHeader(summary, onOpenSettings) }
     }
 }
 
@@ -121,7 +124,7 @@ private fun ClosingCard(ended: BudgetCycle, onClick: () -> Unit, modifier: Modif
 }
 
 @Composable
-private fun HomeHeader(summary: HomeSummary) {
+private fun HomeHeader(summary: HomeSummary, onOpenSettings: () -> Unit){
     val budget = summary.snapshot
     Column(
         Modifier.fillMaxWidth()
@@ -130,8 +133,16 @@ private fun HomeHeader(summary: HomeSummary) {
             .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 28.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
-        Text(summary.cycle.label(), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, color = OnGradient)
-
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                summary.cycle.label(),
+                style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium, color = OnGradient,
+                modifier = Modifier.weight(1f),
+            )
+            IconButton(onClick = onOpenSettings, modifier = Modifier.offset(x = 12.dp)) {
+                Icon(painterResource(R.drawable.ic_settings), contentDescription = "Paramètres", tint = Ink)
+            }
+        }
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 if (budget != null) "Il te reste" else "Tu as dépensé",

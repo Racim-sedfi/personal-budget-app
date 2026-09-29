@@ -17,10 +17,9 @@ import com.application.personal_budget_app.ui.entry.QuickEntrySheet
 import com.application.personal_budget_app.ui.entry.QuickEntryViewModel
 import com.application.personal_budget_app.ui.navigation.AppNavHost
 import com.application.personal_budget_app.ui.navigation.BudgetBottomBar
-import com.application.personal_budget_app.ui.navigation.BudgetRoute
 import com.application.personal_budget_app.ui.navigation.BudgetSetupRoute
 import com.application.personal_budget_app.ui.navigation.CycleClosingRoute
-import com.application.personal_budget_app.ui.navigation.navigateToTopLevel
+import com.application.personal_budget_app.ui.navigation.SettingsRoute
 import java.time.LocalDate
 
 @Composable
@@ -43,9 +42,6 @@ fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
 
     // Pas de barre du bas pendant l'assistant : il est plein écran.
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val inSetup = backStackEntry?.destination?.let {
-        it.hasRoute<BudgetSetupRoute>() || it.hasRoute<CycleClosingRoute>()
-    } == true
 
     val openEntry: (LocalDate?) -> Unit = { date ->
         entryViewModel.start(date)
@@ -56,7 +52,9 @@ fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
         entryViewModel.startEdit(transaction)
         showEntry = true
     }
-
+    val inSetup = backStackEntry?.destination?.let {
+        it.hasRoute<BudgetSetupRoute>() || it.hasRoute<CycleClosingRoute>() || it.hasRoute<SettingsRoute>()
+    } == true
     // Après chaque ajout, modification ou suppression : on ferme la sheet et on propose d'annuler.
     LaunchedEffect(entryViewModel) {
         entryViewModel.events.collect { event ->
