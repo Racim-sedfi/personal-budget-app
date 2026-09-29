@@ -18,11 +18,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.*
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +39,9 @@ import com.application.personal_budget_app.domain.onboarding.OnboardingStep
 import com.application.personal_budget_app.domain.onboarding.StartChoice
 import com.application.personal_budget_app.ui.format.cycleRule
 import com.application.personal_budget_app.ui.format.label
+import com.application.personal_budget_app.ui.lock.authenticate
+import com.application.personal_budget_app.ui.lock.canUseAppLock
+import com.application.personal_budget_app.ui.lock.findFragmentActivity
 import com.application.personal_budget_app.ui.theme.*
 import java.time.LocalDate
 
@@ -48,6 +53,9 @@ fun OnboardingScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     BackHandler(enabled = !state.step.isFirst) { viewModel.back() }
 
+    val context = LocalContext.current
+    val lockAvailable = remember { canUseAppLock(context) }
+
     OnboardingContent(
         state = state,
         onBack = viewModel::back,
@@ -58,6 +66,14 @@ fun OnboardingScreen(
             onChoiceMade(state.choice)
             viewModel.finish()
         },
+        lockAvailable = lockAvailable,
+        onEnableLock = {
+            // On vérifie tout de suite que l'authentification marche avant d'activer.
+            context.findFragmentActivity()?.authenticate("Activer le verrouillage") {
+                onChoiceMade(state.choice)
+                viewModel.finish(enableLock = true)
+            }
+        },
     )
 }
 
@@ -66,6 +82,7 @@ private fun stepBackground(step: OnboardingStep): Brush {
         OnboardingStep.PRIVACY -> Color(0xFFDDEBFF)
         OnboardingStep.CYCLE_START -> Color(0xFFE4E1FC)
         OnboardingStep.START_CHOICE -> Color(0xFFE4F1FF)
+        OnboardingStep.LOCK -> Color(0xFFECE7FF)
     }
     return Brush.verticalGradient(0f to top, 0.38f to Color(0xFFF3F5F9), 1f to Background)
 }
@@ -78,6 +95,8 @@ fun OnboardingContent(
     onPickDay: (Int) -> Unit,
     onPickChoice: (StartChoice) -> Unit,
     onFinish: () -> Unit,
+    lockAvailable: Boolean = true,
+    onEnableLock: () -> Unit = {},
 ) {
     Column(
         Modifier.fillMaxSize().background(stepBackground(state.step))
@@ -100,21 +119,15 @@ fun OnboardingContent(
                     OnboardingStep.PRIVACY -> PrivacyStep()
                     OnboardingStep.CYCLE_START -> CycleStartStep(state.startDay, state.cycle, onPickDay)
                     OnboardingStep.START_CHOICE -> StartChoiceStep(state.choice, onPickChoice)
+                    OnboardingStep.LOCK -> LockStep(lockAvailable)
                 }
             }
         }
 
-        Button(
-            onClick = if (state.step.isLast) onFinish else onNext,
-            enabled = !state.saving,
-            modifier = Modifier.fillMaxWidth().height(52.dp),
-            shape = RoundedCornerShape(14.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Background),
-        ) {
-            Text(
-                if (state.step.isLast) "Commencer" else "Continuer",
-                style = MaterialTheme.typography.labelLarge.copy(fontSize = 15.sp),
-            )
+        if (state.step == OnboardingStep.LOCK) {
+            LockActions(lockAvailable, state.saving, onEnableLock, onFinish)
+        } else {
+            OnboardingButton("Continuer", enabled = true, onClick = onNext)
         }
     }
 }
@@ -289,6 +302,60 @@ private fun ChoiceCard(
             Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
             Text(description, style = MaterialTheme.typography.bodyMedium, color = TextStrong)
         }
+    }
+}
+
+// ---------- Étape 4 ----------
+
+@Composable
+private fun LockStep(available: Boolean) {
+    Box(Modifier.fillMaxWidth().padding(top = 12.dp), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier.size(144.dp).clip(CircleShape).background(
+                Brush.linearGradient(listOf(Color(0xFFD6C6F6), Color(0xFFBFC8FA), Color(0xFFA9D6FF))),
+            ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Box(
+                Modifier.size(88.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.8f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(painterResource(R.drawable.ic_lock), contentDescription = null, tint = Ink, modifier = Modifier.size(44.dp))
+            }
+        }
+    }
+    StepHeader(
+        OnboardingStep.LOCK,
+        "Protège l'app avec ton empreinte ou ton visage.",
+        if (available) "Modifiable dans les Paramètres."
+        else "Aucun verrouillage n'est configuré sur ce téléphone. Tu pourras l'activer plus tard dans les Paramètres.",
+    )
+}
+
+@Composable
+private fun LockActions(available: Boolean, saving: Boolean, onEnableLock: () -> Unit, onFinish: () -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        if (available) {
+            OnboardingButton("Activer le verrouillage", enabled = !saving, onClick = onEnableLock)
+            TextButton(onClick = onFinish, enabled = !saving, modifier = Modifier.fillMaxWidth().height(48.dp)) {
+                Text("Plus tard", color = TextStrong)
+            }
+        } else {
+            OnboardingButton("Commencer", enabled = !saving, onClick = onFinish)
+        }
+    }
+}
+
+@Composable
+private fun OnboardingButton(label: String, enabled: Boolean, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier.fillMaxWidth().height(52.dp),
+        shape = RoundedCornerShape(14.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Background),
+    ) {
+        Text(label, style = MaterialTheme.typography.labelLarge.copy(fontSize = 15.sp))
     }
 }
 

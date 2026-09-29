@@ -41,12 +41,13 @@ class OnboardingViewModel @Inject constructor(
 
     fun pickChoice(choice: StartChoice) = _state.update { it.copy(choice = choice) }
 
-    fun finish() {
+    fun finish(enableLock: Boolean = false) {
         if (_state.value.saving) return // double appui
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
             settings.setCycleStartDay(_state.value.startDay)
             settings.setMode(BudgetMode.OBSERVATION) // le budget s'active depuis l'onglet Budget
+            if (enableLock) settings.setLockEnabled(true)
             settings.completeOnboarding()           // en dernier
         }
     }

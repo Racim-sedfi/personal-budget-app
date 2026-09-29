@@ -63,5 +63,8 @@ class OnboardingViewModelTest {
         assertEquals(1, settings.calls.count { it == "done" })
     }
 
-
+    @Test fun `finish can enable the lock before completing`() {
+        vm.finish(enableLock = true)
+        assertEquals(listOf("startDay=1", "mode=OBSERVATION", "lock=true", "done"), settings.calls)
+    }
 }
