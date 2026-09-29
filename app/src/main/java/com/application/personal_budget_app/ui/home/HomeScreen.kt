@@ -48,15 +48,17 @@ fun HomeScreen(
     onCompleteDays: () -> Unit,
     onEditBudget: () -> Unit,
     onCloseCycle: () -> Unit,
+    onOpenSettings: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
-    onOpenSettings: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     when (val s = state) {
         HomeUiState.Loading -> Box(Modifier.fillMaxSize()) // quelques ms au démarrage
-        is HomeUiState.Ready -> HomeContent(s.summary, onAddClick, onCompleteDays, onEditBudget, onCloseCycle)
+        is HomeUiState.Ready -> HomeContent(s.summary, onAddClick, onCompleteDays, onEditBudget, onCloseCycle, onOpenSettings)
     }
 }
+
+
 
 @Composable
 fun HomeContent(
@@ -70,7 +72,7 @@ fun HomeContent(
 
     val sidePadding = Modifier.padding(horizontal = 16.dp)
     LazyColumn(Modifier.fillMaxSize()) {
-        item { HomeHeader(summary) }
+        item { HomeHeader(summary, onOpenSettings) }
         summary.cycleToClose?.let { ended ->
             item { ClosingCard(ended, onCloseCycle, sidePadding.padding(top = 16.dp)) }
         }
@@ -99,7 +101,6 @@ fun HomeContent(
             item { CycleSection(summary, sidePadding.padding(top = 16.dp)) }
         }
         item { Spacer(Modifier.height(24.dp)) }
-        item { HomeHeader(summary, onOpenSettings) }
     }
 }
 
@@ -285,8 +286,8 @@ private fun previewSummary(mode: BudgetMode): HomeSummary {
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 1300)
 @Composable
-private fun HomeBudgetPreview(onCloseCycle: () -> Unit = {},) = PersonalbudgetappTheme {
-    HomeContent(previewSummary(BudgetMode.BUDGET), {}, {}, {}, onCloseCycle)
+private fun HomeBudgetPreview() = PersonalbudgetappTheme {
+    HomeContent(previewSummary(BudgetMode.BUDGET), {}, {}, {}, {})
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 1000)

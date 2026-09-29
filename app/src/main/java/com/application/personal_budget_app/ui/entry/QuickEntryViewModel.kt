@@ -83,11 +83,11 @@ class QuickEntryViewModel @Inject constructor(
                 date = transaction.date, isToday = transaction.date == LocalDate.now(clock),
                 amount = AmountInput.from(transaction.amount), type = transaction.type,
                 selectedCategoryId = transaction.categoryId ?: it.selectedCategoryId,
+                note = transaction.note.orEmpty(),
                 detailsOpen = transaction.note != null, editing = transaction,
             )
         }
     }
-
     fun onKey(key: KeypadKey) = _state.update { it.copy(amount = it.amount.press(key)) }
     fun onTypeChange(type: TransactionType) = _state.update { it.copy(type = type) }
     fun onCategorySelected(id: Long) = _state.update { it.copy(selectedCategoryId = id) }
