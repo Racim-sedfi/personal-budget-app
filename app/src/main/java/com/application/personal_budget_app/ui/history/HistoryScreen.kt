@@ -159,7 +159,7 @@ private fun DaySection(
 
         when (day.state) {
             DayState.WITH_TRANSACTIONS -> day.transactions.forEach { tx ->
-                TransactionRow(tx, categories[tx.categoryId], onClick = { onEdit(tx) })
+                TransactionRow(tx, tx.categoryId?.let { categories[it] }, onClick = { onEdit(tx) })
             }
             DayState.NO_EXPENSE -> NoExpenseRow(onClear)
             DayState.NOT_FILLED -> NotFilledCard(onAdd, onDeclare)
