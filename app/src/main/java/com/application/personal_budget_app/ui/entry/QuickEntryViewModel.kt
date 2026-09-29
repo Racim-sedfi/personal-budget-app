@@ -28,7 +28,8 @@ data class QuickEntryState(
     val editing: Transaction? = null,
 ) {
     val isEditing: Boolean get() = editing != null
-    val canSave: Boolean get() = amount.isValid && (type == TransactionType.INCOME || selectedCategoryId != null)
+    val canSave: Boolean get() = amount.isValid &&
+            if (type == TransactionType.INCOME) note.isNotBlank() else selectedCategoryId != null
 }
 
 /** Ce qui vient de se passer, avec de quoi l'annuler. */

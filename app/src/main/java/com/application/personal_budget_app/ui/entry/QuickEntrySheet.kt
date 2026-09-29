@@ -83,27 +83,40 @@ fun QuickEntryContent(
 
         AmountDisplay(state)
 
-        FlowRow(
-            Modifier.fillMaxWidth().selectableGroup(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            state.categories.forEach { category ->
-                CategoryChip(category, category.id == state.selectedCategoryId) { onCategorySelected(category.id) }
-            }
-        }
-
-        if (state.detailsOpen) {
+        if (state.type == TransactionType.INCOME) {
+            // Revenu : pas d'enveloppe, le libellé est à saisir directement.
             OutlinedTextField(
                 value = state.note,
                 onValueChange = onNoteChange,
-                label = { Text("Note · $dayText") },
+                label = { Text("D'où vient ce revenu ? · $dayText") },
+                placeholder = { Text("Cadeau d'anniversaire") },
+                supportingText = { Text("S'ajoute à ce qu'il te reste ce cycle.") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
         } else {
-            TextButton(onClick = onOpenDetails, modifier = Modifier.fillMaxWidth()) {
-                Text("$dayText · ajouter une note", color = TextStrong)
+            // Dépense ou remboursement : on choisit l'enveloppe, la note reste facultative.
+            FlowRow(
+                Modifier.fillMaxWidth().selectableGroup(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                state.categories.forEach { category ->
+                    CategoryChip(category, category.id == state.selectedCategoryId) { onCategorySelected(category.id) }
+                }
+            }
+            if (state.detailsOpen) {
+                OutlinedTextField(
+                    value = state.note,
+                    onValueChange = onNoteChange,
+                    label = { Text("Note · $dayText") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            } else {
+                TextButton(onClick = onOpenDetails, modifier = Modifier.fillMaxWidth()) {
+                    Text("$dayText · ajouter une note", color = TextStrong)
+                }
             }
         }
 
