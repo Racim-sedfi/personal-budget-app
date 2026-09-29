@@ -22,6 +22,8 @@ private class FakeSettings : SettingsRepository {
     override suspend fun setCycleStartDay(day: Int) { calls += "startDay=$day" }
     override suspend fun setMode(mode: BudgetMode) { calls += "mode=$mode" }
     override suspend fun completeOnboarding() { calls += "done" }
+    override suspend fun setLockEnabled(enabled: Boolean) { calls += "lock=$enabled" }
+    override suspend fun setLockDelay(minutes: Int) = Unit
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -60,4 +62,6 @@ class OnboardingViewModelTest {
         vm.finish(); vm.finish()
         assertEquals(1, settings.calls.count { it == "done" })
     }
+
+
 }
