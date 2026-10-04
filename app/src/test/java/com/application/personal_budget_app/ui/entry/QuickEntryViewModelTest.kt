@@ -26,7 +26,10 @@ private class FakeTransactions : TransactionRepository {
 
 private class FakeCategories(private val list: List<Category>) : CategoryRepository {
     override fun observeAll() = flowOf(list)
+    override fun observeActive() = flowOf(list)
     override suspend fun update(category: Category) = Unit
+    override suspend fun add(category: Category) = 0L
+    override suspend fun remove(category: Category) = Unit
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)

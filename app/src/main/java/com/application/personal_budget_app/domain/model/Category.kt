@@ -8,4 +8,6 @@ data class Category(
     val cap: Money? = null,
     val isFuse: Boolean = false,   // Imprévus
     val position: Int = 0,
+    val isLocked: Boolean = false, // enveloppe minimale (Courses, Imprévus) : impossible à supprimer
+    val archived: Boolean = false, // supprimée mais déjà utilisée : gardée pour l'historique et l'analyse
 )

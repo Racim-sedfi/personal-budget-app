@@ -24,6 +24,19 @@ class RoomCategoryRepository @Inject constructor(
 ) : CategoryRepository {
     override fun observeAll() = dao.observeAll().map { list -> list.map { it.toDomain() } }
     override suspend fun update(category: Category) = dao.update(category.toEntity())
+    override fun observeActive() = dao.observeActive().map { list -> list.map { it.toDomain() } }
+
+    override suspend fun add(category: Category): Long =
+        dao.insert(category.copy(id = 0, position = dao.nextPosition(), archived = false).toEntity())
+
+    override suspend fun remove(category: Category) {
+        require(!category.isLocked) { "Enveloppe minimale : impossible à supprimer" }
+        if (dao.transactionCount(category.id) == 0) {
+            dao.delete(category.id)
+        } else {
+            dao.update(category.copy(archived = true, cap = null).toEntity())
+        }
+    }
 }
 
 class RoomDayStatusRepository @Inject constructor(

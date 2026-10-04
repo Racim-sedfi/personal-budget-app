@@ -19,10 +19,26 @@ interface TransactionDao {
 
 @Dao
 interface CategoryDao {
+    /** Toutes, archivées comprises (noms dans l'historique et l'analyse). */
     @Query("SELECT * FROM categories ORDER BY position")
     fun observeAll(): Flow<List<CategoryEntity>>
 
+    /** Celles qu'on peut encore utiliser : saisie, budget. */
+    @Query("SELECT * FROM categories WHERE archived = 0 ORDER BY position")
+    fun observeActive(): Flow<List<CategoryEntity>>
+
     @Update suspend fun update(entity: CategoryEntity)
+
+    @Insert suspend fun insert(entity: CategoryEntity): Long
+
+    @Query("SELECT COALESCE(MAX(position), -1) + 1 FROM categories")
+    suspend fun nextPosition(): Int
+
+    @Query("SELECT COUNT(*) FROM transactions WHERE categoryId = :id")
+    suspend fun transactionCount(id: Long): Int
+
+    @Query("DELETE FROM categories WHERE id = :id")
+    suspend fun delete(id: Long)
 }
 
 @Dao
