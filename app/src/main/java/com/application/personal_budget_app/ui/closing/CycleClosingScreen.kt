@@ -240,7 +240,7 @@ private fun ObservationReview(
                 style = MaterialTheme.typography.bodySmall, color = TextSecondary,
             )
         }
-        items(review.envelopes, key = { it.category.id }) { line ->
+        items(review.envelopes.filterNot { it.category.archived }, key = { it.category.id }) { line ->
             CapStepperRow(line, state.caps[line.category.id], onStep)
         }
         item { CapsTotal(state.caps.values.filterNotNull().sum(), state.availableNext.takeIf { review.hasIncome }) }

@@ -14,6 +14,8 @@ data class CategoryEntity(
     val capCents: Long?,
     val isFuse: Boolean,
     val position: Int,
+    @ColumnInfo(defaultValue = "0") val isLocked: Boolean = false,
+    @ColumnInfo(defaultValue = "0") val archived: Boolean = false,
 )
 
 @Entity(

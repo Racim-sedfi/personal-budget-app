@@ -46,7 +46,6 @@ import java.time.LocalDate
 fun HomeScreen(
     onAddClick: () -> Unit,
     onCompleteDays: () -> Unit,
-    onEditBudget: () -> Unit,
     onCloseCycle: () -> Unit,
     onOpenSettings: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
@@ -54,7 +53,7 @@ fun HomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     when (val s = state) {
         HomeUiState.Loading -> Box(Modifier.fillMaxSize()) // quelques ms au démarrage
-        is HomeUiState.Ready -> HomeContent(s.summary, onAddClick, onCompleteDays, onEditBudget, onCloseCycle, onOpenSettings)
+        is HomeUiState.Ready -> HomeContent(s.summary, onAddClick, onCompleteDays, onCloseCycle, onOpenSettings)
     }
 }
 
@@ -65,7 +64,6 @@ fun HomeContent(
     summary: HomeSummary,
     onAddClick: () -> Unit,
     onCompleteDays: () -> Unit,
-    onEditBudget: () -> Unit,
     onCloseCycle: () -> Unit,
     onOpenSettings: () -> Unit = {},
 ) {
@@ -89,8 +87,6 @@ fun HomeContent(
             SectionTitle(
                 if (isBudget) "Enveloppes" else "Par catégorie",
                 sidePadding.padding(top = 16.dp),
-                actionLabel = if (isBudget) "Modifier" else null,
-                onAction = onEditBudget,
             )
         }
         items(summary.envelopes, key = { it.category.id }) { line ->

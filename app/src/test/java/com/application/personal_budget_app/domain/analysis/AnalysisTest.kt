@@ -93,4 +93,14 @@ class AnalysisTest {
         val lines = analysis(noExpense = emptySet()).insights()
         assertEquals(listOf("Tes charges fixes représentent 40 % de tes revenus."), lines)
     }
+
+    @Test fun `archived envelope stays in averages only if it was used`() {
+        val cats = categories +
+            Category(id = 9, name = "Cadeaux", iconKey = "other", archived = true) +
+            Category(id = 10, name = "Ancienne", iconKey = "other", archived = true)
+        val tx = transactions + tx(9, 40, LocalDate.of(2026, 8, 3)) + tx(9, 20, LocalDate.of(2026, 9, 3))
+        val a = buildAnalysis(today, 25, tx, fullDays, cats, emptyList(), emptyList())
+        assertEquals(Money.euros(30), a.averages.first { it.category.id == 9L }.average)
+        assertTrue(a.averages.none { it.category.id == 10L })
+    }
 }

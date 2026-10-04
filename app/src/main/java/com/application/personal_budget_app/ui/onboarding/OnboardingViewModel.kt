@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.application.personal_budget_app.domain.cycle.BudgetCycle
 import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.model.BudgetMode
+import com.application.personal_budget_app.domain.model.Category
+import com.application.personal_budget_app.domain.onboarding.OPTIONAL_ENVELOPES
 import com.application.personal_budget_app.domain.onboarding.OnboardingStep
 import com.application.personal_budget_app.domain.onboarding.StartChoice
+import com.application.personal_budget_app.domain.repository.CategoryRepository
 import com.application.personal_budget_app.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -22,11 +25,13 @@ data class OnboardingUiState(
     val cycle: BudgetCycle,
     val saving: Boolean = false,
     val currency: AppCurrency = AppCurrency.EUR,
+    val envelopes: Set<String> = emptySet(),   // enveloppes en plus de Courses et Imprévus
 )
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
     private val settings: SettingsRepository,
+    private val categories: CategoryRepository,
     clock: Clock,
 ) : ViewModel() {
     private val today = LocalDate.now(clock)
@@ -44,6 +49,10 @@ class OnboardingViewModel @Inject constructor(
 
     fun pickChoice(choice: StartChoice) = _state.update { it.copy(choice = choice) }
 
+    fun toggleEnvelope(name: String) = _state.update {
+        it.copy(envelopes = if (name in it.envelopes) it.envelopes - name else it.envelopes + name)
+    }
+
     fun finish(enableLock: Boolean = false) {
         if (_state.value.saving) return // double appui
         _state.update { it.copy(saving = true) }
@@ -51,6 +60,8 @@ class OnboardingViewModel @Inject constructor(
             settings.setCycleStartDay(_state.value.startDay)
             settings.setCurrency(_state.value.currency)
             settings.setMode(BudgetMode.OBSERVATION) // le budget s'active depuis l'onglet Budget
+            OPTIONAL_ENVELOPES.filter { it.name in _state.value.envelopes }
+                .forEach { categories.add(Category(name = it.name, iconKey = it.iconKey)) }
             if (enableLock) settings.setLockEnabled(true)
             settings.completeOnboarding()           // en dernier
         }

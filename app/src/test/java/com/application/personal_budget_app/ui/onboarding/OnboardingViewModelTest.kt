@@ -16,6 +16,9 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.time.*
+import com.application.personal_budget_app.domain.model.Category
+import com.application.personal_budget_app.domain.repository.CategoryRepository
+import kotlinx.coroutines.flow.flowOf
 
 private class FakeSettings : SettingsRepository {
     val calls = mutableListOf<String>()
@@ -28,16 +31,27 @@ private class FakeSettings : SettingsRepository {
     override suspend fun setCurrency(currency: AppCurrency) { calls += "currency=${currency.code}" }
 }
 
+private class FakeCategories : CategoryRepository {
+    val added = mutableListOf<Category>()
+    override fun observeAll() = flowOf(emptyList<Category>())
+    override fun observeActive() = flowOf(emptyList<Category>())
+    override suspend fun update(category: Category) = Unit
+    override suspend fun add(category: Category): Long { added += category; return added.size.toLong() }
+    override suspend fun remove(category: Category) = Unit
+}
+
 @OptIn(ExperimentalCoroutinesApi::class)
 class OnboardingViewModelTest {
     private val clock = Clock.fixed(Instant.parse("2026-10-12T10:00:00Z"), ZoneOffset.UTC)
     private lateinit var settings: FakeSettings
+    private lateinit var categories: FakeCategories
     private lateinit var vm: OnboardingViewModel
 
     @Before fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         settings = FakeSettings()
-        vm = OnboardingViewModel(settings, clock)
+        categories = FakeCategories()
+        vm = OnboardingViewModel(settings, categories, clock)
     }
 
     @After fun tearDown() = Dispatchers.resetMain()
@@ -49,9 +63,12 @@ class OnboardingViewModelTest {
     }
 
     @Test fun `nothing is saved before the end`() {
-        vm.next(); vm.pickStartDay(25); vm.next()
+        vm.next(); vm.pickStartDay(25); vm.next()        // → Enveloppes
+        assertEquals(OnboardingStep.ENVELOPES, vm.state.value.step)
+        vm.toggleEnvelope("Loisirs"); vm.next()          // → Comment veux-tu commencer ?
         assertEquals(OnboardingStep.START_CHOICE, vm.state.value.step)
         assertEquals(emptyList<String>(), settings.calls)
+        assertEquals(emptyList<Category>(), categories.added)
     }
 
     @Test fun `finish saves everything, onboarding flag last`() {
@@ -70,5 +87,13 @@ class OnboardingViewModelTest {
         vm.pickCurrency(AppCurrency.EUR)
         vm.finish(enableLock = true)
         assertEquals(listOf("startDay=1", "currency=EUR", "mode=OBSERVATION", "lock=true", "done"), settings.calls)
+    }
+
+    @Test fun `only chosen envelopes are created`() {
+        vm.toggleEnvelope("Loisirs")
+        vm.toggleEnvelope("Santé")
+        vm.toggleEnvelope("Santé")   // décochée
+        vm.finish()
+        assertEquals(listOf("Loisirs"), categories.added.map { it.name })
     }
 }

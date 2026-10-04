@@ -106,7 +106,7 @@ class CycleClosingViewModel @Inject constructor(
 
     fun applyProposedCaps() = finish { s ->
         val review = s.review
-        review.envelopes.forEach { line -> categories.update(line.category.copy(cap = s.caps[line.category.id])) }
+        review.envelopes.filterNot { it.category.archived }.forEach { line -> categories.update(line.category.copy(cap = s.caps[line.category.id])) }
         if (review.hasIncome) settings.setMode(BudgetMode.BUDGET)
         closedCycles.close(ClosedCycle(review.cycle.start, review.cycle.end, CycleOutcome.OBSERVED, Money.ZERO))
         ClosingResult(
