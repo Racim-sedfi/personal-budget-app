@@ -4,6 +4,7 @@ import android.content.Context
 import com.application.personal_budget_app.domain.cycle.BudgetCycle
 import com.application.personal_budget_app.domain.home.buildHomeSummary
 import com.application.personal_budget_app.domain.model.Money
+import com.application.personal_budget_app.domain.model.netSpent
 import com.application.personal_budget_app.domain.repository.*
 import com.application.personal_budget_app.domain.widget.WidgetData
 import com.application.personal_budget_app.domain.widget.widgetData
@@ -37,9 +38,10 @@ suspend fun loadWidgetData(context: Context): WidgetData {
     val today = LocalDate.now(d.clock())
     val cycle = BudgetCycle.containing(today, settings.cycleStartDay)
     val previous = cycle.shifted(-1)
+    val transactions = d.transactions().observeBetween(cycle.start, cycle.end).first()
     val summary = buildHomeSummary(
         today, settings,
-        d.transactions().observeBetween(cycle.start, cycle.end).first(),
+        transactions,
         d.dayStatus().observeNoExpenseDays(cycle.start, cycle.end).first(),
         d.categories().observeAll().first(),
         d.budget().observeIncomes().first(),
@@ -47,5 +49,5 @@ suspend fun loadWidgetData(context: Context): WidgetData {
         d.budget().observeFixedCharges().first(),
         carryOver = d.closedCycles().observe(previous.start).first()?.carryOver ?: Money.ZERO,
     )
-    return widgetData(settings, summary)
+    return widgetData(settings, summary, todaySpent = transactions.filter { it.date == today }.netSpent())
 }
