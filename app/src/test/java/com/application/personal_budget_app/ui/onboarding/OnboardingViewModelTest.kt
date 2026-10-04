@@ -63,9 +63,12 @@ class OnboardingViewModelTest {
     }
 
     @Test fun `nothing is saved before the end`() {
-        vm.next(); vm.pickStartDay(25); vm.next()
+        vm.next(); vm.pickStartDay(25); vm.next()        // → Enveloppes
+        assertEquals(OnboardingStep.ENVELOPES, vm.state.value.step)
+        vm.toggleEnvelope("Loisirs"); vm.next()          // → Comment veux-tu commencer ?
         assertEquals(OnboardingStep.START_CHOICE, vm.state.value.step)
         assertEquals(emptyList<String>(), settings.calls)
+        assertEquals(emptyList<Category>(), categories.added)
     }
 
     @Test fun `finish saves everything, onboarding flag last`() {
