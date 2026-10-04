@@ -21,6 +21,8 @@ class DataStoreSettingsRepository @Inject constructor(
         val LOCK_ENABLED = booleanPreferencesKey("lock_enabled")
         val LOCK_DELAY = intPreferencesKey("lock_delay_minutes")
         val CURRENCY = stringPreferencesKey("currency")
+        val REMINDER_ENABLED = booleanPreferencesKey("reminder_enabled")
+        val REMINDER_MINUTES = intPreferencesKey("reminder_minutes")
     }
 
     override val settings: Flow<AppSettings> = store.data.map { prefs ->
@@ -31,6 +33,8 @@ class DataStoreSettingsRepository @Inject constructor(
             lockEnabled = prefs[Keys.LOCK_ENABLED] ?: false,
             lockDelayMinutes = prefs[Keys.LOCK_DELAY] ?: 1,
             currency = prefs[Keys.CURRENCY]?.let { AppCurrency.fromCode(it) } ?: AppCurrency.EUR,
+            reminderEnabled = prefs[Keys.REMINDER_ENABLED] ?: false,
+            reminderMinutes = prefs[Keys.REMINDER_MINUTES] ?: 21 * 60,
         )
     }
 
@@ -57,5 +61,14 @@ class DataStoreSettingsRepository @Inject constructor(
     }
     override suspend fun setCurrency(currency: AppCurrency) {
         store.edit { it[Keys.CURRENCY] = currency.code }
+    }
+
+    override suspend fun setReminderEnabled(enabled: Boolean) {
+        store.edit { it[Keys.REMINDER_ENABLED] = enabled }
+    }
+
+    override suspend fun setReminderTime(minutes: Int) {
+        require(minutes in 0 until 24 * 60)
+        store.edit { it[Keys.REMINDER_MINUTES] = minutes }
     }
 }

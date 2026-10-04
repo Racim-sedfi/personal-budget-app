@@ -23,6 +23,12 @@ interface CategoryRepository {
     suspend fun remove(category: Category)
 }
 
+/** Programme le rappel quotidien (WorkManager côté Android). */
+interface ReminderScheduler {
+    fun schedule(minutesOfDay: Int)
+    fun cancel()
+}
+
 interface DataResetRepository {
     /** Efface tout (base + réglages) et remet les enveloppes par défaut. */
     suspend fun resetAll()
@@ -55,6 +61,8 @@ interface SettingsRepository {
     suspend fun setLockEnabled(enabled: Boolean)
     suspend fun setLockDelay(minutes: Int)
     suspend fun setCurrency(currency: AppCurrency)
+    suspend fun setReminderEnabled(enabled: Boolean)
+    suspend fun setReminderTime(minutes: Int)
 }
 
 interface ClosedCycleRepository {
