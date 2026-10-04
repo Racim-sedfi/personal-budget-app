@@ -51,7 +51,9 @@ fun buildHomeSummary(
     val inCycle = transactions.filter { it.date in cycle }
     val spent = inCycle.netSpent()
     val spentByCategory = inCycle.groupBy { it.categoryId }.mapValues { (_, list) -> list.netSpent() }
-    val lines = categories.map { EnvelopeLine(it, spentByCategory[it.id] ?: Money.ZERO) }
+    val lines = categories
+        .map { EnvelopeLine(it, spentByCategory[it.id] ?: Money.ZERO) }
+        .filter { !it.category.archived || it.spent.cents != 0L } // archivée : seulement si elle a servi ce cycle
     val savingsTotal = savings.map { it.amount }.sum()
     val chargesTotal = charges.totalFor(cycle)
     val isBudget = settings.mode == BudgetMode.BUDGET

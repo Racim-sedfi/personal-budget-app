@@ -57,8 +57,12 @@ class QuickEntryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            categories.observeAll().collect { list ->
-                _state.update { it.copy(categories = list, selectedCategoryId = it.selectedCategoryId ?: list.firstOrNull()?.id) }
+            categories.observeActive().collect { list ->
+                _state.update { s ->
+                    // La catégorie choisie a pu être supprimée : on reprend la première.
+                    val kept = s.selectedCategoryId?.takeIf { id -> list.any { it.id == id } }
+                    s.copy(categories = list, selectedCategoryId = kept ?: list.firstOrNull()?.id)
+                }
             }
         }
     }
