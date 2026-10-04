@@ -134,11 +134,7 @@ fun QuickEntryContent(
             ),
         ) {
             Text(
-                when {
-                    state.isEditing -> "Enregistrer les modifications"
-                    state.amount.isValid -> "Enregistrer ${state.amount.money.format()}"
-                    else -> "Saisis un montant"
-                },
+                "Enregistrer",   // texte fixe : pas de saut de mise en page pendant la saisie
                 style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp),
             )
         }
