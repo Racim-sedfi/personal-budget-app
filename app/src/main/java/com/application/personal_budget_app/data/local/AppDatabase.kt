@@ -39,29 +39,25 @@ class SeedCallback : RoomDatabase.Callback() {
     companion object {
         /** Les enveloppes par défaut. Courses et Imprévus sont le minimum : verrouillées. */
         fun seed(db: SupportSQLiteDatabase) {
-            val defaults = listOf(
-                Triple("Courses", "cart", false),
-                Triple("Restaurants", "restaurant", false),
-                Triple("Transports", "bus", false),
-                Triple("Loisirs", "ticket", false),
-                Triple("Shopping", "bag", false),
-                Triple("Santé", "health", false),
-                Triple("Imprévus", "umbrella", true),
+            // Le minimum. Les autres sont choisies à l'onboarding ou créées dans Budget.
+            // Imprévus en position 1000 : toujours en bas de la liste.
+            db.execSQL(
+                "INSERT INTO categories (name, iconKey, capCents, isFuse, position, isLocked, archived) VALUES ('Courses', 'cart', NULL, 0, 0, 1, 0)",
             )
-            defaults.forEachIndexed { index, (name, icon, fuse) ->
-                val locked = fuse || name == "Courses"
-                db.execSQL(
-                    "INSERT INTO categories (name, iconKey, capCents, isFuse, position, isLocked, archived) VALUES (?, ?, NULL, ?, ?, ?, 0)",
-                    arrayOf<Any>(name, icon, if (fuse) 1 else 0, index, if (locked) 1 else 0),
-                )
-            }
+            db.execSQL(
+                "INSERT INTO categories (name, iconKey, capCents, isFuse, position, isLocked, archived) VALUES ('Imprévus', 'umbrella', NULL, 1, $FUSE_POSITION, 1, 0)",
+            )
         }
     }
 }
+
+/** Position d'Imprévus : après toutes les enveloppes qu'on ajoute. */
+const val FUSE_POSITION = 1000
 
 /** v3 → v4 : les colonnes sont ajoutées par Room ; on verrouille Courses et Imprévus déjà présentes. */
 class LockDefaultCategories : AutoMigrationSpec {
     override fun onPostMigrate(db: SupportSQLiteDatabase) {
         db.execSQL("UPDATE categories SET isLocked = 1 WHERE isFuse = 1 OR name = 'Courses'")
+        db.execSQL("UPDATE categories SET position = $FUSE_POSITION WHERE isFuse = 1")
     }
 }

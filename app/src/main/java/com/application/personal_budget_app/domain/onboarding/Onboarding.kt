@@ -1,7 +1,7 @@
 package com.application.personal_budget_app.domain.onboarding
 
 enum class OnboardingStep {
-    PRIVACY, CYCLE_START, START_CHOICE, LOCK;
+    PRIVACY, CYCLE_START, ENVELOPES, START_CHOICE, LOCK;
 
     val number: Int get() = ordinal + 1
     val isFirst: Boolean get() = ordinal == 0
@@ -16,3 +16,17 @@ enum class OnboardingStep {
 }
 
 enum class StartChoice { CONFIGURE, OBSERVE }
+
+/** Une enveloppe proposée à l'onboarding. */
+data class EnvelopePreset(val name: String, val iconKey: String)
+
+/**
+ * Proposées en plus de Courses et Imprévus (toujours présentes).
+ * Pas de Transports : un abonnement ou l'essence se suivent mieux en charge fixe.
+ */
+val OPTIONAL_ENVELOPES = listOf(
+    EnvelopePreset("Restaurants", "restaurant"),
+    EnvelopePreset("Loisirs", "ticket"),
+    EnvelopePreset("Shopping", "bag"),
+    EnvelopePreset("Santé", "health"),
+)

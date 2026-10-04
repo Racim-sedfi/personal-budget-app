@@ -31,7 +31,8 @@ interface CategoryDao {
 
     @Insert suspend fun insert(entity: CategoryEntity): Long
 
-    @Query("SELECT COALESCE(MAX(position), -1) + 1 FROM categories")
+    /** Juste avant Imprévus, qui reste en dernier. */
+    @Query("SELECT COALESCE(MAX(position), -1) + 1 FROM categories WHERE isFuse = 0")
     suspend fun nextPosition(): Int
 
     @Query("SELECT COUNT(*) FROM transactions WHERE categoryId = :id")
