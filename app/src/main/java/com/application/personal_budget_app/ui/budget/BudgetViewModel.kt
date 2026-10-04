@@ -21,7 +21,7 @@ sealed interface BudgetEditor {
     data class IncomeEditor(val income: Income?) : BudgetEditor
     data class SavingEditor(val saving: PlannedSaving?) : BudgetEditor
     data class ChargeEditor(val charge: FixedCharge?) : BudgetEditor
-    data class CapEditor(val category: Category) : BudgetEditor
+    data class CategoryEditor(val category: Category?) : BudgetEditor
 }
 
 data class BudgetUiState(val overview: BudgetOverview, val editor: BudgetEditor?)
@@ -41,7 +41,7 @@ class BudgetViewModel @Inject constructor(
         val cycle = BudgetCycle.containing(LocalDate.now(clock), appSettings.cycleStartDay)
         combine(
             budget.observeIncomes(), budget.observeSavings(),
-            budget.observeFixedCharges(), categories.observeAll(),
+            budget.observeFixedCharges(), categories.observeActive(),
         ) { incomes, savings, charges, cats ->
             BudgetOverview(
                 appSettings.mode, cycle, incomes, savings,
@@ -62,7 +62,10 @@ class BudgetViewModel @Inject constructor(
     fun saveIncome(income: Income) = saveAndClose { budget.upsertIncome(income) }
     fun saveSaving(saving: PlannedSaving) = saveAndClose { budget.upsertSaving(saving) }
     fun saveCharge(charge: FixedCharge) = saveAndClose { budget.upsertFixedCharge(charge) }
-    fun saveCap(category: Category, cap: Money?) = saveAndClose { categories.update(category.copy(cap = cap)) }
+    fun saveCategory(category: Category) = saveAndClose {
+        if (category.id == 0L) categories.add(category) else categories.update(category)
+    }
+    fun deleteCategory(category: Category) = saveAndClose { categories.remove(category) }
 
     fun deleteIncome(id: Long) = saveAndClose { budget.deleteIncome(id) }
     fun deleteSaving(id: Long) = saveAndClose { budget.deleteSaving(id) }
