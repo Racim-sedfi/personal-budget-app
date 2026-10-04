@@ -25,6 +25,9 @@ import com.application.personal_budget_app.ui.theme.PersonalbudgetappTheme
 import dagger.hilt.android.AndroidEntryPoint
 import android.view.WindowManager
 import androidx.compose.runtime.LaunchedEffect
+import androidx.activity.SystemBarStyle
+import androidx.compose.foundation.isSystemInDarkTheme
+import com.application.personal_budget_app.domain.model.ThemeMode
 
 /** FragmentActivity (et non ComponentActivity) : BiometricPrompt en a besoin. */
 @AndroidEntryPoint
@@ -34,9 +37,20 @@ class MainActivity : FragmentActivity() {
         CurrencyState.install()
         enableEdgeToEdge()
         setContent {
-            PersonalbudgetappTheme {
-                val appViewModel: AppViewModel = hiltViewModel()
-                val settings by appViewModel.settings.collectAsStateWithLifecycle()
+            val appViewModel: AppViewModel = hiltViewModel()
+            val settings by appViewModel.settings.collectAsStateWithLifecycle()
+            val dark = when (settings?.themeMode ?: ThemeMode.SYSTEM) {
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+            }
+            // Icônes de la barre d'état claires sur fond sombre, et inversement.
+            LaunchedEffect(dark) {
+                val bars = SystemBarStyle.auto(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT) { dark }
+                enableEdgeToEdge(statusBarStyle = bars, navigationBarStyle = bars)
+            }
+
+            PersonalbudgetappTheme(darkTheme = dark) {
                 var openBudgetSetup by rememberSaveable { mutableStateOf(false) }
                 var justOnboarded by rememberSaveable { mutableStateOf(false) }
 

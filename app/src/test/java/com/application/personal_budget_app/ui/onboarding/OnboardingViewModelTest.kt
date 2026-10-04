@@ -19,6 +19,7 @@ import java.time.*
 import com.application.personal_budget_app.domain.model.Category
 import com.application.personal_budget_app.domain.repository.CategoryRepository
 import kotlinx.coroutines.flow.flowOf
+import com.application.personal_budget_app.domain.model.ThemeMode
 
 private class FakeSettings : SettingsRepository {
     val calls = mutableListOf<String>()
@@ -32,6 +33,7 @@ private class FakeSettings : SettingsRepository {
     override suspend fun setReminderEnabled(enabled: Boolean) = Unit
     override suspend fun setReminderTime(minutes: Int) = Unit
     override suspend fun setHideInRecents(hide: Boolean) = Unit
+    override suspend fun setThemeMode(mode: ThemeMode) = Unit
 }
 
 private class FakeCategories : CategoryRepository {
