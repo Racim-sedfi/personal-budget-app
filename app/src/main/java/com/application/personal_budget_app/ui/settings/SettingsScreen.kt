@@ -51,6 +51,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.application.personal_budget_app.domain.reminder.formatMinutesOfDay
+import com.application.personal_budget_app.domain.model.ThemeMode
 
 @Composable
 fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
@@ -80,6 +81,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
         },
         onDelay = viewModel::setLockDelay,
         onHideInRecents = viewModel::setHideInRecents,
+        onThemeMode = viewModel::setThemeMode,
         onCurrency = viewModel::setCurrency,
         onCycleStartDay = viewModel::setCycleStartDay,
         notificationsRefused = notificationsRefused,
@@ -118,6 +120,7 @@ fun SettingsContent(
     onToggleReminder: (Boolean) -> Unit = {},
     onReminderTime: (Int) -> Unit = {},
     onHideInRecents: (Boolean) -> Unit = {},
+    onThemeMode: (ThemeMode) -> Unit = {},
 ) {
     var pickReminderTime by remember { mutableStateOf(false) }
     var confirmReset by remember { mutableStateOf(false) }
@@ -235,6 +238,22 @@ fun SettingsContent(
                         )
                     }
                 }
+            }
+
+            SettingsSection("Apparence") {
+                Row(Modifier.selectableGroup().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(ThemeMode.SYSTEM to "Automatique", ThemeMode.LIGHT to "Clair", ThemeMode.DARK to "Sombre").forEach { (mode, label) ->
+                        FilterChip(
+                            selected = settings.themeMode == mode,
+                            onClick = { onThemeMode(mode) },
+                            label = { Text(label) },
+                        )
+                    }
+                }
+                Text(
+                    "Automatique suit le réglage du téléphone.",
+                    style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+                )
             }
 
             SettingsSection("Monnaie") {

@@ -82,7 +82,7 @@ private fun LockScreen(onUnlock: () -> Unit) {
     ) {
         Box(
             Modifier.size(120.dp).clip(CircleShape).background(
-                Brush.linearGradient(listOf(Color(0xFFD6C6F6), Color(0xFFBFC8FA), Color(0xFFA9D6FF))),
+                BudgetGradients.hero,
             ),
             contentAlignment = Alignment.Center,
         ) {

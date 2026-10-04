@@ -157,7 +157,7 @@ private fun IncomeSplit(overview: BudgetOverview) {
         ) {
             if (charges > 0f) Box(Modifier.weight(charges).fillMaxHeight().background(CalmBlueDark))
             if (savings > 0f) Box(Modifier.weight(savings).fillMaxHeight().background(CalmBlue))
-            if (rest > 0f) Box(Modifier.weight(rest).fillMaxHeight().background(Color.White.copy(alpha = 0.85f)))
+            if (rest > 0f) Box(Modifier.weight(rest).fillMaxHeight().background(CardOverlay))
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             LegendItem(CalmBlueDark, "Charges fixes $chargesPct %")
@@ -183,7 +183,7 @@ private fun LegendItem(color: Color, label: String) {
 @Composable
 private fun ObservationBanner(canActivate: Boolean, onActivate: () -> Unit, onOpenSetup: () -> Unit) {
     Column(
-        Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color.White.copy(alpha = 0.75f)).padding(16.dp),
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(CardOverlay).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -253,7 +253,7 @@ internal fun BudgetRow(
 private fun FrequencyTag(frequency: Frequency) {
     val (background, content) = when (frequency) {
         Frequency.MONTHLY -> RefundBg to CalmBlueDark
-        Frequency.QUARTERLY -> Color(0xFFE6E2FC) to NearLimitText
+        Frequency.QUARTERLY -> themed(Color(0xFFE6E2FC), Color(0xFF2A2650)) to NearLimitText
         Frequency.YEARLY -> SurfaceSoft to TextStrong
     }
     Text(

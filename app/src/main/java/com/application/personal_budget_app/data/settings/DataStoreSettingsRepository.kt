@@ -9,6 +9,7 @@ import com.application.personal_budget_app.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import com.application.personal_budget_app.domain.model.ThemeMode
 
 class DataStoreSettingsRepository @Inject constructor(
     private val store: DataStore<Preferences>,
@@ -24,6 +25,7 @@ class DataStoreSettingsRepository @Inject constructor(
         val REMINDER_ENABLED = booleanPreferencesKey("reminder_enabled")
         val REMINDER_MINUTES = intPreferencesKey("reminder_minutes")
         val HIDE_IN_RECENTS = booleanPreferencesKey("hide_in_recents")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
     }
 
     override val settings: Flow<AppSettings> = store.data.map { prefs ->
@@ -37,6 +39,7 @@ class DataStoreSettingsRepository @Inject constructor(
             reminderEnabled = prefs[Keys.REMINDER_ENABLED] ?: false,
             reminderMinutes = prefs[Keys.REMINDER_MINUTES] ?: 21 * 60,
             hideInRecents = prefs[Keys.HIDE_IN_RECENTS] ?: false,
+            themeMode = prefs[Keys.THEME_MODE]?.let { name -> ThemeMode.entries.firstOrNull { it.name == name } } ?: ThemeMode.SYSTEM,
         )
     }
 
@@ -76,5 +79,9 @@ class DataStoreSettingsRepository @Inject constructor(
 
     override suspend fun setHideInRecents(hide: Boolean) {
         store.edit { it[Keys.HIDE_IN_RECENTS] = hide }
+    }
+
+    override suspend fun setThemeMode(mode: ThemeMode) {
+        store.edit { it[Keys.THEME_MODE] = mode.name }
     }
 }
