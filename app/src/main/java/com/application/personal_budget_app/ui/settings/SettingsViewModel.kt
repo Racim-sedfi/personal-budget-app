@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.application.personal_budget_app.domain.model.ThemeMode
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -31,6 +32,14 @@ class SettingsViewModel @Inject constructor(
 
     fun setLockDelay(minutes: Int) {
         viewModelScope.launch { settings.setLockDelay(minutes) }
+    }
+
+    fun setThemeMode(mode: ThemeMode) {
+        viewModelScope.launch { settings.setThemeMode(mode) }
+    }
+
+    fun setHideInRecents(hide: Boolean) {
+        viewModelScope.launch { settings.setHideInRecents(hide) }
     }
 
     fun setCurrency(currency: AppCurrency) {

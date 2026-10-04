@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Personal-budget-app</string>
+    <string name="widget_name">Reste disponible</string>
+    <string name="widget_description">Ce qu\'il te reste jusqu\'à la fin du cycle, et un bouton pour saisir une dépense.</string>
 </resources>

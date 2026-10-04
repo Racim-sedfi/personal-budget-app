@@ -23,7 +23,12 @@ import com.application.personal_budget_app.ui.navigation.SettingsRoute
 import java.time.LocalDate
 
 @Composable
-fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
+fun BudgetAppRoot(
+    openBudgetSetup: Boolean = false,
+    locked: Boolean = false,
+    openEntryRequest: Boolean = false,
+    onEntryRequestHandled: () -> Unit = {},
+) {
     val navController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
     val entryViewModel: QuickEntryViewModel = hiltViewModel()
@@ -51,6 +56,14 @@ fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
     val openEdit: (Transaction) -> Unit = { transaction ->
         entryViewModel.startEdit(transaction)
         showEntry = true
+    }
+
+    // « + » du widget : on ouvre la saisie, mais seulement une fois l'app déverrouillée.
+    LaunchedEffect(openEntryRequest, locked) {
+        if (openEntryRequest && !locked) {
+            openEntry(null)
+            onEntryRequestHandled()
+        }
     }
     val inSetup = backStackEntry?.destination?.let {
         it.hasRoute<BudgetSetupRoute>() || it.hasRoute<CycleClosingRoute>() || it.hasRoute<SettingsRoute>()
@@ -95,7 +108,8 @@ fun BudgetAppRoot(openBudgetSetup: Boolean = false) {
         )
     }
 
-    if (showEntry) {
+    // La sheet est une fenêtre à part : on ne l'affiche jamais par-dessus l'écran verrouillé.
+    if (showEntry && !locked) {
         QuickEntrySheet(entryViewModel, onDismiss = { showEntry = false })
     }
 }

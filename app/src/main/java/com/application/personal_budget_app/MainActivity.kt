@@ -23,22 +23,52 @@ import com.application.personal_budget_app.ui.onboarding.OnboardingScreen
 import com.application.personal_budget_app.ui.theme.Background
 import com.application.personal_budget_app.ui.theme.PersonalbudgetappTheme
 import dagger.hilt.android.AndroidEntryPoint
+import android.view.WindowManager
+import androidx.compose.runtime.LaunchedEffect
+import androidx.activity.SystemBarStyle
+import androidx.compose.foundation.isSystemInDarkTheme
+import com.application.personal_budget_app.domain.model.ThemeMode
+import android.content.Intent
 
 /** FragmentActivity (et non ComponentActivity) : BiometricPrompt en a besoin. */
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
+
+    /** Le widget demande d'ouvrir la saisie rapide. */
+    private var openEntryRequest by mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) openEntryRequest = intent.getBooleanExtra(EXTRA_OPEN_ENTRY, false)
         CurrencyState.install()
         enableEdgeToEdge()
         setContent {
-            PersonalbudgetappTheme {
-                val appViewModel: AppViewModel = hiltViewModel()
-                val settings by appViewModel.settings.collectAsStateWithLifecycle()
+            val appViewModel: AppViewModel = hiltViewModel()
+            val settings by appViewModel.settings.collectAsStateWithLifecycle()
+            val dark = when (settings?.themeMode ?: ThemeMode.SYSTEM) {
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+            }
+            // Icônes de la barre d'état claires sur fond sombre, et inversement.
+            LaunchedEffect(dark) {
+                val bars = SystemBarStyle.auto(android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT) { dark }
+                enableEdgeToEdge(statusBarStyle = bars, navigationBarStyle = bars)
+            }
+
+            PersonalbudgetappTheme(darkTheme = dark) {
                 var openBudgetSetup by rememberSaveable { mutableStateOf(false) }
                 var justOnboarded by rememberSaveable { mutableStateOf(false) }
 
                 val s = settings
+
+                // FLAG_SECURE : aperçu vide dans les apps récentes, captures d'écran bloquées.
+                val hide = s?.hideInRecents == true
+                LaunchedEffect(hide) {
+                    if (hide) window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                    else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                }
+
                 when {
                     s == null -> Box(Modifier.fillMaxSize().background(Background))
                     !s.onboardingDone -> OnboardingScreen(onChoiceMade = { choice ->
@@ -49,11 +79,26 @@ class MainActivity : FragmentActivity() {
                         enabled = s.lockEnabled,
                         delayMinutes = s.lockDelayMinutes,
                         startUnlocked = justOnboarded,
-                    ) {
-                        BudgetAppRoot(openBudgetSetup = openBudgetSetup)
+                    ) { locked ->
+                        BudgetAppRoot(
+                            openBudgetSetup = openBudgetSetup,
+                            locked = locked,
+                            openEntryRequest = openEntryRequest,
+                            onEntryRequestHandled = { openEntryRequest = false },
+                        )
                     }
                 }
             }
         }
+    }
+
+    /** App déjà ouverte : le « + » du widget arrive ici. */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_OPEN_ENTRY, false)) openEntryRequest = true
+    }
+
+    companion object {
+        const val EXTRA_OPEN_ENTRY = "open_entry"
     }
 }

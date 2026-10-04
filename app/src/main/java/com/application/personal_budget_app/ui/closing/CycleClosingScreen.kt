@@ -324,7 +324,7 @@ private fun ClosingDone(result: ClosingResult, onDone: () -> Unit, onOpenSetup: 
             ) {
                 Box(
                     Modifier.size(96.dp).clip(CircleShape).background(
-                        Brush.linearGradient(listOf(Color(0xFFD6C6F6), Color(0xFFBFC8FA), Color(0xFFA9D6FF))),
+                        BudgetGradients.hero,
                     ),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -341,7 +341,7 @@ private fun ClosingDone(result: ClosingResult, onDone: () -> Unit, onOpenSetup: 
         item {
             val shape = RoundedCornerShape(16.dp)
             Column(
-                Modifier.fillMaxWidth().clip(shape).background(Color.White.copy(alpha = 0.8f))
+                Modifier.fillMaxWidth().clip(shape).background(CardOverlay)
                     .border(1.dp, Divider, shape).padding(16.dp)
                     .semantics(mergeDescendants = true) {},
                 verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -413,7 +413,7 @@ private fun ReliabilityNote(completion: Completion) {
     if (completion.isReliable) return
     Row(
         Modifier.fillMaxWidth().padding(bottom = 8.dp).clip(RoundedCornerShape(12.dp))
-            .background(Color.White.copy(alpha = 0.75f)).padding(12.dp),
+            .background(CardOverlay).padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {

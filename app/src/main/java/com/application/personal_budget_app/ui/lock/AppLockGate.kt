@@ -38,7 +38,7 @@ fun AppLockGate(
     delayMinutes: Int,
     startUnlocked: Boolean,
     viewModel: AppLockViewModel = hiltViewModel(),
-    content: @Composable () -> Unit,
+    content: @Composable (locked: Boolean) -> Unit,
 ) {
     remember(viewModel) { viewModel.start(lockNow = enabled && !startUnlocked); true }
     val locked by viewModel.locked.collectAsStateWithLifecycle()
@@ -62,7 +62,7 @@ fun AppLockGate(
 
     Box(Modifier.fillMaxSize()) {
         // Verrouillée : l'app reste en mémoire mais TalkBack ne peut rien lire dessous.
-        Box(if (locked) Modifier.fillMaxSize().clearAndSetSemantics {} else Modifier.fillMaxSize()) { content() }
+        Box(if (locked) Modifier.fillMaxSize().clearAndSetSemantics {} else Modifier.fillMaxSize()) { content(locked) }
         if (locked) LockScreen(onUnlock = unlock)
     }
 }
@@ -82,7 +82,7 @@ private fun LockScreen(onUnlock: () -> Unit) {
     ) {
         Box(
             Modifier.size(120.dp).clip(CircleShape).background(
-                Brush.linearGradient(listOf(Color(0xFFD6C6F6), Color(0xFFBFC8FA), Color(0xFFA9D6FF))),
+                BudgetGradients.hero,
             ),
             contentAlignment = Alignment.Center,
         ) {

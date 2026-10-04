@@ -10,5 +10,7 @@ data class AppSettings(
     val lockDelayMinutes: Int = 1,   // 0 = immédiatement
     val currency: AppCurrency = AppCurrency.EUR,
     val reminderEnabled: Boolean = false,
-    val reminderMinutes: Int = 21 * 60,   // heure du rappel, en minutes depuis minuit
+    val reminderMinutes: Int = 21 * 60,
+    val hideInRecents: Boolean = false,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,   // masque l'aperçu dans les apps récentes (et les captures)   // heure du rappel, en minutes depuis minuit
 )

@@ -176,7 +176,7 @@ private fun BudgetProgress(spent: Money, spendable: Money, status: EnvelopeStatu
         BudgetProgressBar(
             fraction = progressFraction(spent, spendable),
             color = color,
-            trackColor = Color.White.copy(alpha = 0.8f),
+            trackColor = CardOverlay,
             height = 8.dp,
             modifier = Modifier.semantics {
                 contentDescription = "${spent.format()} dépensés sur ${spendable.format()}, soit ${usedPercent(spent, spendable)} %"

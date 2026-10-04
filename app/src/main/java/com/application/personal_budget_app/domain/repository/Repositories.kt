@@ -63,6 +63,8 @@ interface SettingsRepository {
     suspend fun setCurrency(currency: AppCurrency)
     suspend fun setReminderEnabled(enabled: Boolean)
     suspend fun setReminderTime(minutes: Int)
+    suspend fun setHideInRecents(hide: Boolean)
+    suspend fun setThemeMode(mode: ThemeMode)
 }
 
 interface ClosedCycleRepository {

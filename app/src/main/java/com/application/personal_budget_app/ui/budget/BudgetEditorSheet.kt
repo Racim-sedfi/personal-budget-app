@@ -196,7 +196,30 @@ private fun ChargeForm(
     }
 }
 
-private val IconKeys = listOf("cart", "restaurant", "bus", "ticket", "bag", "health", "umbrella", "other")
+/** Icônes proposées pour une enveloppe, regroupées par thème. */
+private val IconKeys = listOf(
+    "cart",
+    "restaurant",
+    "coffee",
+    "bus",
+    "car",
+    "home",
+    "ticket",
+    "music",
+    "sport",
+    "travel",
+    "bag",
+    "shirt",
+    "beauty",
+    "gift",
+    "health",
+    "pet",
+    "child",
+    "book",
+    "phone",
+    "umbrella",
+    "other",
+)
 
 private fun iconLabel(key: String) = when (key) {
     "cart" -> "Panier"
@@ -206,6 +229,19 @@ private fun iconLabel(key: String) = when (key) {
     "bag" -> "Shopping"
     "health" -> "Santé"
     "umbrella" -> "Imprévus"
+    "pet" -> "Animaux"
+    "home" -> "Maison"
+    "car" -> "Voiture"
+    "gift" -> "Cadeaux"
+    "book" -> "Études"
+    "phone" -> "Téléphone"
+    "sport" -> "Sport"
+    "child" -> "Enfants"
+    "coffee" -> "Café"
+    "travel" -> "Voyages"
+    "shirt" -> "Vêtements"
+    "beauty" -> "Beauté"
+    "music" -> "Musique"
     else -> "Autre"
 }
 

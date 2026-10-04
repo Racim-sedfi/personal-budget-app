@@ -51,6 +51,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.application.personal_budget_app.domain.reminder.formatMinutesOfDay
+import com.application.personal_budget_app.domain.model.ThemeMode
 
 @Composable
 fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
@@ -79,6 +80,8 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             }
         },
         onDelay = viewModel::setLockDelay,
+        onHideInRecents = viewModel::setHideInRecents,
+        onThemeMode = viewModel::setThemeMode,
         onCurrency = viewModel::setCurrency,
         onCycleStartDay = viewModel::setCycleStartDay,
         notificationsRefused = notificationsRefused,
@@ -116,6 +119,8 @@ fun SettingsContent(
     notificationsRefused: Boolean = false,
     onToggleReminder: (Boolean) -> Unit = {},
     onReminderTime: (Int) -> Unit = {},
+    onHideInRecents: (Boolean) -> Unit = {},
+    onThemeMode: (ThemeMode) -> Unit = {},
 ) {
     var pickReminderTime by remember { mutableStateOf(false) }
     var confirmReset by remember { mutableStateOf(false) }
@@ -176,6 +181,26 @@ fun SettingsContent(
                         }
                     }
                 }
+
+                HorizontalDivider(color = Divider)
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 64.dp)
+                        .toggleable(value = settings.hideInRecents, role = Role.Switch, onValueChange = onHideInRecents),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text("Masquer dans les apps récentes", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                        Text(
+                            "Cache tes montants dans l'aperçu des apps. Bloque aussi les captures d'écran.",
+                            style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+                        )
+                    }
+                    Switch(
+                        checked = settings.hideInRecents,
+                        onCheckedChange = null,
+                        colors = SwitchDefaults.colors(checkedTrackColor = Ink, checkedThumbColor = Background),
+                    )
+                }
             }
             SettingsSection("Rappel") {
                 Row(
@@ -213,6 +238,22 @@ fun SettingsContent(
                         )
                     }
                 }
+            }
+
+            SettingsSection("Apparence") {
+                Row(Modifier.selectableGroup().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(ThemeMode.SYSTEM to "Automatique", ThemeMode.LIGHT to "Clair", ThemeMode.DARK to "Sombre").forEach { (mode, label) ->
+                        FilterChip(
+                            selected = settings.themeMode == mode,
+                            onClick = { onThemeMode(mode) },
+                            label = { Text(label) },
+                        )
+                    }
+                }
+                Text(
+                    "Automatique suit le réglage du téléphone.",
+                    style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+                )
             }
 
             SettingsSection("Monnaie") {

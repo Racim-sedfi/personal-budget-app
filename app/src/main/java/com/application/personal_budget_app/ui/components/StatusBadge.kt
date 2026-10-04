@@ -15,12 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.application.personal_budget_app.ui.theme.CardOverlay
 
 /** Pastille d'état : toujours icône + texte, jamais la couleur seule. */
 @Composable
 fun StatusBadge(text: String, @DrawableRes icon: Int, color: Color, modifier: Modifier = Modifier) {
     Row(
-        modifier.clip(RoundedCornerShape(16.dp)).background(Color.White.copy(alpha = 0.75f))
+        modifier.clip(RoundedCornerShape(16.dp)).background(CardOverlay)
             .padding(start = 8.dp, end = 12.dp, top = 6.dp, bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
