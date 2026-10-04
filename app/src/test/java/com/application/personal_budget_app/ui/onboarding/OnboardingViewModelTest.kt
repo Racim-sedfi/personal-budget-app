@@ -29,6 +29,8 @@ private class FakeSettings : SettingsRepository {
     override suspend fun setLockEnabled(enabled: Boolean) { calls += "lock=$enabled" }
     override suspend fun setLockDelay(minutes: Int) = Unit
     override suspend fun setCurrency(currency: AppCurrency) { calls += "currency=${currency.code}" }
+    override suspend fun setReminderEnabled(enabled: Boolean) = Unit
+    override suspend fun setReminderTime(minutes: Int) = Unit
 }
 
 private class FakeCategories : CategoryRepository {
