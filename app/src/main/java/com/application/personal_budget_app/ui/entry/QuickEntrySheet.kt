@@ -27,10 +27,15 @@ import com.application.personal_budget_app.domain.entry.KeypadKey
 import com.application.personal_budget_app.domain.model.Category
 import com.application.personal_budget_app.domain.model.TransactionType
 import com.application.personal_budget_app.ui.components.categoryIcon
-import com.application.personal_budget_app.ui.format.withWeekdayFr
 import com.application.personal_budget_app.ui.theme.*
 import java.time.LocalDate
 import com.application.personal_budget_app.ui.format.CurrencyState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.application.personal_budget_app.ui.format.dayTitle
+import java.time.Instant
+import java.time.ZoneOffset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,6 +52,7 @@ fun QuickEntrySheet(viewModel: QuickEntryViewModel, onDismiss: () -> Unit) {
             onTypeChange = viewModel::onTypeChange,
             onCategorySelected = viewModel::onCategorySelected,
             onNoteChange = viewModel::onNoteChange,
+            onDateChange = viewModel::onDateChange,
             onOpenDetails = viewModel::openDetails,
             onSave = viewModel::save,
             onDelete = viewModel::delete,
@@ -64,12 +70,13 @@ fun QuickEntryContent(
     onTypeChange: (TransactionType) -> Unit,
     onCategorySelected: (Long) -> Unit,
     onNoteChange: (String) -> Unit,
+    onDateChange: (LocalDate) -> Unit = {},
     onOpenDetails: () -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit = {},
     onClose: () -> Unit,
 ) {
-    val dayText = if (state.isToday) "Aujourd'hui" else state.date.withWeekdayFr()
+    var showDatePicker by remember { mutableStateOf(false) }
     Column(
         Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 16.dp).navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -84,12 +91,24 @@ fun QuickEntryContent(
 
         AmountDisplay(state)
 
+        // Le jour de la dépense : touche pour en choisir un autre (hier, la semaine dernière…).
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            AssistChip(
+                onClick = { showDatePicker = true },
+                label = { Text(state.date.dayTitle(LocalDate.now())) },
+                leadingIcon = {
+                    Icon(painterResource(R.drawable.ic_calendar), contentDescription = null, modifier = Modifier.size(18.dp))
+                },
+                modifier = Modifier.heightIn(min = 44.dp).semantics { onClick(label = "Changer la date", action = null) },
+            )
+        }
+
         if (state.type == TransactionType.INCOME) {
             // Revenu : pas d'enveloppe, le libellé est à saisir directement.
             OutlinedTextField(
                 value = state.note,
                 onValueChange = onNoteChange,
-                label = { Text("D'où vient ce revenu ? · $dayText") },
+                label = { Text("D'où vient ce revenu ?") },
                 placeholder = { Text("Cadeau d'anniversaire") },
                 supportingText = { Text("S'ajoute à ce qu'il te reste ce cycle.") },
                 singleLine = true,
@@ -110,13 +129,13 @@ fun QuickEntryContent(
                 OutlinedTextField(
                     value = state.note,
                     onValueChange = onNoteChange,
-                    label = { Text("Note · $dayText") },
+                    label = { Text("Note") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
             } else {
                 TextButton(onClick = onOpenDetails, modifier = Modifier.fillMaxWidth()) {
-                    Text("$dayText · ajouter une note", color = TextStrong)
+                    Text("Ajouter une note", color = TextStrong)
                 }
             }
         }
@@ -154,6 +173,40 @@ fun QuickEntryContent(
             }
         }
     }
+
+    if (showDatePicker) {
+        EntryDatePicker(
+            initial = state.date,
+            onPicked = { onDateChange(it); showDatePicker = false },
+            onDismiss = { showDatePicker = false },
+        )
+    }
+}
+
+/** Calendrier sans les jours futurs : on ne saisit pas une dépense qui n'a pas encore eu lieu. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EntryDatePicker(initial: LocalDate, onPicked: (LocalDate) -> Unit, onDismiss: () -> Unit) {
+    // Le DatePicker de Material 3 travaille en millisecondes UTC.
+    fun LocalDate.toUtcMillis() = atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
+    val today = LocalDate.now()
+    val state = rememberDatePickerState(
+        initialSelectedDateMillis = initial.toUtcMillis(),
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= today.toUtcMillis()
+            override fun isSelectableYear(year: Int) = year <= today.year
+        },
+    )
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                val millis = state.selectedDateMillis
+                if (millis != null) onPicked(Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate()) else onDismiss()
+            }) { Text("Valider", color = Ink) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Annuler", color = Ink) } },
+    ) { DatePicker(state) }
 }
 
 @Composable
