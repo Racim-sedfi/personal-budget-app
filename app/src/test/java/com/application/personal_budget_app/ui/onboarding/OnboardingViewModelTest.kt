@@ -31,6 +31,7 @@ private class FakeSettings : SettingsRepository {
     override suspend fun setCurrency(currency: AppCurrency) { calls += "currency=${currency.code}" }
     override suspend fun setReminderEnabled(enabled: Boolean) = Unit
     override suspend fun setReminderTime(minutes: Int) = Unit
+    override suspend fun setHideInRecents(hide: Boolean) = Unit
 }
 
 private class FakeCategories : CategoryRepository {

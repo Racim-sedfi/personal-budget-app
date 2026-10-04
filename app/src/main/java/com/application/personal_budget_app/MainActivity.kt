@@ -23,6 +23,8 @@ import com.application.personal_budget_app.ui.onboarding.OnboardingScreen
 import com.application.personal_budget_app.ui.theme.Background
 import com.application.personal_budget_app.ui.theme.PersonalbudgetappTheme
 import dagger.hilt.android.AndroidEntryPoint
+import android.view.WindowManager
+import androidx.compose.runtime.LaunchedEffect
 
 /** FragmentActivity (et non ComponentActivity) : BiometricPrompt en a besoin. */
 @AndroidEntryPoint
@@ -39,6 +41,14 @@ class MainActivity : FragmentActivity() {
                 var justOnboarded by rememberSaveable { mutableStateOf(false) }
 
                 val s = settings
+
+                // FLAG_SECURE : aperçu vide dans les apps récentes, captures d'écran bloquées.
+                val hide = s?.hideInRecents == true
+                LaunchedEffect(hide) {
+                    if (hide) window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                    else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                }
+
                 when {
                     s == null -> Box(Modifier.fillMaxSize().background(Background))
                     !s.onboardingDone -> OnboardingScreen(onChoiceMade = { choice ->
