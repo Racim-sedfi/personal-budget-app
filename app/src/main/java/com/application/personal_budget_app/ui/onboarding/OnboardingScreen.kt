@@ -48,6 +48,7 @@ import com.application.personal_budget_app.ui.theme.*
 import java.time.LocalDate
 import com.application.personal_budget_app.domain.onboarding.OPTIONAL_ENVELOPES
 import com.application.personal_budget_app.ui.components.categoryIcon
+import com.application.personal_budget_app.ui.components.CycleDayGrid
 
 @Composable
 fun OnboardingScreen(
@@ -223,31 +224,7 @@ private fun CycleStartStep(
 ) {
     StepHeader(OnboardingStep.CYCLE_START, "Quel jour commence ton mois budgétaire ?", "En général, le jour de ta paie.")
 
-    Column(
-        Modifier.selectableGroup().semantics { contentDescription = "Jour de début du cycle" },
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        (1..28).chunked(7).forEach { week ->
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                week.forEach { day ->
-                    val isSelected = day == selected
-                    Box(
-                        Modifier.weight(1f).heightIn(min = 44.dp).clip(CircleShape)
-                            .background(if (isSelected) BudgetGradients.primaryButton else Brush.linearGradient(listOf(Color.Transparent, Color.Transparent)))
-                            .selectable(selected = isSelected, role = Role.RadioButton, onClick = { onPick(day) }),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            day.toString(),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                            color = if (isSelected) Background else Ink,
-                        )
-                    }
-                }
-            }
-        }
-    }
+    CycleDayGrid(selected, onPick)
 
     Column(
         Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color.White.copy(alpha = 0.8f))

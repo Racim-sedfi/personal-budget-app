@@ -9,4 +9,6 @@ data class AppSettings(
     val lockEnabled: Boolean = false,
     val lockDelayMinutes: Int = 1,   // 0 = immédiatement
     val currency: AppCurrency = AppCurrency.EUR,
+    val reminderEnabled: Boolean = false,
+    val reminderMinutes: Int = 21 * 60,   // heure du rappel, en minutes depuis minuit
 )

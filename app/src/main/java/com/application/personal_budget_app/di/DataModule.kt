@@ -12,6 +12,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import com.application.personal_budget_app.data.reminder.WorkManagerReminderScheduler
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -37,5 +38,6 @@ abstract class RepositoryModule {
     @Binds @Singleton abstract fun dayStatus(impl: RoomDayStatusRepository): DayStatusRepository
     @Binds @Singleton abstract fun budget(impl: RoomBudgetRepository): BudgetRepository
     @Binds @Singleton abstract fun dataReset(impl: RoomDataReset): DataResetRepository
+    @Binds @Singleton abstract fun reminder(impl: WorkManagerReminderScheduler): ReminderScheduler
     @Binds @Singleton abstract fun closedCycles(impl: RoomClosedCycleRepository): ClosedCycleRepository
 }
