@@ -28,7 +28,6 @@ fun AppNavHost(
             HomeScreen(
                 onAddClick = { onAddClick(null) },
                 onCompleteDays = { navController.navigateToTopLevel(HistoryRoute) },
-                onEditBudget = { navController.navigateToTopLevel(BudgetRoute) },
                 onCloseCycle = { navController.navigate(CycleClosingRoute) },
                 onOpenSettings = { navController.navigate(SettingsRoute) },
             )
