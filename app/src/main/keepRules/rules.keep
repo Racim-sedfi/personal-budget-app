@@ -1,12 +1,18 @@
-# Add project specific R8 rules here.
-# AGP will combine all keep rule files in src/main/keepRules to pass to R8
-#
-# For more details, see
-#   https://d.android.com/r/tools/r8/keep-rules
+# Règles R8 propres à l'application.
+# Room, Hilt, WorkManager, Glance, Navigation et kotlinx.serialization
+# fournissent déjà leurs propres règles (consumer rules) : rien à ajouter pour eux.
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Les noms des enums sont enregistrés dans DataStore (BudgetMode, ThemeMode, devise...).
+# On garde leurs noms et leurs méthodes values()/valueOf() pour relire les réglages existants.
+-keepclassmembers enum com.application.personal_budget_app.** {
+    <fields>;
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# Routes de navigation type-safe : sérialisées par kotlinx.serialization.
+-keep @kotlinx.serialization.Serializable class com.application.personal_budget_app.ui.navigation.** { *; }
+
+# Stack traces lisibles dans les rapports de crash (le mapping.txt permet de les décoder).
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile

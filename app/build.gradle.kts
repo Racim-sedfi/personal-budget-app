@@ -24,9 +24,13 @@ android {
 
     buildTypes {
         release {
+            // R8 : réduit, optimise et obfusque le code, retire les ressources inutilisées
             optimization {
-                enable = false
+                enable = true
             }
+            // Temporaire : signée avec la clé debug pour pouvoir installer et tester la release.
+            // À remplacer par la vraie clé de signature.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
