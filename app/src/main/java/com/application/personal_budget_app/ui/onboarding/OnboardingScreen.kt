@@ -86,13 +86,13 @@ fun OnboardingScreen(
 
 private fun stepBackground(step: OnboardingStep): Brush {
     val top = when (step) {
-        OnboardingStep.PRIVACY -> Color(0xFFDDEBFF)
-        OnboardingStep.CYCLE_START -> Color(0xFFE4E1FC)
-        OnboardingStep.ENVELOPES -> Color(0xFFE1ECF8)
-        OnboardingStep.START_CHOICE -> Color(0xFFE4F1FF)
-        OnboardingStep.LOCK -> Color(0xFFECE7FF)
+        OnboardingStep.PRIVACY -> themed(Color(0xFFDDEBFF), Color(0xFF1B2A3B))
+        OnboardingStep.CYCLE_START -> themed(Color(0xFFE4E1FC), Color(0xFF221F36))
+        OnboardingStep.ENVELOPES -> themed(Color(0xFFE1ECF8), Color(0xFF1C2734))
+        OnboardingStep.START_CHOICE -> themed(Color(0xFFE4F1FF), Color(0xFF1A2836))
+        OnboardingStep.LOCK -> themed(Color(0xFFECE7FF), Color(0xFF241F38))
     }
-    return Brush.verticalGradient(0f to top, 0.38f to Color(0xFFF3F5F9), 1f to Background)
+    return Brush.verticalGradient(0f to top, 0.38f to themed(Color(0xFFF3F5F9), Color(0xFF16191D)), 1f to Background)
 }
 
 @Composable
@@ -158,7 +158,7 @@ private fun TopBar(step: OnboardingStep, onBack: () -> Unit) {
             repeat(OnboardingStep.count) { index ->
                 Box(
                     Modifier.weight(1f).height(4.dp).clip(RoundedCornerShape(2.dp))
-                        .background(if (index < step.number) Ink else Color(0xFFD3DAE4)),
+                        .background(if (index < step.number) Ink else StepTrack),
                 )
             }
         }
@@ -189,12 +189,12 @@ private fun PrivacyStep() {
     Box(Modifier.fillMaxWidth().padding(top = 12.dp), contentAlignment = Alignment.Center) {
         Box(
             Modifier.size(144.dp).clip(CircleShape).background(
-                Brush.linearGradient(listOf(Color(0xFFD6C6F6), Color(0xFFBFC8FA), Color(0xFFA9D6FF))),
+                BudgetGradients.hero,
             ),
             contentAlignment = Alignment.Center,
         ) {
             Box(
-                Modifier.size(88.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.8f)),
+                Modifier.size(88.dp).clip(CircleShape).background(CardOverlay),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(painterResource(R.drawable.ic_shield), contentDescription = null, tint = Ink, modifier = Modifier.size(44.dp))
@@ -227,7 +227,7 @@ private fun CycleStartStep(
     CycleDayGrid(selected, onPick)
 
     Column(
-        Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(Color.White.copy(alpha = 0.8f))
+        Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(CardOverlay)
             .border(BorderStroke(1.dp, Divider), RoundedCornerShape(16.dp))
             .padding(16.dp)
             .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
@@ -289,14 +289,14 @@ private fun StartChoiceStep(choice: StartChoice, onPick: (StartChoice) -> Unit) 
             title = "Configurer mon budget",
             description = "Revenus, charges, plafonds. Environ 5 min.",
             selected = choice == StartChoice.CONFIGURE,
-            selectedBrush = Brush.linearGradient(listOf(Color(0xFFBFE3FF), Color(0xFFC8D5FB))),
+            selectedBrush = Brush.linearGradient(listOf(themed(Color(0xFFBFE3FF), Color(0xFF1F3550)), themed(Color(0xFFC8D5FB), Color(0xFF2A3A5E)))),
         ) { onPick(StartChoice.CONFIGURE) }
         ChoiceCard(
             icon = R.drawable.ic_eye,
             title = "Commencer par observer",
             description = "Saisis tes dépenses un cycle, l'app propose ensuite des plafonds.",
             selected = choice == StartChoice.OBSERVE,
-            selectedBrush = Brush.linearGradient(listOf(Color(0xFFE3DEFC), Color(0xFFD6E3F8))),
+            selectedBrush = Brush.linearGradient(listOf(themed(Color(0xFFE3DEFC), Color(0xFF2A2650)), themed(Color(0xFFD6E3F8), Color(0xFF1F2E44)))),
         ) { onPick(StartChoice.OBSERVE) }
     }
 }
@@ -314,7 +314,7 @@ private fun ChoiceCard(
     Column(
         Modifier.fillMaxWidth().clip(shape)
             .background(if (selected) selectedBrush else Brush.linearGradient(listOf(Background, Background)))
-            .border(if (selected) 2.dp else 1.dp, if (selected) Ink else Color(0xFFE3E8EF), shape)
+            .border(if (selected) 2.dp else 1.dp, if (selected) Ink else Divider, shape)
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
             .padding(18.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -327,7 +327,7 @@ private fun ChoiceCard(
             Spacer(Modifier.weight(1f))
             Box(
                 Modifier.size(22.dp).clip(CircleShape).background(Background)
-                    .border(if (selected) 7.dp else 1.5.dp, if (selected) Ink else Color(0xFF9AA1AA), CircleShape),
+                    .border(if (selected) 7.dp else 1.5.dp, if (selected) Ink else DashedBorder, CircleShape),
             )
         }
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -344,12 +344,12 @@ private fun LockStep(available: Boolean) {
     Box(Modifier.fillMaxWidth().padding(top = 12.dp), contentAlignment = Alignment.Center) {
         Box(
             Modifier.size(144.dp).clip(CircleShape).background(
-                Brush.linearGradient(listOf(Color(0xFFD6C6F6), Color(0xFFBFC8FA), Color(0xFFA9D6FF))),
+                BudgetGradients.hero,
             ),
             contentAlignment = Alignment.Center,
         ) {
             Box(
-                Modifier.size(88.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.8f)),
+                Modifier.size(88.dp).clip(CircleShape).background(CardOverlay),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(painterResource(R.drawable.ic_lock), contentDescription = null, tint = Ink, modifier = Modifier.size(44.dp))

@@ -182,7 +182,7 @@ private fun SetupTopBar(step: SetupStep, onBack: () -> Unit) {
             repeat(SetupStep.count) { index ->
                 Box(
                     Modifier.weight(1f).height(4.dp).clip(RoundedCornerShape(2.dp))
-                        .background(if (index < step.number) Ink else Color(0xFFD3DAE4)),
+                        .background(if (index < step.number) Ink else StepTrack),
                 )
             }
         }
@@ -224,7 +224,7 @@ private fun SpendableCard(overview: BudgetOverview, step: SetupStep) {
 
     Column(
         Modifier.padding(vertical = 16.dp).fillMaxWidth().clip(shape)
-            .background(Color.White.copy(alpha = 0.8f)).border(1.dp, Divider, shape)
+            .background(CardOverlay).border(1.dp, Divider, shape)
             .padding(16.dp)
             .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
         verticalArrangement = Arrangement.spacedBy(4.dp),

@@ -34,13 +34,19 @@ import java.time.LocalDate
 import com.application.personal_budget_app.ui.format.CurrencyState
 
 /** Palette de l'anneau : bleus et violets, jamais de rouge ni de vert. */
-private val ShareColors = listOf(
+private val LightShareColors = listOf(
     Color(0xFF1F3550), Color(0xFF4F7FB0), Color(0xFF5B55B8), Color(0xFF7FA3C6),
     Color(0xFF3A3270), Color(0xFF9B96E0), Color(0xFF8A929C),
 )
+/** En sombre : des teintes plus claires, sinon l'anneau disparaît sur le fond. */
+private val DarkShareColors = listOf(
+    Color(0xFFA8C5E6), Color(0xFF7FA9D6), Color(0xFF9B96E0), Color(0xFF5F86B0),
+    Color(0xFFC4C0F2), Color(0xFF6E69B8), Color(0xFF8A929C),
+)
+private val ShareColors: List<Color> get() = if (ThemeState.isDark) DarkShareColors else LightShareColors
 private fun shareColor(index: Int) = ShareColors[index % ShareColors.size]
 
-private val UnreliableBar = Color(0xFFC9D0D9)
+private val UnreliableBar: Color get() = themed(Color(0xFFC9D0D9), Color(0xFF3A414A))
 
 @Composable
 fun AnalysisScreen(
