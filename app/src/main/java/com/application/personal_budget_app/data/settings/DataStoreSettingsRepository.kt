@@ -2,6 +2,7 @@ package com.application.personal_budget_app.data.settings
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
+import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.model.AppSettings
 import com.application.personal_budget_app.domain.model.BudgetMode
 import com.application.personal_budget_app.domain.repository.SettingsRepository
@@ -19,6 +20,7 @@ class DataStoreSettingsRepository @Inject constructor(
         val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
         val LOCK_ENABLED = booleanPreferencesKey("lock_enabled")
         val LOCK_DELAY = intPreferencesKey("lock_delay_minutes")
+        val CURRENCY = stringPreferencesKey("currency")
     }
 
     override val settings: Flow<AppSettings> = store.data.map { prefs ->
@@ -28,6 +30,7 @@ class DataStoreSettingsRepository @Inject constructor(
             onboardingDone = prefs[Keys.ONBOARDING_DONE] ?: false,
             lockEnabled = prefs[Keys.LOCK_ENABLED] ?: false,
             lockDelayMinutes = prefs[Keys.LOCK_DELAY] ?: 1,
+            currency = prefs[Keys.CURRENCY]?.let { AppCurrency.fromCode(it) } ?: AppCurrency.EUR,
         )
     }
 
@@ -51,5 +54,8 @@ class DataStoreSettingsRepository @Inject constructor(
     override suspend fun setLockDelay(minutes: Int) {
         require(minutes >= 0)
         store.edit { it[Keys.LOCK_DELAY] = minutes }
+    }
+    override suspend fun setCurrency(currency: AppCurrency) {
+        store.edit { it[Keys.CURRENCY] = currency.code }
     }
 }

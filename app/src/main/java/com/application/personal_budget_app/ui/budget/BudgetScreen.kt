@@ -98,8 +98,9 @@ fun BudgetContent(
                 modifier = side,
                 iconKey = category.iconKey,
                 amountColor = if (category.cap == null) TextSecondary else Ink,
-            ) { onEdit(BudgetEditor.CapEditor(category)) }
+            ) { onEdit(BudgetEditor.CategoryEditor(category)) }
         }
+        item { AddRow("Ajouter une enveloppe", side) { onEdit(BudgetEditor.CategoryEditor(null)) } }
         item { UnallocatedLine(overview, side) }
 
         if (overview.mode == BudgetMode.BUDGET) {

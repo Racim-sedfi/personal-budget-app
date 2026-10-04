@@ -57,8 +57,12 @@ class QuickEntryViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            categories.observeAll().collect { list ->
-                _state.update { it.copy(categories = list, selectedCategoryId = it.selectedCategoryId ?: list.firstOrNull()?.id) }
+            categories.observeActive().collect { list ->
+                _state.update { s ->
+                    // La catégorie choisie a pu être supprimée : on reprend la première.
+                    val kept = s.selectedCategoryId?.takeIf { id -> list.any { it.id == id } }
+                    s.copy(categories = list, selectedCategoryId = kept ?: list.firstOrNull()?.id)
+                }
             }
         }
     }
@@ -91,6 +95,13 @@ class QuickEntryViewModel @Inject constructor(
     fun onKey(key: KeypadKey) = _state.update { it.copy(amount = it.amount.press(key)) }
     fun onTypeChange(type: TransactionType) = _state.update { it.copy(type = type) }
     fun onCategorySelected(id: Long) = _state.update { it.copy(selectedCategoryId = id) }
+    /** Change le jour de la saisie. Jamais dans le futur : une date après aujourd'hui revient à aujourd'hui. */
+    fun onDateChange(date: LocalDate) {
+        val today = LocalDate.now(clock)
+        val day = if (date.isAfter(today)) today else date
+        _state.update { it.copy(date = day, isToday = day == today) }
+    }
+
     fun onNoteChange(note: String) = _state.update { it.copy(note = note.take(80)) }
     fun openDetails() = _state.update { it.copy(detailsOpen = true) }
 

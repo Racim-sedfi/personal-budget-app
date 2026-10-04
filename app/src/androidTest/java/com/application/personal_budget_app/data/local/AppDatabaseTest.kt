@@ -27,7 +27,7 @@ class AppDatabaseTest {
 
     @Test fun createsSevenDefaultCategoriesWithImprevusAsFuse() = runBlocking {
         val categories = db.categoryDao().observeAll().first()
-        assertEquals(7, categories.size)
+        assertEquals(listOf("Courses", "Imprévus"), categories.map { it.name })
         assertEquals(listOf("Imprévus"), categories.filter { it.isFuse }.map { it.name })
     }
 

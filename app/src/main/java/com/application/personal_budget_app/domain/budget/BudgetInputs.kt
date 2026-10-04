@@ -9,8 +9,7 @@ private val amountPattern = Regex("""^(\d{1,7})(?:,(\d{1,2}))?$""")
 /** Lit un montant tapé au clavier : "650", "48,9", "1 650,00", "12.5 €". null si invalide. */
 fun parseAmount(text: String): Money? {
     val cleaned = text.trim()
-        .replace("\u00A0", "").replace("\u202F", "").replace(" ", "")
-        .replace("€", "")
+        .filter { it.isDigit() || it == ',' || it == '.' || it == '-' }
         .replace('.', ',')
     val match = amountPattern.matchEntire(cleaned) ?: return null
     val euros = match.groupValues[1].toLong()

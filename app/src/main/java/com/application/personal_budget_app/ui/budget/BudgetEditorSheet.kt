@@ -24,6 +24,13 @@ import com.application.personal_budget_app.ui.theme.*
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import com.application.personal_budget_app.ui.format.CurrencyState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import com.application.personal_budget_app.ui.components.categoryIcon
 
 /** Affiche le formulaire ouvert dans le ViewModel, s'il y en a un. Partagé par l'écran Budget et l'assistant. */
 @Composable
@@ -35,7 +42,8 @@ fun BudgetEditorHost(viewModel: BudgetViewModel, editor: BudgetEditor?) {
         onSaveIncome = viewModel::saveIncome,
         onSaveSaving = viewModel::saveSaving,
         onSaveCharge = viewModel::saveCharge,
-        onSaveCap = viewModel::saveCap,
+        onSaveCategory = viewModel::saveCategory,
+        onDeleteCategory = viewModel::deleteCategory,
         onDeleteIncome = viewModel::deleteIncome,
         onDeleteSaving = viewModel::deleteSaving,
         onDeleteCharge = viewModel::deleteCharge,
@@ -50,7 +58,8 @@ fun BudgetEditorSheet(
     onSaveIncome: (Income) -> Unit,
     onSaveSaving: (PlannedSaving) -> Unit,
     onSaveCharge: (FixedCharge) -> Unit,
-    onSaveCap: (Category, Money?) -> Unit,
+    onSaveCategory: (Category) -> Unit,
+    onDeleteCategory: (Category) -> Unit,
     onDeleteIncome: (Long) -> Unit,
     onDeleteSaving: (Long) -> Unit,
     onDeleteCharge: (Long) -> Unit,
@@ -90,7 +99,11 @@ fun BudgetEditorSheet(
                     onSave = onSaveCharge,
                     onDelete = editor.charge?.let { charge -> { onDeleteCharge(charge.id) } },
                 )
-                is BudgetEditor.CapEditor -> CapForm(editor.category) { cap -> onSaveCap(editor.category, cap) }
+                is BudgetEditor.CategoryEditor -> CategoryForm(
+                    category = editor.category,
+                    onSave = onSaveCategory,
+                    onDelete = editor.category?.takeIf { !it.isLocked }?.let { category -> { onDeleteCategory(category) } },
+                )
             }
         }
     }
@@ -183,15 +196,73 @@ private fun ChargeForm(
     }
 }
 
-@Composable
-private fun CapForm(category: Category, onSave: (Money?) -> Unit) {
-    var amountText by rememberSaveable { mutableStateOf(category.cap?.let { AmountInput.from(it).raw }.orEmpty()) }
-    val amount = parseAmount(amountText)
+private val IconKeys = listOf("cart", "restaurant", "bus", "ticket", "bag", "health", "umbrella", "other")
 
-    SheetTitle("Plafond · ${category.name}")
-    AmountField(amountText, { amountText = it }, isError = amountText.isNotEmpty() && amount == null, label = "Plafond par cycle")
-    SaveButton(enabled = amount != null && amount.cents > 0) { onSave(amount) }
-    if (category.cap != null) DeleteButton("Retirer le plafond") { onSave(null) }
+private fun iconLabel(key: String) = when (key) {
+    "cart" -> "Panier"
+    "restaurant" -> "Restaurant"
+    "bus" -> "Transport"
+    "ticket" -> "Loisirs"
+    "bag" -> "Shopping"
+    "health" -> "Santé"
+    "umbrella" -> "Imprévus"
+    else -> "Autre"
+}
+
+/** Créer ou modifier une enveloppe : nom, icône, plafond facultatif. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun CategoryForm(category: Category?, onSave: (Category) -> Unit, onDelete: (() -> Unit)?) {
+    var name by rememberSaveable { mutableStateOf(category?.name.orEmpty()) }
+    var iconKey by rememberSaveable { mutableStateOf(category?.iconKey ?: "other") }
+    var capText by rememberSaveable { mutableStateOf(category?.cap?.let { AmountInput.from(it).raw }.orEmpty()) }
+    val cap = parseAmount(capText)
+    val capValid = capText.isBlank() || (cap != null && cap.cents > 0)
+
+    SheetTitle(if (category == null) "Nouvelle enveloppe" else "Modifier l'enveloppe")
+    OutlinedTextField(
+        value = name, onValueChange = { name = it.take(24) },
+        label = { Text("Nom") }, singleLine = true, modifier = Modifier.fillMaxWidth(),
+    )
+    Text("Icône", style = MaterialTheme.typography.bodyMedium)
+    FlowRow(
+        Modifier.selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        IconKeys.forEach { key ->
+            val selected = key == iconKey
+            Box(
+                Modifier.size(48.dp).clip(RoundedCornerShape(12.dp))
+                    .background(if (selected) Ink else SurfaceSoft)
+                    .selectable(selected = selected, role = Role.RadioButton, onClick = { iconKey = key }),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painterResource(categoryIcon(key)), contentDescription = iconLabel(key),
+                    tint = if (selected) Background else Ink, modifier = Modifier.size(22.dp),
+                )
+            }
+        }
+    }
+    AmountField(capText, { capText = it }, isError = !capValid, label = "Plafond par cycle (facultatif)")
+    SaveButton(enabled = name.isNotBlank() && capValid) {
+        val base = category ?: Category(name = "", iconKey = iconKey)
+        onSave(base.copy(name = name.trim(), iconKey = iconKey, cap = if (capText.isBlank()) null else cap))
+    }
+    when {
+        onDelete != null -> {
+            DeleteButton("Supprimer l'enveloppe", onDelete)
+            Text(
+                "Ses dépenses déjà saisies restent dans l'historique et l'analyse.",
+                style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+            )
+        }
+        category?.isLocked == true -> Text(
+            "Enveloppe de base : tu peux la renommer, pas la supprimer.",
+            style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -223,7 +294,7 @@ private fun SheetTitle(text: String) {
 private fun AmountField(value: String, onValueChange: (String) -> Unit, isError: Boolean, label: String = "Montant") {
     OutlinedTextField(
         value = value, onValueChange = onValueChange,
-        label = { Text(label) }, suffix = { Text("€") },
+        label = { Text(label) }, suffix = { Text(CurrencyState.current.symbol) },
         singleLine = true, isError = isError,
         supportingText = if (isError) { { Text("Par exemple 650 ou 48,90") } } else null,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),

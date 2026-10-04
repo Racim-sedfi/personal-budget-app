@@ -96,7 +96,7 @@ fun buildAnalysis(
             transactions.filter { it.date in s.cycle && it.categoryId == cat.id }.netSpent().cents
         }
         EnvelopeAverage(cat, Money(total / reliable.size))
-    }
+    }.filter { !it.category.archived || it.average.cents != 0L } // archivée : seulement si elle a servi
 
     val income = incomes.map { it.amount }.sum()
     return Analysis(
@@ -106,7 +106,7 @@ fun buildAnalysis(
         shares = shares,
         cycles = stats,
         averages = averages,
-        capsTotal = categories.mapNotNull { it.cap }.sum(),
+        capsTotal = categories.filterNot { it.archived }.mapNotNull { it.cap }.sum(),
         fixedChargesPercent = if (income.cents > 0) {
             (charges.totalFor(current).cents * 100.0 / income.cents).roundToInt()
         } else null,

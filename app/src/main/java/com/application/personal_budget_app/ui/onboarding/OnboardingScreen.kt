@@ -35,8 +35,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.application.personal_budget_app.R
 import com.application.personal_budget_app.domain.cycle.BudgetCycle
+import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.onboarding.OnboardingStep
 import com.application.personal_budget_app.domain.onboarding.StartChoice
+import com.application.personal_budget_app.ui.components.CurrencyPicker
 import com.application.personal_budget_app.ui.format.cycleRule
 import com.application.personal_budget_app.ui.format.label
 import com.application.personal_budget_app.ui.lock.authenticate
@@ -44,6 +46,8 @@ import com.application.personal_budget_app.ui.lock.canUseAppLock
 import com.application.personal_budget_app.ui.lock.findFragmentActivity
 import com.application.personal_budget_app.ui.theme.*
 import java.time.LocalDate
+import com.application.personal_budget_app.domain.onboarding.OPTIONAL_ENVELOPES
+import com.application.personal_budget_app.ui.components.categoryIcon
 
 @Composable
 fun OnboardingScreen(
@@ -62,6 +66,8 @@ fun OnboardingScreen(
         onNext = viewModel::next,
         onPickDay = viewModel::pickStartDay,
         onPickChoice = viewModel::pickChoice,
+        onPickCurrency = viewModel::pickCurrency,
+        onToggleEnvelope = viewModel::toggleEnvelope,
         onFinish = {
             onChoiceMade(state.choice)
             viewModel.finish()
@@ -81,6 +87,7 @@ private fun stepBackground(step: OnboardingStep): Brush {
     val top = when (step) {
         OnboardingStep.PRIVACY -> Color(0xFFDDEBFF)
         OnboardingStep.CYCLE_START -> Color(0xFFE4E1FC)
+        OnboardingStep.ENVELOPES -> Color(0xFFE1ECF8)
         OnboardingStep.START_CHOICE -> Color(0xFFE4F1FF)
         OnboardingStep.LOCK -> Color(0xFFECE7FF)
     }
@@ -97,6 +104,8 @@ fun OnboardingContent(
     onFinish: () -> Unit,
     lockAvailable: Boolean = true,
     onEnableLock: () -> Unit = {},
+    onPickCurrency: (AppCurrency) -> Unit = {},
+    onToggleEnvelope: (String) -> Unit = {},
 ) {
     Column(
         Modifier.fillMaxSize().background(stepBackground(state.step))
@@ -117,9 +126,10 @@ fun OnboardingContent(
             ) {
                 when (step) {
                     OnboardingStep.PRIVACY -> PrivacyStep()
-                    OnboardingStep.CYCLE_START -> CycleStartStep(state.startDay, state.cycle, onPickDay)
+                    OnboardingStep.ENVELOPES -> EnvelopesStep(state.envelopes, onToggleEnvelope)
                     OnboardingStep.START_CHOICE -> StartChoiceStep(state.choice, onPickChoice)
                     OnboardingStep.LOCK -> LockStep(lockAvailable)
+                    OnboardingStep.CYCLE_START -> CycleStartStep(state.startDay, state.cycle, onPickDay, state.currency, onPickCurrency)
                 }
             }
         }
@@ -204,7 +214,13 @@ private fun PrivacyStep() {
 // ---------- Étape 2 ----------
 
 @Composable
-private fun CycleStartStep(selected: Int, cycle: BudgetCycle, onPick: (Int) -> Unit) {
+private fun CycleStartStep(
+    selected: Int,
+    cycle: BudgetCycle,
+    onPick: (Int) -> Unit,
+    currency: AppCurrency,
+    onPickCurrency: (AppCurrency) -> Unit,
+) {
     StepHeader(OnboardingStep.CYCLE_START, "Quel jour commence ton mois budgétaire ?", "En général, le jour de ta paie.")
 
     Column(
@@ -244,6 +260,45 @@ private fun CycleStartStep(selected: Int, cycle: BudgetCycle, onPick: (Int) -> U
         Text(cycle.label(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
         Text(cycleRule(selected), style = MaterialTheme.typography.bodySmall, color = TextStrong)
     }
+
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Text("Ta monnaie", style = MaterialTheme.typography.titleMedium, modifier = Modifier.semantics { heading() })
+        CurrencyPicker(currency, onPickCurrency)
+    }
+}
+
+// ---------- Enveloppes ----------
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun EnvelopesStep(selected: Set<String>, onToggle: (String) -> Unit) {
+    StepHeader(
+        OnboardingStep.ENVELOPES,
+        "Quelles enveloppes veux-tu suivre ?",
+        "Courses et Imprévus sont toujours là. Tu pourras en créer d'autres dans Budget.",
+    )
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        // Le minimum : toujours inclus, non modifiable ici.
+        listOf("Courses" to "cart", "Imprévus" to "umbrella").forEach { (name, icon) ->
+            FilterChip(
+                selected = true, onClick = {}, enabled = false,
+                label = { Text(name) },
+                leadingIcon = { Icon(painterResource(categoryIcon(icon)), contentDescription = null, modifier = Modifier.size(18.dp)) },
+            )
+        }
+        OPTIONAL_ENVELOPES.forEach { preset ->
+            FilterChip(
+                selected = preset.name in selected,
+                onClick = { onToggle(preset.name) },
+                label = { Text(preset.name) },
+                leadingIcon = { Icon(painterResource(categoryIcon(preset.iconKey)), contentDescription = null, modifier = Modifier.size(18.dp)) },
+            )
+        }
+    }
+    Text(
+        "Transports : un abonnement ou l'essence se suivent mieux en charge fixe, dans Budget.",
+        style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+    )
 }
 
 // ---------- Étape 3 ----------

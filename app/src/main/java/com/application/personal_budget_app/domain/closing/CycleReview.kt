@@ -43,7 +43,7 @@ data class CycleReview(
      * Plafonds proposés après observation, arrondis aux 5 € supérieurs.
      * Rien dépensé → pas de plafond. Imprévus : son plafond actuel, sinon 10 % des dépenses (20 € minimum).
      */
-    fun proposedCaps(): Map<Long, Money?> = envelopes.associate { line ->
+    fun proposedCaps(): Map<Long, Money?> = envelopes.filterNot { it.category.archived }.associate { line ->
         line.category.id to when {
             line.category.isFuse -> line.category.cap ?: maxOf(Money(spent.cents / 10).roundUpTo(10), Money.euros(20))
             line.spent.cents > 0 -> line.spent.roundUpTo(5)
@@ -73,7 +73,9 @@ fun buildCycleReview(
         spendable = if (mode == BudgetMode.BUDGET) {
             income - savings.map { it.amount }.sum() - charges.totalFor(cycle) + carryIn + inCycle.extraIncome()
         } else null,
-        envelopes = categories.map { EnvelopeLine(it, byCategory[it.id] ?: Money.ZERO) },
+        envelopes = categories
+            .map { EnvelopeLine(it, byCategory[it.id] ?: Money.ZERO) }
+            .filter { !it.category.archived || it.spent.cents != 0L },
         // Le cycle est fini : tous ses jours comptent.
         completion = completion(cycle, cycle.end.plusDays(1), inCycle.map { it.date }.toSet(), noExpenseDays),
         hasIncome = income.cents > 0,

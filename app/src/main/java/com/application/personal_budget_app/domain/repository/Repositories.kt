@@ -13,8 +13,19 @@ interface TransactionRepository {
 }
 
 interface CategoryRepository {
+    /** Toutes, archivées comprises. */
     fun observeAll(): Flow<List<Category>>
+    /** Sans les archivées. */
+    fun observeActive(): Flow<List<Category>>
     suspend fun update(category: Category)
+    suspend fun add(category: Category): Long
+    /** Supprime si elle n'a jamais servi, sinon l'archive (ses dépenses restent visibles). */
+    suspend fun remove(category: Category)
+}
+
+interface DataResetRepository {
+    /** Efface tout (base + réglages) et remet les enveloppes par défaut. */
+    suspend fun resetAll()
 }
 
 interface DayStatusRepository {
@@ -43,6 +54,7 @@ interface SettingsRepository {
     suspend fun completeOnboarding()
     suspend fun setLockEnabled(enabled: Boolean)
     suspend fun setLockDelay(minutes: Int)
+    suspend fun setCurrency(currency: AppCurrency)
 }
 
 interface ClosedCycleRepository {

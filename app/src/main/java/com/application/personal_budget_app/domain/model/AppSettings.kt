@@ -8,4 +8,5 @@ data class AppSettings(
     val onboardingDone: Boolean = false,
     val lockEnabled: Boolean = false,
     val lockDelayMinutes: Int = 1,   // 0 = immédiatement
+    val currency: AppCurrency = AppCurrency.EUR,
 )

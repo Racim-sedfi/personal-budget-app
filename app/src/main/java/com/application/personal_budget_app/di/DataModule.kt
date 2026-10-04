@@ -36,5 +36,6 @@ abstract class RepositoryModule {
     @Binds @Singleton abstract fun categories(impl: RoomCategoryRepository): CategoryRepository
     @Binds @Singleton abstract fun dayStatus(impl: RoomDayStatusRepository): DayStatusRepository
     @Binds @Singleton abstract fun budget(impl: RoomBudgetRepository): BudgetRepository
+    @Binds @Singleton abstract fun dataReset(impl: RoomDataReset): DataResetRepository
     @Binds @Singleton abstract fun closedCycles(impl: RoomClosedCycleRepository): ClosedCycleRepository
 }

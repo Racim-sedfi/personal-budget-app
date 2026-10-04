@@ -41,6 +41,7 @@ import com.application.personal_budget_app.domain.model.sum
 import com.application.personal_budget_app.ui.components.BudgetProgressBar
 import com.application.personal_budget_app.ui.format.label
 import com.application.personal_budget_app.ui.theme.*
+import com.application.personal_budget_app.ui.format.CurrencyState
 
 @Composable
 fun CycleClosingScreen(
@@ -235,11 +236,11 @@ private fun ObservationReview(
         item {
             ClosingSectionTitle("Tes plafonds")
             Text(
-                "Proposés d'après ce cycle, arrondis aux 5 € supérieurs.",
+                "Proposés d'après ce cycle, arrondis aux 5 ${CurrencyState.current.symbol} supérieurs.",
                 style = MaterialTheme.typography.bodySmall, color = TextSecondary,
             )
         }
-        items(review.envelopes, key = { it.category.id }) { line ->
+        items(review.envelopes.filterNot { it.category.archived }, key = { it.category.id }) { line ->
             CapStepperRow(line, state.caps[line.category.id], onStep)
         }
         item { CapsTotal(state.caps.values.filterNotNull().sum(), state.availableNext.takeIf { review.hasIncome }) }
@@ -257,7 +258,7 @@ private fun CapStepperRow(line: EnvelopeLine, cap: Money?, onStep: (Long, Long) 
                 style = MaterialTheme.typography.bodySmall, color = TextSecondary,
             )
         }
-        StepButton("−", "Baisser $name de 5 euros") { onStep(line.category.id, -5) }
+        StepButton("−", "Baisser $name de 5 ${CurrencyState.current.symbol}") { onStep(line.category.id, -5) }
         Text(
             cap?.format() ?: "Aucun",
             style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
@@ -265,7 +266,7 @@ private fun CapStepperRow(line: EnvelopeLine, cap: Money?, onStep: (Long, Long) 
             color = if (cap == null) TextSecondary else Ink,
             modifier = Modifier.widthIn(min = 92.dp).semantics { liveRegion = LiveRegionMode.Polite },
         )
-        StepButton("+", "Augmenter $name de 5 euros") { onStep(line.category.id, 5) }
+        StepButton("+", "Augmenter $name de 5 ${CurrencyState.current.symbol}") { onStep(line.category.id, 5) }
     }
     HorizontalDivider(color = Divider)
 }

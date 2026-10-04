@@ -26,11 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.application.personal_budget_app.R
+import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.model.AppSettings
+import com.application.personal_budget_app.ui.components.CurrencyPicker
 import com.application.personal_budget_app.ui.lock.authenticate
 import com.application.personal_budget_app.ui.lock.canUseAppLock
 import com.application.personal_budget_app.ui.lock.findFragmentActivity
 import com.application.personal_budget_app.ui.theme.*
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 
 @Composable
 fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
@@ -52,6 +56,15 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             }
         },
         onDelay = viewModel::setLockDelay,
+        onCurrency = viewModel::setCurrency,
+        onReset = {
+            // Verrouillage actif : on confirme l'identité avant de tout effacer.
+            if (settings.lockEnabled && lockAvailable) {
+                context.findFragmentActivity()?.authenticate("Confirmer la réinitialisation") { viewModel.resetAll() }
+            } else {
+                viewModel.resetAll()
+            }
+        },
     )
 }
 
@@ -62,7 +75,11 @@ fun SettingsContent(
     onBack: () -> Unit,
     onToggleLock: (Boolean) -> Unit,
     onDelay: (Int) -> Unit,
+    onCurrency: (AppCurrency) -> Unit,
+    onReset: () -> Unit,
 ) {
+    var confirmReset by remember { mutableStateOf(false) }
+
     Column(Modifier.fillMaxSize().background(Background).statusBarsPadding().navigationBarsPadding()) {
         Row(Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack) {
@@ -119,7 +136,14 @@ fun SettingsContent(
                     }
                 }
             }
-
+            SettingsSection("Monnaie") {
+                Text(
+                    "Change seulement le symbole affiché : tes montants ne sont pas convertis.",
+                    style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                CurrencyPicker(settings.currency, onCurrency)
+            }
             SettingsSection("Cycle") {
                 Row(Modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("Jour de début du cycle", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
@@ -130,11 +154,36 @@ fun SettingsContent(
                 }
             }
 
+            SettingsSection("Données") {
+                Text(
+                    "Supprime tout ce qui est enregistré sur ce téléphone : dépenses, revenus, budget, enveloppes et réglages.",
+                    style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
+                OutlinedButton(
+                    onClick = { confirmReset = true },
+                    modifier = Modifier.fillMaxWidth().height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                ) { Text("Réinitialiser les données", color = OverAmberText) }
+            }
+
             Text(
                 "100 % hors ligne · tes données restent sur ce téléphone.",
                 style = MaterialTheme.typography.bodySmall, color = TextSecondary,
             )
         }
+    }
+
+    if (confirmReset) {
+        AlertDialog(
+            onDismissRequest = { confirmReset = false },
+            title = { Text("Tout réinitialiser ?") },
+            text = { Text("Toutes tes données seront supprimées de ce téléphone. C'est définitif : l'app repartira de zéro.") },
+            confirmButton = {
+                TextButton(onClick = { confirmReset = false; onReset() }) { Text("Tout supprimer", color = OverAmberText) }
+            },
+            dismissButton = { TextButton(onClick = { confirmReset = false }) { Text("Annuler", color = Ink) } },
+        )
     }
 }
 
@@ -156,7 +205,7 @@ private fun SettingsPreview() {
     PersonalbudgetappTheme {
         SettingsContent(
             settings = AppSettings(cycleStartDay = 25, onboardingDone = true, lockEnabled = true, lockDelayMinutes = 1),
-            lockAvailable = true, onBack = {}, onToggleLock = {}, onDelay = {},
+            lockAvailable = true, onBack = {}, onToggleLock = {}, onDelay = {}, onCurrency = {}, onReset = {},
         )
     }
 }

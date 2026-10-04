@@ -6,8 +6,8 @@ import com.application.personal_budget_app.domain.model.*
 fun TransactionEntity.toDomain() = Transaction(id, Money(amountCents), type, categoryId, date, note)
 fun Transaction.toEntity() = TransactionEntity(id, amount.cents, type, categoryId, date, note)
 
-fun CategoryEntity.toDomain() = Category(id, name, iconKey, capCents?.let(::Money), isFuse, position)
-fun Category.toEntity() = CategoryEntity(id, name, iconKey, cap?.cents, isFuse, position)
+fun CategoryEntity.toDomain() = Category(id, name, iconKey, capCents?.let(::Money), isFuse, position, isLocked, archived)
+fun Category.toEntity() = CategoryEntity(id, name, iconKey, cap?.cents, isFuse, position, isLocked, archived)
 
 fun IncomeEntity.toDomain() = Income(id, name, Money(amountCents), dayOfMonth)
 fun Income.toEntity() = IncomeEntity(id, name, amount.cents, dayOfMonth)

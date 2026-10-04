@@ -129,7 +129,7 @@ fun BudgetSetupContent(
                             modifier = Modifier,
                             iconKey = category.iconKey,
                             amountColor = if (category.cap == null) TextSecondary else Ink,
-                        ) { onEdit(BudgetEditor.CapEditor(category)) }
+                        ) { onEdit(BudgetEditor.CategoryEditor(category)) }
                     }
                     item { UnallocatedLine(overview, Modifier) }
                 }

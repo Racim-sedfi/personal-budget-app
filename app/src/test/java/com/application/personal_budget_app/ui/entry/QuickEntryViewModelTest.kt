@@ -26,7 +26,10 @@ private class FakeTransactions : TransactionRepository {
 
 private class FakeCategories(private val list: List<Category>) : CategoryRepository {
     override fun observeAll() = flowOf(list)
+    override fun observeActive() = flowOf(list)
     override suspend fun update(category: Category) = Unit
+    override suspend fun add(category: Category) = 0L
+    override suspend fun remove(category: Category) = Unit
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -151,5 +154,26 @@ class QuickEntryViewModelTest {
         assertFalse(vm.state.value.canSave)
         vm.save()
         assertTrue(repo.added.isEmpty())
+    }
+
+    @Test fun `changing the date saves on that day`() {
+        vm.onDateChange(LocalDate.of(2026, 10, 9))
+        assertFalse(vm.state.value.isToday)
+        typeAmount(KeypadKey.Digit(3))
+        vm.save()
+        assertEquals(LocalDate.of(2026, 10, 9), repo.added.single().date)
+    }
+
+    @Test fun `a future date is brought back to today`() {
+        vm.onDateChange(LocalDate.of(2026, 10, 20))
+        assertEquals(LocalDate.of(2026, 10, 12), vm.state.value.date)
+        assertTrue(vm.state.value.isToday)
+    }
+
+    @Test fun `editing can move an expense to another day`() {
+        vm.startEdit(existing)
+        vm.onDateChange(LocalDate.of(2026, 10, 1))
+        vm.save()
+        assertEquals(LocalDate.of(2026, 10, 1), repo.updated.single().date)
     }
 }

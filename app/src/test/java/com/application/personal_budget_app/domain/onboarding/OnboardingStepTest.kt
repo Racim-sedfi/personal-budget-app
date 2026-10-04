@@ -19,7 +19,7 @@ class OnboardingStepTest {
 
     @Test fun `numbers start at one`() {
         assertEquals(1, OnboardingStep.PRIVACY.number)
-        assertEquals(4, OnboardingStep.count)
+        assertEquals(5, OnboardingStep.count)
     }
 
     @Test fun `cycle rule reads naturally`() {
