@@ -79,6 +79,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
             }
         },
         onDelay = viewModel::setLockDelay,
+        onHideInRecents = viewModel::setHideInRecents,
         onCurrency = viewModel::setCurrency,
         onCycleStartDay = viewModel::setCycleStartDay,
         notificationsRefused = notificationsRefused,
@@ -116,6 +117,7 @@ fun SettingsContent(
     notificationsRefused: Boolean = false,
     onToggleReminder: (Boolean) -> Unit = {},
     onReminderTime: (Int) -> Unit = {},
+    onHideInRecents: (Boolean) -> Unit = {},
 ) {
     var pickReminderTime by remember { mutableStateOf(false) }
     var confirmReset by remember { mutableStateOf(false) }
@@ -175,6 +177,26 @@ fun SettingsContent(
                             )
                         }
                     }
+                }
+
+                HorizontalDivider(color = Divider)
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 64.dp)
+                        .toggleable(value = settings.hideInRecents, role = Role.Switch, onValueChange = onHideInRecents),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text("Masquer dans les apps récentes", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+                        Text(
+                            "Cache tes montants dans l'aperçu des apps. Bloque aussi les captures d'écran.",
+                            style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+                        )
+                    }
+                    Switch(
+                        checked = settings.hideInRecents,
+                        onCheckedChange = null,
+                        colors = SwitchDefaults.colors(checkedTrackColor = Ink, checkedThumbColor = Background),
+                    )
                 }
             }
             SettingsSection("Rappel") {

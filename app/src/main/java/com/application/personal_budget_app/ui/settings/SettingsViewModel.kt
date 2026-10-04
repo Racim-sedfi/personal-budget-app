@@ -33,6 +33,10 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { settings.setLockDelay(minutes) }
     }
 
+    fun setHideInRecents(hide: Boolean) {
+        viewModelScope.launch { settings.setHideInRecents(hide) }
+    }
+
     fun setCurrency(currency: AppCurrency) {
         viewModelScope.launch { settings.setCurrency(currency) }
     }
