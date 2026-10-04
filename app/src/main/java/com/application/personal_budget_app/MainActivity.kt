@@ -28,12 +28,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.activity.SystemBarStyle
 import androidx.compose.foundation.isSystemInDarkTheme
 import com.application.personal_budget_app.domain.model.ThemeMode
+import android.content.Intent
 
 /** FragmentActivity (et non ComponentActivity) : BiometricPrompt en a besoin. */
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
+
+    /** Le widget demande d'ouvrir la saisie rapide. */
+    private var openEntryRequest by mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) openEntryRequest = intent.getBooleanExtra(EXTRA_OPEN_ENTRY, false)
         CurrencyState.install()
         enableEdgeToEdge()
         setContent {
@@ -73,11 +79,26 @@ class MainActivity : FragmentActivity() {
                         enabled = s.lockEnabled,
                         delayMinutes = s.lockDelayMinutes,
                         startUnlocked = justOnboarded,
-                    ) {
-                        BudgetAppRoot(openBudgetSetup = openBudgetSetup)
+                    ) { locked ->
+                        BudgetAppRoot(
+                            openBudgetSetup = openBudgetSetup,
+                            locked = locked,
+                            openEntryRequest = openEntryRequest,
+                            onEntryRequestHandled = { openEntryRequest = false },
+                        )
                     }
                 }
             }
         }
+    }
+
+    /** App déjà ouverte : le « + » du widget arrive ici. */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_OPEN_ENTRY, false)) openEntryRequest = true
+    }
+
+    companion object {
+        const val EXTRA_OPEN_ENTRY = "open_entry"
     }
 }
