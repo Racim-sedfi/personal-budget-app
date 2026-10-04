@@ -34,6 +34,10 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { settings.setCurrency(currency) }
     }
 
+    fun setCycleStartDay(day: Int) {
+        viewModelScope.launch { settings.setCycleStartDay(day) }
+    }
+
     /** Tout effacer : l'app repart sur l'onboarding. */
     fun resetAll() {
         viewModelScope.launch { dataReset.resetAll() }

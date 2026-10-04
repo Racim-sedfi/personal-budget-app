@@ -35,6 +35,15 @@ import com.application.personal_budget_app.ui.lock.findFragmentActivity
 import com.application.personal_budget_app.ui.theme.*
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.clickable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import com.application.personal_budget_app.domain.cycle.BudgetCycle
+import com.application.personal_budget_app.ui.components.CycleDayGrid
+import com.application.personal_budget_app.ui.format.cycleRule
+import com.application.personal_budget_app.ui.format.label
+import java.time.LocalDate
 
 @Composable
 fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
@@ -57,6 +66,7 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMo
         },
         onDelay = viewModel::setLockDelay,
         onCurrency = viewModel::setCurrency,
+        onCycleStartDay = viewModel::setCycleStartDay,
         onReset = {
             // Verrouillage actif : on confirme l'identité avant de tout effacer.
             if (settings.lockEnabled && lockAvailable) {
@@ -77,8 +87,10 @@ fun SettingsContent(
     onDelay: (Int) -> Unit,
     onCurrency: (AppCurrency) -> Unit,
     onReset: () -> Unit,
+    onCycleStartDay: (Int) -> Unit = {},
 ) {
     var confirmReset by remember { mutableStateOf(false) }
+    var editCycleDay by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().background(Background).statusBarsPadding().navigationBarsPadding()) {
         Row(Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -145,11 +157,19 @@ fun SettingsContent(
                 CurrencyPicker(settings.currency, onCurrency)
             }
             SettingsSection("Cycle") {
-                Row(Modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                        .clickable(onClickLabel = "Modifier", role = Role.Button) { editCycleDay = true },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     Text("Jour de début du cycle", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
                     Text(
                         if (settings.cycleStartDay == 1) "le 1er" else "le ${settings.cycleStartDay}",
                         style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
+                    )
+                    Icon(
+                        painterResource(R.drawable.ic_chevron_right), contentDescription = null, tint = TextSecondary,
+                        modifier = Modifier.padding(start = 8.dp).size(16.dp),
                     )
                 }
             }
@@ -174,6 +194,14 @@ fun SettingsContent(
         }
     }
 
+    if (editCycleDay) {
+        CycleDayDialog(
+            current = settings.cycleStartDay,
+            onConfirm = { day -> onCycleStartDay(day); editCycleDay = false },
+            onDismiss = { editCycleDay = false },
+        )
+    }
+
     if (confirmReset) {
         AlertDialog(
             onDismissRequest = { confirmReset = false },
@@ -185,6 +213,37 @@ fun SettingsContent(
             dismissButton = { TextButton(onClick = { confirmReset = false }) { Text("Annuler", color = Ink) } },
         )
     }
+}
+
+/** Choisir un autre jour de début : aperçu du cycle avant de valider. */
+@Composable
+private fun CycleDayDialog(current: Int, onConfirm: (Int) -> Unit, onDismiss: () -> Unit) {
+    var day by remember { mutableIntStateOf(current) }
+    val cycle = BudgetCycle.containing(LocalDate.now(), day)
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Jour de début du cycle") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                CycleDayGrid(day, { day = it })
+                Column(
+                    Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
+                    Text("Ton cycle en cours : ${cycle.label()}", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+                    Text(cycleRule(day), style = MaterialTheme.typography.bodySmall, color = TextStrong)
+                }
+                Text(
+                    "Tes dépenses ne bougent pas : seuls les cycles sont recalculés. Le bilan du cycle précédent pourra t'être reproposé.",
+                    style = MaterialTheme.typography.bodySmall, color = TextSecondary,
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(day) }, enabled = day != current) { Text("Valider", color = Ink) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text("Annuler", color = Ink) } },
+    )
 }
 
 @Composable
