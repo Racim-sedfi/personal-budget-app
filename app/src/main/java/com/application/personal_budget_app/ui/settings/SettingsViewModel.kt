@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.application.personal_budget_app.domain.model.AppCurrency
 import com.application.personal_budget_app.domain.model.AppSettings
 import com.application.personal_budget_app.domain.repository.DataResetRepository
+import com.application.personal_budget_app.domain.repository.ReminderScheduler
 import com.application.personal_budget_app.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val settings: SettingsRepository,
     private val dataReset: DataResetRepository,
+    private val reminder: ReminderScheduler,
 ) : ViewModel() {
 
     val state: StateFlow<AppSettings?> = settings.settings
@@ -40,6 +43,21 @@ class SettingsViewModel @Inject constructor(
 
     /** Tout effacer : l'app repart sur l'onboarding. */
     fun resetAll() {
+        reminder.cancel()
         viewModelScope.launch { dataReset.resetAll() }
+    }
+
+    fun setReminderEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            settings.setReminderEnabled(enabled)
+            if (enabled) reminder.schedule(settings.settings.first().reminderMinutes) else reminder.cancel()
+        }
+    }
+
+    fun setReminderTime(minutes: Int) {
+        viewModelScope.launch {
+            settings.setReminderTime(minutes)
+            if (settings.settings.first().reminderEnabled) reminder.schedule(minutes)
+        }
     }
 }
