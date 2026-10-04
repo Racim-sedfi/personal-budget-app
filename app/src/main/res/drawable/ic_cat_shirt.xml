@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Enveloppe « Vêtements » : icône trait fin, 24 dp. La couleur est remplacée par le tint du composant Icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M9,4 L4,7 L5.5,10.5 L7.5,9.5 V20 H16.5 V9.5 L18.5,10.5 L20,7 L15,4 C14.5,5.5 13.4,6.3 12,6.3 C10.6,6.3 9.5,5.5 9,4 Z"
+        android:fillColor="#00000000"
+        android:strokeColor="#FF1C1C1C"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

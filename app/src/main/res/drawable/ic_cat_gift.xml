@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Enveloppe « Cadeaux » : icône trait fin, 24 dp. La couleur est remplacée par le tint du composant Icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M4.5,10 H19.5 V13 H4.5 Z M6,13 V19.5 H18 V13 M12,10 V19.5 M12,10 C10,10 8,9 8,7.3 C8,5.8 9.5,5.2 10.5,6 C11.3,6.6 12,8 12,10 C12,8 12.7,6.6 13.5,6 C14.5,5.2 16,5.8 16,7.3 C16,9 14,10 12,10"
+        android:fillColor="#00000000"
+        android:strokeColor="#FF1C1C1C"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>
