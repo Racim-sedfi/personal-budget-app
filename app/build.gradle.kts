@@ -28,8 +28,8 @@ android {
         applicationId = "com.application.personal_budget_app"
         minSdk = 26 // java.time sans desugaring (calcul des cycles)
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.6.0"
+        versionCode = 7
+        versionName = "0.7.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
