@@ -6,7 +6,7 @@
     <!-- Écran de démarrage : logo WalletFlow sur fond noir (toutes versions d'Android) -->
     <style name="Theme.Personalbudgetapp.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/wf_icon_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_wf</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_wf_splash</item>
         <item name="postSplashScreenTheme">@style/Theme.Personalbudgetapp</item>
     </style>
 </resources>
