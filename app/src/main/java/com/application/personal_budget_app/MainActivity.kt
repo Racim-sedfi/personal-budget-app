@@ -1,6 +1,7 @@
 package com.application.personal_budget_app
 
 import android.os.Bundle
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
@@ -38,6 +39,8 @@ class MainActivity : FragmentActivity() {
     private var openEntryRequest by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Avant super.onCreate : affiche le logo au lancement puis bascule sur le thème normal
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) openEntryRequest = intent.getBooleanExtra(EXTRA_OPEN_ENTRY, false)
         CurrencyState.install()
