@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Signature release : ne jamais versionner la clé ni ses mots de passe
+keystore.properties
+*.jks
+*.keystore

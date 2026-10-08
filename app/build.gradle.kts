@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -5,6 +7,16 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.serialization)
 }
+
+// Signature release : lue depuis keystore.properties (en local, ignoré par git)
+// ou depuis les variables d'environnement (GitHub Actions). Jamais de mot de passe dans le code.
+val keystoreProperties = Properties().apply {
+    val file = rootProject.file("keystore.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+
+fun signingValue(key: String, env: String): String? =
+    keystoreProperties.getProperty(key) ?: System.getenv(env)
 
 android {
     namespace = "com.application.personal_budget_app"
@@ -22,15 +34,27 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            val storePath = signingValue("storeFile", "WF_KEYSTORE_PATH")
+            if (storePath != null) {
+                storeFile = file(storePath)
+                storePassword = signingValue("storePassword", "WF_KEYSTORE_PASSWORD")
+                keyAlias = signingValue("keyAlias", "WF_KEY_ALIAS")
+                keyPassword = signingValue("keyPassword", "WF_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             // R8 : réduit, optimise et obfusque le code, retire les ressources inutilisées
             optimization {
                 enable = true
             }
-            // Temporaire : signée avec la clé debug pour pouvoir installer et tester la release.
-            // À remplacer par la vraie clé de signature.
-            signingConfig = signingConfigs.getByName("debug")
+            // Vraie clé si elle est configurée, sinon clé debug (build local sans keystore, CI des PR)
+            val releaseKey = signingConfigs.getByName("release")
+            signingConfig = if (releaseKey.storeFile != null) releaseKey else signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -55,6 +79,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     // --- Ajouts app budget ---
     // Navigation et état
